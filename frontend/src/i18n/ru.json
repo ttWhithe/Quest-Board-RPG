@@ -1,0 +1,11 @@
+{
+  "common": { "save": "Сохранить", "cancel": "Отмена", "delete": "Удалить", "loading": "Загрузка…" },
+  "auth": { "login": "Вход", "register": "Регистрация", "demo": "Войти как гость" },
+  "board": { "title": "Доска квестов", "empty": "Квестов пока нет", "filterAll": "Все" },
+  "quest": {
+    "create": "Новый квест",
+    "fields": { "title": "Название", "description": "Описание", "rank": "Ранг", "rarity": "Редкость", "deadline": "Дедлайн" },
+    "status": { "active": "В процессе", "completed": "Выполнен", "failed": "Провален", "archived": "В архиве" }
+  },
+  "character": { "level": "Уровень", "xp": "Опыт", "stats": "Статистика" }
+}
