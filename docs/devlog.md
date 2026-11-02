@@ -70,6 +70,12 @@
 - **Решение по процессу:** Переходим на Git Flow. Прямые пуши в `main` с кодом запрещены. Разработка ведется в ветках `feat/...`, слияние — только через PR с зеленым CI. Это исключит попадание красных крестиков в историю основной ветки.
 - **Дальше:** Day 2 — Auth (Security, JWT, Bcrypt).
 
+## [2026-11-02 19:00] — Day 2, шаг 1: security + schemas
+- **Сделано:** `app/core/security.py` (bcrypt, JWT HS256, emblem_seed), `app/schemas/user.py` (`UserBase`/`UserCreate`/`UserOut` + кастомные коды через `PydanticCustomError`), `app/schemas/auth.py` (`LoginRequest`/`TokenResponse`). `types-PyJWT` в dev-deps, создан `.venv`, добавлен `backend/.editorconfig`. Ветка `feat/auth-schemas` запушена.
+- **Застрял / потратил время на:** `import-not-found` bcrypt/jwt в mypy (запускал из системного Python); несуществующий `types-bcrypt`; `types-PyJWT 1.7.1` описывает PyJWT 1.x (`bytes` вместо `str`); `UP017` (`timezone.utc` → `UTC`).
+- **Решение:** bcrypt даёт свои types — стаб не нужен; `cast(str, jwt.encode(...))`; `_settings = get_settings()` (в `config.py` нет module-level `settings`). Случайный коммит в `main` перенесён на `feat/auth-schemas` через `git branch` + `git reset --hard origin/main`, `main` не загрязнён.
+- **Дальше:** шаг 2 — `app/core/deps.py` (`get_current_user`), затем `api/auth.py` + error-handler.
+
 ## Шаблон для следующих дней
 
 ```markdown
