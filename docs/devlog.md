@@ -76,6 +76,10 @@
 - **Решение:** bcrypt даёт свои types — стаб не нужен; `cast(str, jwt.encode(...))`; `_settings = get_settings()`. Случайный коммит в `main` перенесён на `feat/auth-schemas`. Для Windows добавлен `tzdata`, в `conftest.py` прописан `localhost` для `DATABASE_URL`. CI зелёный.
 - **Дальше:** шаг 2 — `app/core/deps.py` (`get_current_user`), затем шаг 3 — эндпоинты в `api/auth.py`.
 
+## [2026-11-02 19:50] — Day 2, шаг 2: get_current_user
+- **Сделано:** `app/core/deps.py` с зависимостью `get_current_user` (Bearer-токен, проверка JWT, поиск юзера в БД). Линтеры и CI зелёные.
+- **Дальше:** шаг 3 — эндпоинты `api/auth.py` и кастомные обработчики ошибок в `main.py`.
+
 ## Шаблон для следующих дней
 
 ```markdown
