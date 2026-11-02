@@ -70,6 +70,20 @@
 - **Решение по процессу:** Переходим на Git Flow. Прямые пуши в `main` с кодом запрещены. Разработка ведется в ветках `feat/...`, слияние — только через PR с зеленым CI. Это исключит попадание красных крестиков в историю основной ветки.
 - **Дальше:** Day 2 — Auth (Security, JWT, Bcrypt).
 
+## [2026-11-02 19:40] — Day 2, шаг 1: security + schemas + тесты
+- **Сделано:** `app/core/security.py` (bcrypt, JWT, emblem_seed), `app/schemas/user.py` (`UserCreate` + кастомные ошибки), `app/schemas/auth.py`. Создан `.venv`, добавлен `.editorconfig`. Ветка `feat/auth-schemas` запушена. **Из-за упавшего CI (46% покрытия) написаны тесты на `security.py` и `schemas/` (покрытие 91%), пофикшены локальные тесты БД (добавлен `tzdata`, настроен `conftest.py`).**
+- **Застрял / потратил время на:** `import-not-found` bcrypt/jwt в mypy (запускал из системного Python); несуществующий `types-bcrypt`; `types-PyJWT 1.7.1` описывает PyJWT 1.x (`bytes` вместо `str`); `UP017` (`timezone.utc` → `UTC`); падение тестов на Windows (нет зоны `Europe/Moscow`, неверный хост БД).
+- **Решение:** bcrypt даёт свои types — стаб не нужен; `cast(str, jwt.encode(...))`; `_settings = get_settings()`. Случайный коммит в `main` перенесён на `feat/auth-schemas`. Для Windows добавлен `tzdata`, в `conftest.py` прописан `localhost` для `DATABASE_URL`. CI зелёный.
+- **Дальше:** шаг 2 — `app/core/deps.py` (`get_current_user`), затем шаг 3 — эндпоинты в `api/auth.py`.
+
+## [2026-11-02 19:50] — Day 2, шаг 2: get_current_user
+- **Сделано:** `app/core/deps.py` с зависимостью `get_current_user` (Bearer-токен, проверка JWT, поиск юзера в БД). Линтеры и CI зелёные.
+- **Дальше:** шаг 3 — эндпоинты `api/auth.py` и кастомные обработчики ошибок в `main.py`.
+
+## [2026-11-02 20:00] — Day 2, шаг 3: эндпоинты Auth
+- **Сделано:** `app/api/auth.py` (`/register`, `/login`, `/me`), глобальные обработчики ошибок в `app/main.py` (маппинг Pydantic-ошибок в формат `{detail, code}`). Вручную проверено через Swagger: регистрация, логин, авторизация по токену. CI зелёный.
+- **Дальше:** День 3 — квесты (CRUD, игровая логика XP, эффективный статус).
+
 ## Шаблон для следующих дней
 
 ```markdown

@@ -54,16 +54,17 @@ npm run dev
 Quest-Board-RPG/
 ├── backend/       # FastAPI + SQLAlchemy + Alembic
 ├── frontend/      # React + Vite + TypeScript
+├── docs/          # Документация (ТЗ, дневник, промпты)
+├── tools/         # Скрипты для запуска (.bat)
 ├── docker-compose.yml
 ├── .github/workflows/ci.yml
-├── spec.md        # ТЗ (полное)
-└── devlog.md      # дневник разработки
+└── README.md
 ```
 
 ## Документация
 
-- Полное ТЗ — [spec.md](spec.md)
-- Хроника разработки — [devlog.md](devlog.md)
+- Полное ТЗ — [docs/spec.md](docs/spec.md)
+- Хроника разработки — [docs/devlog.md](docs/devlog.md)
 
 ## Скриншоты
 

@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     )
 
     database_url: str = "postgresql+asyncpg://questboard:questboard@db:5432/questboard"
-    jwt_secret: str = "change-me"
+    jwt_secret: str = "change-me-super-secret-key-32-bytes-long"
     jwt_expires_days: int = 7
     cors_origins: str = "http://localhost:5173"
     log_level: str = "INFO"

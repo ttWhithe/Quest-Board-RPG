@@ -1,4 +1,12 @@
+import os
 from collections.abc import AsyncGenerator
+
+# При локальном запуске тестов на хосте (Windows/Mac) используем localhost.
+# В Docker или CI эта переменная уже будет задана окружением, и мы её не перезапишем.
+if "DATABASE_URL" not in os.environ:
+    os.environ["DATABASE_URL"] = (
+        "postgresql+asyncpg://questboard:questboard@localhost:5432/questboard"
+    )
 
 import pytest
 from httpx import ASGITransport, AsyncClient

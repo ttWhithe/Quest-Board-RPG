@@ -1,35 +1,30 @@
-# Quest Board RPG — старт разработки (Day 2)
+# Quest Board RPG — старт разработки (Day 3)
 
-Привет. Продолжаем проект. Прикладываю 4 финальных файла — читай их полностью:
-- `spec.md` — ТЗ (frozen, меняем только через Find -> Replace)
-- `README.md` — витрина проекта
-- `devlog.md` — хроника (Day 1 полностью завершен)
+Привет. Продолжаем проект. Прикладываю 4 файла:
+- `spec.md` — ТЗ (frozen)
+- `README.md` — витрина
+- `devlog.md` — хроника (Day 1 и Day 2 завершены)
 - `prompt.md` — этот файл
 
-## Текущее состояние (что уже готово на 100%)
-- **Backend:** каркас FastAPI, PostgreSQL в Docker, async SQLAlchemy, Alembic (миграции применены).
-- **Модели:** `User`, `Quest`, `Event` (+ Enum'ы).
-- **Инфраструктура:** Настроен JSON-логгер с `X-Request-ID`, CORS, `pytest` (покрытие 70%+), `ruff`, `mypy strict`.
-- **CI:** GitHub Actions (зеленый, pre-commit установлен).
-- **Frontend:** Vite + React + TS (v5.9), Tailwind, React Router, TanStack Query, Axios-клиент (с интерцепторами), i18n (RU).
+## Текущее состояние (100% готово)
+- **Backend (Auth):** Модели `User/Quest/Event`, Alembic, `security.py` (bcrypt, JWT), `schemas/user.py`, `deps.py` (get_current_user), `api/auth.py` (register/login/me), обработчики ошибок в `main.py`.
+- **Инфраструктура:** Настроен JSON-логгер, CORS, CI (GitHub Actions) на все ветки, pre-commit, pytest (покрытие 91%).
+- **Frontend:** Заглушка Vite + React, базовый роутинг.
+
+## Уроки Day 2 (чтобы не повторять ошибки)
+1. **Windows:** Для работы `zoneinfo` локально добавлен пакет `tzdata` в `pyproject.toml`.
+2. **Тесты БД на Windows:** В `conftest.py` добавлен фикс `DATABASE_URL` (localhost вместо db).
+3. **Mypy:** `types-PyJWT` требует `cast(str, jwt.encode(...))` из-за старого стаба.
 
 ## Правила работы
-1. **Отвечай по-русски.**
-2. **Код — в тройных бэктиках.**
-3. **Правки в spec.md** — только в формате «Найди: … Замени на: …».
-4. **Инкрементальность.** Один логический блок за раз. Выдал → я запустил → отписался → идём дальше.
-5. **Спорные решения** — сначала вопрос с 2–3 вариантами, потом код.
-6. **Git Flow:** Разработка ведется в фича-ветках (`feat/...`, `fix/...`). В `main` напрямую не пушим (кроме документации). Ветка сливается в `main` только через Pull Request при зеленом CI. Всегда напоминай мне об этом, если я предлагаю закоммитить код напрямую в `main`.
+1. Отвечай по-русски. Код — в тройных бэктиках.
+2. Инкрементальность. Один логический блок за раз.
+3. Git Flow: работаем в ветке `feat/quests`, PR в `main` со Squash Merge, только при зелёном CI.
 
-## Что делаем сейчас — Day 2 (Auth)
-Мы остановились на пороге создания логики авторизации. Мне нужны файлы:
-1. `app/core/security.py` — хеширование паролей (bcrypt напрямую), создание JWT (HS256, 7 дней), генерация `emblem_seed`.
-2. `app/schemas/user.py` — Pydantic-схемы (`UserBase`, `UserCreate` с валидацией пароля/никнейма, `UserOut`).
-3. `app/schemas/auth.py` — `LoginRequest`, `TokenResponse`.
-4. `app/core/deps.py` — зависимость `get_current_user` (чтение Bearer-токена, поиск юзера в БД).
-5. `app/api/auth.py` — эндпоинты `/register` (201, `EMAIL_TAKEN` при дубликате) и `/login` (200, `INVALID_CREDENTIALS`). Подключение роутера в `main.py`.
+## Что делаем сейчас — Day 3 (Quests CRUD + Game Logic)
+Мне нужны файлы:
+1. `app/core/game.py` — формулы XP (`calc_xp`), уровня (`level_for_xp`), и `effective_status`.
+2. `app/schemas/quest.py` — Pydantic-схемы.
+3. `app/api/quests.py` — CRUD эндпоинты и `/complete` с блокировкой `FOR UPDATE`.
 
-Напиши первый шаг: `security.py` и `schemas/`. Поехали.
-
----
-*(Советы на будущее: Docker greenlet уже учтен в pyproject, TS зафиксирован на ~5.9.0)*
+Напиши первый шаг: `game.py` и `schemas/quest.py`. Поехали.
