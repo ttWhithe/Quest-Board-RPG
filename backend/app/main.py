@@ -5,6 +5,8 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.auth import router as auth_router
+from app.api.character import router as character_router
+from app.api.quests import router as quests_router
 from app.config import get_settings
 from app.log_setup import RequestContextMiddleware, setup_logging
 
@@ -22,9 +24,22 @@ async def validation_exception_handler(
 ) -> JSONResponse:
     """Map Pydantic validation errors to our custom format."""
     error = exc.errors()[0]
-    # PydanticCustomError returns custom type (e.g., PASSWORD_TOO_SHORT)
-    code = error.get("type", "VALIDATION_ERROR")
+    raw_type = error.get("type", "")
+
+    # 1. Наши кастомные ошибки, которые мы явно кидаем в схемах через PydanticCustomError
+    custom_codes = {
+        "PASSWORD_TOO_SHORT",
+        "PASSWORD_TOO_LONG",
+        "INVALID_NICKNAME",
+        "INVALID_TIMEZONE",
+        "BIRTHDAY_MUST_REPEAT",
+    }
+
+    # 2. Если это стандартная ошибка Pydantic (missing, string_too_short, enum и т.д.)
+    #    отдаём VALIDATION_ERROR (по ТЗ §7.9)
+    code = raw_type if raw_type in custom_codes else "VALIDATION_ERROR"
     detail = error.get("msg", "Validation error")
+
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content={"detail": detail, "code": code},
@@ -58,6 +73,8 @@ app.add_middleware(
 # --- Routers ---
 
 app.include_router(auth_router, prefix="/api/v1")
+app.include_router(quests_router, prefix="/api/v1")
+app.include_router(character_router, prefix="/api/v1")
 
 
 @app.get("/health")
