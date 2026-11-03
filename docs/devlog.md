@@ -84,6 +84,20 @@
 - **Сделано:** `app/api/auth.py` (`/register`, `/login`, `/me`), глобальные обработчики ошибок в `app/main.py` (маппинг Pydantic-ошибок в формат `{detail, code}`). Вручную проверено через Swagger: регистрация, логин, авторизация по токену. CI зелёный.
 - **Дальше:** День 3 — квесты (CRUD, игровая логика XP, эффективный статус).
 
+## [2026-11-03 15:30] — Day 3, шаг 1-2: Игровая логика и Quests CRUD
+- **Сделано:**
+  - `core/game.py`: формулы XP (`calc_xp`), уровней (`level_for_xp`, `xp_into_level`, `xp_for_next_level`), `effective_status`, `is_completed_in_current_period` (с учетом TZ).
+  - `schemas/quest.py`: Pydantic-схемы для создания, обновления (с whitelist) и ответов (включая `effective_status`).
+  - `api/quests.py`: полный CRUD (фильтры по `effective_status`, сортировки через `CASE`), `archive` и `complete` с `SELECT ... FOR UPDATE` и атомарным инкрементом `total_xp`.
+  - `main.py`: исправлен обработчик `RequestValidationError` для корректной отдачи `VALIDATION_ERROR` вместо дефолтных типов Pydantic.
+- **Застрял / потратил время на:**
+  - Ошибка `AssertionError: Status code 204 must not have a response body` при `DELETE` (FastAPI).
+  - Нестыковка в `main.py`: стандартные ошибки Pydantic отдавали код `missing` вместо `VALIDATION_ERROR`.
+- **Решение:**
+  - Явно возвращаем `Response(status_code=204)` в `delete_quest`.
+  - Добавлен маппинг: если ошибка не из кастомного списка — отдаем `VALIDATION_ERROR`.
+- **Дальше:** PR в `main`, проверка CI. После мержа — Шаг 3 (`/character`).
+
 ## Шаблон для следующих дней
 
 ```markdown
