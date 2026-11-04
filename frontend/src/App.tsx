@@ -26,7 +26,7 @@ function BoardPlaceholder() {
 function Header() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  // УДАЛИЛИ: const { t } = useTranslation();
 
   const handleLogout = () => {
     logout();
