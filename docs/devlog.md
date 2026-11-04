@@ -114,6 +114,21 @@
 - **Решение:** Написаны быстрые юнит-тесты на `CharacterUpdate` и `game.py`, длинные строки разбиты.
 - **Дальше:** Day 4 — API для Событий (`/events`) и Demo-режим (`/auth/demo`).
 
+## [2026-11-04 19:25] — Day 4, шаг 1: API Событий (`/events`)
+- **Сделано:**
+  - `schemas/event.py`: Pydantic-схемы (Create, Update, Out). Валидация `title` (strip + запрет пустых строк).
+  - `api/events.py`: полный CRUD (`GET`, `POST`, `PATCH`, `DELETE`).
+  - Логика `repeats_yearly`: `kind='birthday'` принудительно ставит `true` при создании и не дает сбросить в `false` при PATCH (422 `BIRTHDAY_MUST_REPEAT`).
+  - `main.py`: подключен роутер `events` с префиксом `/api/v1`.
+  - `enums.py`: классы переведены на `enum.StrEnum` (фикс Ruff `UP042`).
+- **Застрял / потратил время на:**
+  - `TypeError: unsupported operand type(s) for |: 'NoneType' and 'NoneType'` при старте. Поле `date` в Pydantic-схеме затеняло импортированный тип `date`.
+  - `ImportError: cannot import name 'get_db'` в `events.py`.
+- **Решение:**
+  - В `schemas/event.py` сделан `import datetime` и обращение к `datetime.date`.
+  - Заменили `get_db` на `get_session` в зависимостях FastAPI.
+- **Дальше:** Шаг 2 — Demo-режим (`POST /auth/demo`) и Redis Rate Limit.
+
 ## Шаблон для следующих дней
 
 ```markdown

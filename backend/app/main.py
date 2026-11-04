@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from app.api import events
 from app.api.auth import router as auth_router
 from app.api.character import router as character_router
 from app.api.quests import router as quests_router
@@ -75,6 +76,7 @@ app.add_middleware(
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(quests_router, prefix="/api/v1")
 app.include_router(character_router, prefix="/api/v1")
+app.include_router(events.router, prefix="/api/v1")
 
 
 @app.get("/health")
