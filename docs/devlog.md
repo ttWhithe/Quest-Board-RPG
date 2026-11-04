@@ -114,6 +114,67 @@
 - **Решение:** Написаны быстрые юнит-тесты на `CharacterUpdate` и `game.py`, длинные строки разбиты.
 - **Дальше:** Day 4 — API для Событий (`/events`) и Demo-режим (`/auth/demo`).
 
+## [2026-11-04 19:25] — Day 4, шаг 1: API Событий (`/events`)
+- **Сделано:**
+  - `schemas/event.py`: Pydantic-схемы (Create, Update, Out). Валидация `title` (strip + запрет пустых строк).
+  - `api/events.py`: полный CRUD (`GET`, `POST`, `PATCH`, `DELETE`).
+  - Логика `repeats_yearly`: `kind='birthday'` принудительно ставит `true` при создании и не дает сбросить в `false` при PATCH (422 `BIRTHDAY_MUST_REPEAT`).
+  - `main.py`: подключен роутер `events` с префиксом `/api/v1`.
+  - `enums.py`: классы переведены на `enum.StrEnum` (фикс Ruff `UP042`).
+- **Застрял / потратил время на:**
+  - `TypeError: unsupported operand type(s) for |: 'NoneType' and 'NoneType'` при старте. Поле `date` в Pydantic-схеме затеняло импортированный тип `date`.
+  - `ImportError: cannot import name 'get_db'` в `events.py`.
+- **Решение:**
+  - В `schemas/event.py` сделан `import datetime` и обращение к `datetime.date`.
+  - Заменили `get_db` на `get_session` в зависимостях FastAPI.
+- **Дальше:** Шаг 2 — Demo-режим (`POST /auth/demo`) и Redis Rate Limit.
+
+## [2026-11-04 20:20] — Day 4, шаг 2: Demo-режим и Redis
+- **Сделано:**
+  - `docker-compose.yml`: добавлен сервис `redis:7-alpine` и том `redisdata`.
+  - `config.py`: добавлена переменная `REDIS_URL`.
+  - `core/redis.py`: асинхронный клиент Redis.
+  - `core/rate_limit.py`: зависимость `check_demo_rate_limit` (атомарный INCR + EXPIRE, 5 запросов/час).
+  - `core/demo.py`: генерация детерминированного сида (13 квестов, 4 события, `total_xp=238`). Очистка старых демо-юзеров (>7 дней).
+  - `api/auth.py`: эндпоинт `POST /auth/demo`, возвращающий JWT.
+- **Застрял / потратил время на:**
+  - Сборка Docker упала с `SSLError` из-за обрыва соединения при скачивании `pip` пакетов. (Помог перезапуск команды).
+  - Ruff ругался на длину строк в `demo.py` и неотсортированные импорты.
+  - Пропал интернет.
+- **Решение:**
+  - Разбил создание квестов в `demo.py` на многострочные вызовы (соблюдение E501).
+  - Прогнал `ruff check . --fix`.
+- **Дальше:** Шаг 3 — интеграционные тесты (фикс покрытия CI) и Шаг 4 — старт Frontend.
+
+## [2026-11-04 21:10] — Day 4, шаг 3: Интеграционные тесты и фикс CI
+- **Сделано:**
+  - В `.github/workflows/ci.yml` добавлен сервис `redis:7-alpine` и переменная `REDIS_URL`.
+  - Написаны интеграционные тесты `test_demo.py`: проверка создания юзера, 13 квестов, 4 событий и `total_xp=238`.
+  - Написан тест на Rate Limit (проверка 429 при 6-м запросе).
+  - В `conftest.py` добавлен фикс `WindowsSelectorEventLoopPolicy` и автоочистка пула БД (`engine.dispose()`).
+  - В тестах Redis замокан через `unittest.mock.AsyncMock`, чтобы не зависеть от инфраструктуры.
+- **Застрял / потратил время на:**
+  - Долгая борьба с ошибками `RuntimeError: Event loop is closed` и `got Future attached to a different loop`. На Windows `pytest-asyncio` создает новый Event Loop на каждый тест, ломая глобальные клиенты БД и Redis.
+  - Падение CI на покрытии (68.66%).
+- **Решение:**
+  - Изолировали тесты от реальной БД и Redis (замокали инкремент в Redis, принудительно очищаем пул БД после каждого теста).
+  - Покрытие поднято до **73.38%**, CI зеленый.
+- **Дальше:** Шаг 4 — Старт Frontend (Axios-клиент, страницы Login/Register, защищенный роутинг).
+
+## [2026-11-04 21:15] — Day 4, шаг 4: Frontend Start (Auth, Routing)
+- **Сделано:**
+  - `types.ts`: типы `User` и `AuthResponse`.
+  - `api/auth.ts`: методы для `login`, `register`, `demo`, `me`.
+  - `contexts/AuthContext.tsx`: провайдер авторизации (хранение токена, авто-логаут при 401).
+  - `components/ProtectedRoute.tsx`: защита роутов от неавторизованного доступа.
+  - `pages/Login.tsx` и `pages/Register.tsx`: формы с валидацией, отправкой данных и кнопкой Demo-режима.
+  - `App.tsx`: обновлен роутинг, добавлен `AuthProvider` и хедер с информацией о пользователе и кнопкой «Выйти».
+- **Застрял / потратил время на:**
+  - CI упал на сборке фронтенда с `error TS6133: 't' is declared but its value is never read` (строгий TypeScript).
+- **Решение:**
+  - Удален неиспользуемый хук `useTranslation` из компонента `Header`.
+- **Дальше:** Day 4 завершен. Слияние в `main` через Squash & Merge. Day 5 — Доска квестов (Board).
+
 ## Шаблон для следующих дней
 
 ```markdown

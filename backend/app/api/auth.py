@@ -7,7 +7,9 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.demo import create_demo_user
 from app.core.deps import get_current_user
+from app.core.rate_limit import check_demo_rate_limit
 from app.core.security import (
     create_access_token,
     generate_emblem_seed,
@@ -80,3 +82,18 @@ async def read_current_user(
 ) -> User:
     """Get current user profile."""
     return current_user
+
+
+@router.post(
+    "/demo",
+    response_model=TokenResponse,
+    # Вешаем проверку Rate Limit на этот эндпоинт
+    dependencies=[Depends(check_demo_rate_limit)],
+)
+async def demo_login(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> TokenResponse:
+    """Create a demo user with seeded data and return JWT (Spec §7.8)."""
+    demo_user = await create_demo_user(session)
+    token = create_access_token(demo_user.id)
+    return TokenResponse(access_token=token, user=UserOut.model_validate(demo_user))

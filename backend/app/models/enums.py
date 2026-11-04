@@ -1,7 +1,7 @@
-import enum
+from enum import StrEnum
 
 
-class QuestRank(str, enum.Enum):
+class QuestRank(StrEnum):
     S = "S"
     A = "A"
     B = "B"
@@ -11,7 +11,7 @@ class QuestRank(str, enum.Enum):
     F = "F"
 
 
-class QuestRarity(str, enum.Enum):
+class QuestRarity(StrEnum):
     common = "common"
     uncommon = "uncommon"
     rare = "rare"
@@ -19,19 +19,19 @@ class QuestRarity(str, enum.Enum):
     legendary = "legendary"
 
 
-class QuestStatus(str, enum.Enum):
+class QuestStatus(StrEnum):
     active = "active"
     completed = "completed"
     archived = "archived"
 
 
-class QuestRecurrence(str, enum.Enum):
+class QuestRecurrence(StrEnum):
     none = "none"
     daily = "daily"
     weekly = "weekly"
 
 
-class EventKind(str, enum.Enum):
+class EventKind(StrEnum):
     birthday = "birthday"
     holiday = "holiday"
     reminder = "reminder"
