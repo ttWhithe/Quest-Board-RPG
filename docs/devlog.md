@@ -161,6 +161,20 @@
   - Покрытие поднято до **73.38%**, CI зеленый.
 - **Дальше:** Шаг 4 — Старт Frontend (Axios-клиент, страницы Login/Register, защищенный роутинг).
 
+## [2026-11-04 21:15] — Day 4, шаг 4: Frontend Start (Auth, Routing)
+- **Сделано:**
+  - `types.ts`: типы `User` и `AuthResponse`.
+  - `api/auth.ts`: методы для `login`, `register`, `demo`, `me`.
+  - `contexts/AuthContext.tsx`: провайдер авторизации (хранение токена, авто-логаут при 401).
+  - `components/ProtectedRoute.tsx`: защита роутов от неавторизованного доступа.
+  - `pages/Login.tsx` и `pages/Register.tsx`: формы с валидацией, отправкой данных и кнопкой Demo-режима.
+  - `App.tsx`: обновлен роутинг, добавлен `AuthProvider` и хедер с информацией о пользователе и кнопкой «Выйти».
+- **Застрял / потратил время на:**
+  - CI упал на сборке фронтенда с `error TS6133: 't' is declared but its value is never read` (строгий TypeScript).
+- **Решение:**
+  - Удален неиспользуемый хук `useTranslation` из компонента `Header`.
+- **Дальше:** Day 4 завершен. Слияние в `main` через Squash & Merge. Day 5 — Доска квестов (Board).
+
 ## Шаблон для следующих дней
 
 ```markdown
