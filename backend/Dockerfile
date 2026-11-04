@@ -11,8 +11,9 @@ WORKDIR /app
 COPY pyproject.toml ./
 COPY app ./app
 
-RUN pip install --upgrade pip \
-    && pip install -e ".[dev]"
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --upgrade pip && \
+    pip install -e ".[dev]"
 
 EXPOSE 8000
 

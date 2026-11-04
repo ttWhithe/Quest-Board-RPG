@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     jwt_expires_days: int = 7
     cors_origins: str = "http://localhost:5173"
     log_level: str = "INFO"
+    redis_url: str = "redis://localhost:6379/0"
 
     @property
     def cors_origins_list(self) -> list[str]:

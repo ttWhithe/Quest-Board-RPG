@@ -16,6 +16,14 @@ services:
       timeout: 5s
       retries: 10
 
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
   api:
     build:
       context: ./backend
@@ -24,12 +32,15 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_started
     environment:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-questboard}:${POSTGRES_PASSWORD:-questboard}@db:5432/${POSTGRES_DB:-questboard}
       JWT_SECRET: ${JWT_SECRET:-change-me}
       JWT_EXPIRES_DAYS: ${JWT_EXPIRES_DAYS:-7}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      REDIS_URL: redis://redis:6379/0
     ports:
       - "8000:8000"
     volumes:
@@ -37,3 +48,4 @@ services:
 
 volumes:
   pgdata:
+  redisdata:
