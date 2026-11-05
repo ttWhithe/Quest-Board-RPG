@@ -1,5 +1,6 @@
-import { Quest } from '../api/quests';
+import type { Quest } from '../api/quests';
 import { RARITY_COLORS, RANK_COLORS } from '../constants';
+
 
 interface QuestCardProps {
   quest: Quest;

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuests, QuestFilters, QuestEffectiveStatus, QuestRank, QuestRarity } from '../api/quests';
+import { useQuests } from '../api/quests';
+import type { QuestFilters } from '../api/quests';
 import { QuestCard } from '../components/QuestCard';
 
 export function Board() {
