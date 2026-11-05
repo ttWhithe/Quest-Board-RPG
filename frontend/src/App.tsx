@@ -1,27 +1,17 @@
 import { BrowserRouter, Routes, Route, Navigate, Link, useNavigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useTranslation } from 'react-i18next';
 
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
+import { Board } from './pages/Board';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: { refetchOnWindowFocus: false, retry: 1 },
   },
 });
-
-function BoardPlaceholder() {
-  const { t } = useTranslation();
-  return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-4">{t('board.title')}</h1>
-      <p className="text-gray-500">Здесь будет доска квестов. (Tailwind работает!)</p>
-    </div>
-  );
-}
 
 function Header() {
   const { user, logout } = useAuth();
@@ -76,7 +66,7 @@ function App() {
                 {/* Защищенные роуты */}
                 <Route element={<ProtectedRoute />}>
                   <Route path="/" element={<Navigate to="/board" replace />} />
-                  <Route path="/board" element={<BoardPlaceholder />} />
+                  <Route path="/board" element={<Board />} />
                 </Route>
 
                 <Route path="*" element={<div className="p-8 text-red-500 text-center">404 - Страница не найдена</div>} />
