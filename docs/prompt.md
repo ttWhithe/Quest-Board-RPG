@@ -1,38 +1,45 @@
-# Quest Board RPG — старт разработки (Day 5)
+# Quest Board RPG — старт разработки (Day 6)
 
 Привет. Продолжаем проект. Прикладываю 4 файла:
 - `spec.md` — ТЗ (frozen)
 - `README.md` — витрина
-- `devlog.md` — хроника (Day 1–4 завершены)
+- `devlog.md` — хроника (Day 1–5 завершены)
 - `prompt.md` — этот файл
 
-## Текущее состояние (Backend MVP — 100% готов)
-- **Auth:** Модели, Alembic, `security.py`, схемы, `deps.py`, `/register`, `/login`, `/me`, `/demo` (с Redis Rate Limit).
-- **Game Logic:** `core/game.py` (XP, уровни, `effective_status`, `is_completed_in_current_period`).
-- **Quests:** Полный CRUD, фильтры, сортировки, `archive` и `complete` (с `FOR UPDATE` и транзакцией).
-- **Events:** Полный CRUD, логика `repeats_yearly` (принудительный `true` для ДР).
-- **Character:** GET (со stats) и PATCH (ник, герб, TZ).
-- **Инфраструктура:** JSON-логгер, CORS, CI (GitHub Actions с Postgres и Redis), pre-commit, pytest (покрытие 73.3%).
-- **Frontend (старт):** Axios-клиент с интерцепторами, `AuthContext`, страницы Login (с кнопкой Demo) и Register, защищенный роутинг.
+## Текущее состояние (Frontend MVP — 80% готов)
+- **Backend:** 100% готов (Auth, Game Logic, Quests, Events, Character, Demo, CI, покрытие 73%).
+- **Frontend (сделано):**
+  - API-клиент (axios), `AuthContext`, защищенный роутинг.
+  - API Quests (`api/quests.ts`): типы, `useQuests`, `useCreateQuest`, `useCompleteQuest`.
+  - Доска квестов (`pages/Board.tsx`): сетка карточек, фильтры (статус, ранг, редкость, сортировка).
+  - Карточка (`components/QuestCard.tsx`): бейджи ранга/редкости, зачеркивание, кнопка «Выполнить».
+  - Создание квеста (`components/QuestForm.tsx`): вынесено в модальное окно поверх доски.
+  - Анимация XP: Framer Motion при выполнении, обновление `total_xp` в `AuthContext`.
 
-## Уроки Day 4 (чтобы не повторять ошибки)
-1. **Windows + async pytest:** Ошибка `Event loop is closed`. Решение: использовать `engine.dispose()` после каждого теста в `conftest.py` и мокать Redis через `unittest.mock`.
-2. **Pydantic `date`:** Имя поля `date` перекрывает тип `date`. Решение: импортировать `import datetime` и использовать `datetime.date`.
-3. **TypeScript strict:** CI падает на неиспользуемых переменных (`TS6133`). Решение: удалять неиспользуемые импорты/переменные перед коммитом.
-4. **Docker SSL:** При сборке может упасть `pip install` с `SSLError`. Решение: просто перезапустить `docker compose up --build`.
+## Важные архитектурные решения (не ломать!)
+1. **Модалка вместо страницы:** Создание квеста вызывается через модалку на `/board`. Отдельного роута `/quests/new` нет (отступили от Spec §8.1 ради UX).
+2. **TypeScript strict:** Включен `verbatimModuleSyntax`. Типы импортируются строго через `import type { ... }`.
+3. **Pre-commit:** Если pre-commit изменил файлы (end-of-file, line endings), просто сделай `git add .` и повтори коммит.
+4. **Сборка:** Dev-сервер Vite не проверяет типы. Перед коммитом всегда проверяй вкладку Problems в VS Code или запускай `npm run build` локально.
+
+## Уроки Day 5 (чтобы не повторять ошибки)
+1. **TS1484:** При импорте интерфейсов (например, `Quest`, `QuestFilters`) обязательно использовать `import type`.
+2. **TS6133:** Удалять неиспользуемые импорты (например, `useTranslation` или `Link`), иначе CI упадет.
+3. **Форматирование:** Полные файлы от ИИ лучше вставлять целиком (Ctrl+A -> Ctrl+V), чтобы не ломались скобки.
 
 ## Правила работы
 1. Отвечай по-русски. Код — в тройных бэктиках.
 2. Инкрементальность. Один логический блок за раз.
-3. Git Flow: работаем в ветке `feat/day-5`, PR в `main` со Squash Merge, только при зелёном CI.
+3. Git Flow: работаем в ветке `feat/day-6`, PR в `main` со Squash Merge, только при зеленом CI.
 4. **Никаких догадок:** Если нужен контекст существующих файлов — прямо проси их прислать.
 5. В конце дня обновляем `devlog.md` и делаем Squash & Merge.
+6. **Коммиты:** Строго на английском, без Markdown, через несколько `-m`.
 
-## Что делаем сейчас — Day 5 (Frontend Board & Quests)
+## Что делаем сейчас — Day 6 (Character & Calendar/Events)
 Мне нужны шаги в таком порядке:
-1. **API Quests (`api/quests.ts`)**: типы Quest, хуки TanStack Query для получения списка.
-2. **Доска квестов (`pages/Board.tsx`)**: отрисовка карточек (QuestCard), цвета редкости/ранга из `constants.ts`.
-3. **Форма создания квеста (`pages/QuestForm.tsx`)**: POST-запрос, выбор ранга, редкости, дедлайна.
-4. **Действие Complete**: кнопка «Выполнить», POST-запрос, инвалидация кэша TanStack Query и простенькая анимация XP.
+1. **Карточка персонажа (`pages/Character.tsx`)**: `GET /character`, XP-бар, статистика (выполнено, провалено, по рангам). Визуализация герба (пока заглушка или процедурный SVG).
+2. **События (`pages/Events.tsx`)**: CRUD событий (дни рождения, напоминания).
+3. **Свиток времени (`pages/Calendar.tsx`)**: горизонтальная шкала дня (00:00–23:59), красная линия «сейчас», маркеры квестов и событий.
+4. **Обновление `README.md`**: добавить скриншоты и инструкцию по запуску.
 
-Напиши первый шаг: API Quests и типы (`api/quests.ts`). Поехали.
+Напиши первый шаг: API Character (`api/character.ts`) и типы. Поехали.
