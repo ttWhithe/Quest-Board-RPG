@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useQuests } from '../api/quests';
 import type { QuestFilters } from '../api/quests';
 import { QuestCard } from '../components/QuestCard';
+import { QuestForm } from '../components/QuestForm';
 
 export function Board() {
   // Состояние фильтров
@@ -15,6 +15,7 @@ export function Board() {
 
   // Запрос данных (наш хук из шага 1)
   const { data, isLoading, isError } = useQuests(filters);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Обработчик изменения фильтров
   const handleFilterChange = (key: keyof QuestFilters, value: string) => {
@@ -26,12 +27,12 @@ export function Board() {
       {/* Шапка доски */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-800">Доска квестов</h1>
-        <Link
-          to="/quests/new"
+        <button
+          onClick={() => setIsModalOpen(true)}
           className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded shadow"
         >
           + Новый квест
-        </Link>
+        </button>
       </div>
 
       {/* Панель фильтров (Spec §15) */}
@@ -93,9 +94,12 @@ export function Board() {
       {!isLoading && !isError && data?.items.length === 0 && (
         <div className="text-center py-20 bg-white rounded-lg shadow-sm">
           <p className="text-gray-500 text-lg mb-4">Квестов пока нет</p>
-          <Link to="/quests/new" className="text-amber-500 hover:underline">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="text-amber-500 hover:underline"
+          >
             Создать первый квест
-          </Link>
+          </button>
         </div>
       )}
 
@@ -104,6 +108,25 @@ export function Board() {
           {data.items.map((quest) => (
             <QuestCard key={quest.id} quest={quest} />
           ))}
+        </div>
+      )}
+
+      {/* Модалка создания квеста */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold leading-none"
+            >
+              &times;
+            </button>
+            <h2 className="text-2xl font-bold mb-6">Новый квест</h2>
+            <QuestForm
+              onSuccess={() => setIsModalOpen(false)}
+              onCancel={() => setIsModalOpen(false)}
+            />
+          </div>
         </div>
       )}
     </div>

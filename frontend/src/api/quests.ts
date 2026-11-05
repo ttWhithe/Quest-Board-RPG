@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from './client';
 
 // ============================================================
@@ -138,5 +138,34 @@ export function useQuests(filters: QuestFilters = {}) {
     // Доска не критична к «свежести в миллисекунду» — 30с кэша,
     // а complete/archive/create будут инвалидировать явно (шаги 3-4).
     staleTime: 30_000,
+  });
+}
+
+// ============================================================
+// Mutations
+// ============================================================
+
+export interface QuestCreateInput {
+  title: string;
+  description?: string;
+  rank: QuestRank;
+  rarity: QuestRarity;
+  deadline?: string | null;
+  recurrence?: QuestRecurrence;
+}
+
+/** Создание нового квеста (Spec §7.7). */
+export function useCreateQuest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: QuestCreateInput) => {
+      const response = await api.post<Quest>('/quests', data);
+      return response.data;
+    },
+    onSuccess: () => {
+      // Инвалидируем кэш списка, чтобы доска обновилась
+      queryClient.invalidateQueries({ queryKey: questKeys.lists() });
+    },
   });
 }
