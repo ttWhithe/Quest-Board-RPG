@@ -165,6 +165,26 @@
   - Удален неиспользуемый хук `useTranslation` из компонента `Header`.
 - **Дальше:** Day 4 завершен. Слияние в `main` через Squash & Merge. Day 5 — Доска квестов (Board).
 
+## [2026-11-05 19:00] — Day 5, шаг 1: API Quests (типы + useQuests)
+- **Сделано:**
+  - `frontend/src/api/quests.ts`: типы `Quest`, `QuestFilters`, `QuestSort`, `QuestEffectiveStatus`, `QuestListResponse`.
+  - Фабрика `questKeys` (базис для инвалидации в шагах 3-4).
+  - Хук `useQuests(filters)` на TanStack Query v5 (`staleTime: 30s`).
+  - `normalizeFilters()` — стабильный `queryKey` (пустые фильтры не плодят кэш).
+  - Уточнён импорт по факту `client.ts`: `import { api } from './client'` (named, не default).
+- **Застрял / потратил время на:** —
+- **Решение:** —
+- **Дальше:** шаг 2 — `pages/Board.tsx` (QuestCard, цвета редкости/ранга из `constants.ts`).
+
+## [2026-11-05 19:05] — Day 5, шаг 2: Доска квестов и QuestCard
+- **Сделано:**
+  - `components/QuestCard.tsx`: визуализация квеста. Цвет рамки и текста из `RARITY_COLORS`, бейдж из `RANK_COLORS`. Добавлено зачеркивание и красный крест для `effective_status === 'completed'`.
+  - `pages/Board.tsx`: сетка (Tailwind grid), панель фильтров (статус, ранг, редкость, сортировка) и состояния загрузки/пустоты. Интегрирован `useQuests`.
+  - `App.tsx`: `BoardPlaceholder` заменен на реальный `Board`.
+- **Застрял / потратил время на:** —
+- **Решение:** —
+- **Дальше:** шаг 3 — Форма создания квеста (`pages/QuestForm.tsx`).
+
 ## Шаблон для следующих дней
 
 ```markdown
