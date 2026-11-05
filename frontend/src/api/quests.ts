@@ -2,42 +2,21 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from './client';
 
 // ============================================================
-// Types — контракт API (spec.md §6.2, §7.2, §7.5, §7.7)
+// Types
 // ============================================================
 
 export type QuestRank = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
-
-export type QuestRarity =
-  | 'common'
-  | 'uncommon'
-  | 'rare'
-  | 'epic'
-  | 'legendary';
-
+export type QuestRarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
 export type QuestRecurrence = 'none' | 'daily' | 'weekly';
-
-/** Сырой статус в БД (spec §7.5). НЕ использовать для UI/фильтров. */
 export type QuestDbStatus = 'active' | 'completed' | 'archived';
+export type QuestEffectiveStatus = 'active' | 'completed' | 'failed' | 'archived';
 
-/** Вычисляемый статус в API (spec §7.5). По нему красим/фильтруем. */
-export type QuestEffectiveStatus =
-  | 'active'
-  | 'completed'
-  | 'failed'
-  | 'archived';
-
-/** Значения ?sort= (spec §7.2). Некорректное → 422 VALIDATION_ERROR. */
 export type QuestSort =
-  | 'deadline_asc'
-  | 'deadline_desc'
-  | 'created_desc'
-  | 'created_asc'
-  | 'rank_desc'
-  | 'rank_asc'
-  | 'rarity_desc'
-  | 'rarity_asc';
+  | 'deadline_asc' | 'deadline_desc'
+  | 'created_desc' | 'created_asc'
+  | 'rank_desc' | 'rank_asc'
+  | 'rarity_desc' | 'rarity_asc';
 
-/** Квест в ответе API (spec §7.7). */
 export interface Quest {
   id: string;
   user_id: string;
@@ -45,11 +24,8 @@ export interface Quest {
   description: string | null;
   rank: QuestRank;
   rarity: QuestRarity;
-  /** ISO-8601 UTC, либо null. */
   deadline: string | null;
-  /** Сырой статус (source of truth в БД). */
   status: QuestDbStatus;
-  /** Вычисленный статус — этим живёт UI. */
   effective_status: QuestEffectiveStatus;
   recurrence: QuestRecurrence;
   last_completed_at: string | null;
@@ -59,17 +35,13 @@ export interface Quest {
   updated_at: string;
 }
 
-/** Параметры GET /quests (spec §7.2). Пустая строка = без фильтра. */
 export interface QuestFilters {
   status?: QuestEffectiveStatus | '';
   rank?: QuestRank | '';
   rarity?: QuestRarity | '';
   sort?: QuestSort;
-  /** YYYY-MM-DD в TZ пользователя (для «Свитка времени»). */
   deadline_date?: string;
-  /** 1..200, default 50 на бэкенде. */
   limit?: number;
-  /** >= 0, default 0. */
   offset?: number;
 }
 
@@ -80,16 +52,35 @@ export interface QuestListResponse {
   offset: number;
 }
 
+export interface QuestCreateInput {
+  title: string;
+  description?: string;
+  rank: QuestRank;
+  rarity: QuestRarity;
+  deadline?: string | null;
+  recurrence?: QuestRecurrence;
+}
+
+// Ответ от POST /quests/{id}/complete (Spec §7.7)
+export interface CompleteQuestResponse {
+  quest: Quest;
+  xp_awarded: number;
+  user_after: {
+    total_xp: number;
+    level: number;
+    xp_into_level: number;
+    xp_for_next_level: number;
+  };
+}
+
 // ============================================================
-// Query keys — единая точка правды для инвалидации
-// (пригодится в шагах 3-4: complete / archive / create)
+// Query keys
 // ============================================================
 
 export const questKeys = {
   all: ['quests'] as const,
   lists: () => [...questKeys.all, 'list'] as const,
-  list: (filters: Record<string, string | number>) =>
-    [...questKeys.lists(), filters] as const,
+  list: (filters: Record<string, string | number>) => [...questKeys.lists(), filters] as const,
   details: () => [...questKeys.all, 'detail'] as const,
   detail: (id: string) => [...questKeys.details(), id] as const,
 };
@@ -98,14 +89,7 @@ export const questKeys = {
 // Helpers
 // ============================================================
 
-/**
- * Убирает пустые значения из фильтров.
- * Зачем: queryKey должен быть стабильным — `undefined`/`''`
- * не должны создавать «новый» кэш-ключ.
- */
-function normalizeFilters(
-  filters: QuestFilters = {},
-): Record<string, string | number> {
+function normalizeFilters(filters: QuestFilters = {}): Record<string, string | number> {
   const out: Record<string, string | number> = {};
   if (filters.status) out.status = filters.status;
   if (filters.rank) out.rank = filters.rank;
@@ -118,53 +102,43 @@ function normalizeFilters(
 }
 
 // ============================================================
-// Hooks
+// Queries & Mutations
 // ============================================================
 
-/**
- * Список квестов текущего пользователя.
- * Spec: §7.2 (фильтры/sort/пагинация), §7.5 (status-фильтр по effective_status).
- */
 export function useQuests(filters: QuestFilters = {}) {
   const params = normalizeFilters(filters);
   return useQuery<QuestListResponse>({
     queryKey: questKeys.list(params),
     queryFn: async () => {
-      const { data } = await api.get<QuestListResponse>('/quests', {
-        params,
-      });
+      const { data } = await api.get<QuestListResponse>('/quests', { params });
       return data;
     },
-    // Доска не критична к «свежести в миллисекунду» — 30с кэша,
-    // а complete/archive/create будут инвалидировать явно (шаги 3-4).
     staleTime: 30_000,
   });
 }
 
-// ============================================================
-// Mutations
-// ============================================================
-
-export interface QuestCreateInput {
-  title: string;
-  description?: string;
-  rank: QuestRank;
-  rarity: QuestRarity;
-  deadline?: string | null;
-  recurrence?: QuestRecurrence;
-}
-
-/** Создание нового квеста (Spec §7.7). */
 export function useCreateQuest() {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async (data: QuestCreateInput) => {
       const response = await api.post<Quest>('/quests', data);
       return response.data;
     },
     onSuccess: () => {
-      // Инвалидируем кэш списка, чтобы доска обновилась
+      queryClient.invalidateQueries({ queryKey: questKeys.lists() });
+    },
+  });
+}
+
+export function useCompleteQuest() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await api.post<CompleteQuestResponse>(`/quests/${id}/complete`);
+      return response.data;
+    },
+    onSuccess: () => {
+      // Обновляем список квестов
       queryClient.invalidateQueries({ queryKey: questKeys.lists() });
     },
   });

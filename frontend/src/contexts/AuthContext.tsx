@@ -8,6 +8,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (token: string, user: User) => void;
   logout: () => void;
+  updateUser: (updates: Partial<User>) => void; // <-- ДОБАВЛЕНО
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -17,7 +18,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(localStorage.getItem('qb_token'));
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // При загрузке приложения, если есть токен, проверяем его валидность через /auth/me
   useEffect(() => {
     const initAuth = async () => {
       if (token) {
@@ -25,7 +25,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const userData = await authApi.me();
           setUser(userData);
         } catch (error) {
-          // Если токен протух, интерцептор почистит localStorage
           setToken(null);
           setUser(null);
         }
@@ -47,8 +46,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
 
+  const updateUser = (updates: Partial<User>) => {
+    setUser((prev) => (prev ? { ...prev, ...updates } : null));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoading, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
