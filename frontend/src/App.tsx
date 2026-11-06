@@ -6,6 +6,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Board } from './pages/Board';
+import { Character } from './pages/Character';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -67,6 +68,7 @@ function App() {
                 <Route element={<ProtectedRoute />}>
                   <Route path="/" element={<Navigate to="/board" replace />} />
                   <Route path="/board" element={<Board />} />
+                  <Route path="/character" element={<Character />} />
                 </Route>
 
                 <Route path="*" element={<div className="p-8 text-red-500 text-center">404 - Страница не найдена</div>} />
