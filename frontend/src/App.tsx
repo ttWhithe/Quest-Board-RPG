@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate, Link, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, NavLink, useNavigate } from 'react-router-dom';
+import { Emblem } from './components/Emblem';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -33,17 +34,20 @@ function Header() {
           <span className="font-bold text-xl">⚔ QuestBoard</span>
           {user && (
             <>
-              <Link to="/board" className="hover:text-amber-400">Доска</Link>
-              <Link to="/character" className="hover:text-amber-400">Персонаж</Link>
-              <Link to="/events" className="hover:text-amber-400">События</Link>
-              <Link to="/calendar" className="hover:text-amber-400">Календарь</Link>
+              <NavLink to="/board" className={({ isActive }) => isActive ? "text-amber-400 font-bold" : "hover:text-amber-400"}>Доска</NavLink>
+              <NavLink to="/character" className={({ isActive }) => isActive ? "text-amber-400 font-bold" : "hover:text-amber-400"}>Персонаж</NavLink>
+              <NavLink to="/events" className={({ isActive }) => isActive ? "text-amber-400 font-bold" : "hover:text-amber-400"}>События</NavLink>
+              <NavLink to="/calendar" className={({ isActive }) => isActive ? "text-amber-400 font-bold" : "hover:text-amber-400"}>Календарь</NavLink>
             </>
           )}
         </div>
 
         {user && (
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-300">{user.nickname}</span>
+            <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => navigate('/character')}>
+              <Emblem seed={user.emblem_seed} size={32} />
+              <span className="text-sm text-gray-300">{user.nickname}</span>
+            </div>
             <button onClick={handleLogout} className="text-sm bg-red-600 hover:bg-red-700 px-3 py-1 rounded">
               Выйти
             </button>

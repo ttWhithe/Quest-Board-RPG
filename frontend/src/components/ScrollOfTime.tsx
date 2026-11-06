@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { format, isSameDay } from 'date-fns';
 import type { Quest } from '../api/quests';
 import type { Event } from '../api/events';
@@ -12,7 +12,12 @@ interface ScrollOfTimeProps {
 
 export function ScrollOfTime({ quests, events, currentDate }: ScrollOfTimeProps) {
   const isToday = isSameDay(currentDate, new Date());
-  const now = new Date();
+  // Живое время (обновляется каждую минуту)
+  const [now, setNow] = useState(new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(timer);
+  }, []);
 
   // Вычисляем процент для красной линии "сейчас" (если выбран сегодняшний день)
   const nowPercent = ((now.getHours() * 60 + now.getMinutes()) / 1440) * 100;
@@ -48,13 +53,14 @@ export function ScrollOfTime({ quests, events, currentDate }: ScrollOfTimeProps)
         {/* Красная линия "Сейчас" */}
         {isToday && (
           <div
-            className="absolute top-0 bottom-0 border-l-2 border-red-500 z-10 flex flex-col items-center"
+            className="absolute top-0 bottom-0 w-0.5 bg-red-500 z-10 -translate-x-1/2"
             style={{ left: `${nowPercent}%` }}
           >
-            <div className="absolute -top-8 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded shadow whitespace-nowrap">
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded shadow whitespace-nowrap">
               Сейчас {format(now, 'HH:mm')}
             </div>
-            <div className="w-2 h-2 bg-red-500 rounded-full -mt-1 shadow" />
+            {/* Точка ровно по центру */}
+            <div className="absolute top-1/2 left-1/2 w-3 h-3 bg-red-500 border-2 border-white rounded-full shadow -translate-x-1/2 -translate-y-1/2" />
           </div>
         )}
 
