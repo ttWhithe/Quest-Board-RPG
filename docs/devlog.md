@@ -208,6 +208,18 @@
 - **Решение:** Ошибки бэкенда (409 ALREADY_COMPLETED) выводятся через `alert`.
 - **Дальше:** Финальный PR в main (Squash Merge) и обновление статуса проекта.
 
+## [2026-11-06 20:05] — Day 6, шаг 1: API Character (типы + хуки)
+- **Сделано:**
+  - `frontend/src/api/character.ts`: типы `CharacterStats`, `CharacterResponse`, `CharacterUpdate`; `CharacterRank` реэкспортирован как алиас `QuestRank` (без дублирования union).
+  - Фабрика `characterKeys` (`all`, `detail`) — по образцу `questKeys`.
+  - Хуки `useCharacter` (GET) и `useUpdateCharacter` (PATCH) на TanStack Query v5, `staleTime: 30s`.
+  - В `useUpdateCharacter` после PATCH — `setQueryData(characterKeys.detail(), data)` (мгновенный отклик).
+- **Застрял / потратил время на:** —
+- **Решение:**
+  - `PATCH /character` возвращает полный `CharacterOut` (см. `backend/app/api/character.py`) — поэтому `setQueryData`, а не `invalidate`.
+  - `AuthContext` обновляет `user` через `useState` + `authApi.me()`, а не TanStack Query — поэтому инвалидация `['auth','me']` была бы мёртвым кодом; синхронизация `user` перенесена в шаг 2 через `updateUser(data.user)`.
+- **Дальше:** шаг 2 — `pages/Character.tsx` (XP-бар, статистика, процедурный герб).
+
 ## Шаблон для следующих дней
 
 ```markdown
