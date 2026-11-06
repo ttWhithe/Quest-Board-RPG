@@ -1,0 +1,99 @@
+import { useMemo } from 'react';
+import { format, isSameDay } from 'date-fns';
+import type { Quest } from '../api/quests';
+import type { Event } from '../api/events';
+import { RARITY_COLORS } from '../constants';
+
+interface ScrollOfTimeProps {
+  quests: Quest[];
+  events: Event[];
+  currentDate: Date;
+}
+
+export function ScrollOfTime({ quests, events, currentDate }: ScrollOfTimeProps) {
+  const isToday = isSameDay(currentDate, new Date());
+  const now = new Date();
+
+  // Вычисляем процент для красной линии "сейчас" (если выбран сегодняшний день)
+  const nowPercent = ((now.getHours() * 60 + now.getMinutes()) / 1440) * 100;
+
+  // Квесты с дедлайнами для отображения
+  const questsWithDeadlines = useMemo(() => {
+    return quests.filter((q) => q.deadline).map((q) => {
+      const d = new Date(q.deadline!);
+      return {
+        ...q,
+        percent: ((d.getHours() * 60 + d.getMinutes()) / 1440) * 100,
+        timeStr: format(d, 'HH:mm'),
+      };
+    });
+  }, [quests]);
+
+  return (
+    <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 flex flex-col gap-12 min-w-[600px] overflow-x-auto">
+
+      {/* Контейнер шкалы */}
+      <div className="relative h-24 mt-6">
+        {/* Горизонтальная линия */}
+        <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-300 -translate-y-1/2 rounded-full" />
+
+        {/* Деления и подписи (00:00, 06:00, 12:00, 18:00, 24:00) */}
+        {[0, 6, 12, 18, 24].map((h) => (
+          <div key={h} className="absolute top-1/2 -translate-y-1/2 flex flex-col items-center" style={{ left: `${(h / 24) * 100}%` }}>
+            <div className="w-0.5 h-3 bg-gray-400" />
+            <span className="text-xs font-medium text-gray-500 mt-1">{h.toString().padStart(2, '0')}:00</span>
+          </div>
+        ))}
+
+        {/* Красная линия "Сейчас" */}
+        {isToday && (
+          <div
+            className="absolute top-0 bottom-0 border-l-2 border-red-500 z-10 flex flex-col items-center"
+            style={{ left: `${nowPercent}%` }}
+          >
+            <div className="absolute -top-8 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded shadow whitespace-nowrap">
+              Сейчас {format(now, 'HH:mm')}
+            </div>
+            <div className="w-2 h-2 bg-red-500 rounded-full -mt-1 shadow" />
+          </div>
+        )}
+
+        {/* Маркеры квестов */}
+        {questsWithDeadlines.map((q) => (
+          <div
+            key={q.id}
+            className="absolute top-1/2 -translate-y-1/2 -ml-2.5 z-20 group cursor-pointer"
+            style={{ left: `${q.percent}%` }}
+          >
+            <div
+              className="w-5 h-5 rounded-full border-2 border-white shadow-md transition-transform group-hover:scale-125"
+              style={{ backgroundColor: RARITY_COLORS[q.rarity] }}
+            />
+            {/* Тултип при наведении */}
+            <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-900 text-white text-xs p-2 rounded whitespace-nowrap shadow-lg z-30">
+              <div className="font-bold">{q.title}</div>
+              <div className="text-gray-300">{q.timeStr} • {q.rank} • {q.rarity}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Легенда событий (события не имеют конкретного времени, выводим их под шкалой) */}
+      <div className="flex flex-col gap-2">
+        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">События дня</h3>
+        {events.length === 0 ? (
+          <p className="text-sm text-gray-400">Нет событий на этот день</p>
+        ) : (
+          <div className="flex flex-wrap gap-3">
+            {events.map((ev) => (
+              <div key={ev.id} className="flex items-center gap-2 bg-amber-50 border border-amber-100 text-amber-800 px-3 py-1.5 rounded text-sm shadow-sm">
+                <span>★</span>
+                <span className="font-medium">{ev.title}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
