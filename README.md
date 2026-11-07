@@ -1,4 +1,5 @@
 # Quest Board RPG
+[![CI](https://github.com/ttWhithe/Quest-Board-RPG/actions/workflows/ci.yml/badge.svg)](https://github.com/ttWhithe/Quest-Board-RPG/actions/workflows/ci.yml)
 
 RPG-трекер задач в стилистике доски квестов средневековой магической гильдии.
 Задания имеют ранг сложности (S–F) и редкость-срочность (common–legendary), начисляют XP,

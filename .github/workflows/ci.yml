@@ -91,11 +91,9 @@ jobs:
       working-directory: ./frontend
       run: npm run build
 
-    # Тесты Vitest мы добавим на следующих этапах, пока закомментируем,
-    # чтобы CI не падал из-за отсутствия тестов.
-    # - name: Test
-    #   working-directory: ./frontend
-    #   run: npm test -- --run
+    - name: Test
+      working-directory: ./frontend
+      run: npm test -- --run
 
   docker:
     needs: [backend, frontend]
