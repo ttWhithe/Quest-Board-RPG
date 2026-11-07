@@ -269,6 +269,15 @@
 - **Решение:** —
 - **Дальше:** Day 6 завершен. PR, Squash & Merge, очистка веток.
 
+## [2026-11-07 19:50] — Day 7, шаг 1: Настройка Vitest
+- **Сделано:**
+  - В `package.json` добавлены `vitest` и `@vitest/coverage-v8`, скрипты `test` и `test:run` (с флагом `--passWithNoTests`).
+  - Создан отдельный `vitest.config.ts` через `mergeConfig` с `vite.config.ts` (решает конфликт типов Vite 8 + Vitest).
+  - В `tsconfig.app.json` добавлен тип `"vitest/globals"`.
+- **Застрял / потратил время на:** Конфликт типов `PluginOption` между Vite 8 (Rolldown) и Vitest. Ошибка `No test files found` (код 1).
+- **Решение:** Разделение конфигов Vite и Vitest. Флаг `--passWithNoTests` для пустых прогонов.
+- **Дальше:** Шаг 2 — утилиты `rarityColor`/`rankColor` и их тесты.
+
 ## Шаблон для следующих дней
 
 ```markdown
