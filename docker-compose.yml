@@ -46,6 +46,20 @@ services:
     volumes:
       - ./backend:/app
 
+  # Фронтенд в Docker запускается только с профилем "prod"
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=/api/v1
+    restart: unless-stopped
+    profiles: ["prod"]
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
 volumes:
   pgdata:
   redisdata:

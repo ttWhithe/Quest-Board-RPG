@@ -48,7 +48,7 @@ function Header() {
 
   return (
     // Сделали sticky top-0 и z-50, чтобы шапка всегда была сверху
-    <header className="bg-slate-800 text-white shadow-md sticky top-0 z-50">
+    <header className="bg-tavern-wood text-parchment-light shadow-[0_4px_10px_rgba(0,0,0,0.6)] border-b-2 border-black sticky top-0 z-50">
       <nav className="container mx-auto px-4 py-3 md:py-4 flex justify-between items-center relative">
         {/* Логотип */}
         <div
@@ -149,7 +149,7 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           {/* Убрали overflow-x-hidden отсюда, он переехал в index.css (body) */}
-          <div className="min-h-screen bg-gray-100 text-gray-900 flex flex-col w-full">
+          <div className="min-h-screen flex flex-col w-full relative z-0">
             <Header />
 
             <main className="flex-1 w-full flex flex-col relative">

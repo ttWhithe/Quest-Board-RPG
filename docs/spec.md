@@ -959,6 +959,12 @@ VITE_API_URL=http://localhost:8000/api/v1
 
 ## 16. Changelog
 
+- **v1.8 (2026-11-08):**
+  - **UI/UX:** Полный визуальный редизайн под стиль D&D (шрифты, пергамент, сургучные печати, мобильное бургер-меню).
+  - **Frontend:** Добавлены скелетоны загрузки (`Skeletons.tsx`). Добавлен расчет потенциального XP в `QuestCard`. Список квестов добавлен в `ScrollOfTime`.
+  - **Infra:** Фронтенд контейнеризован (`frontend/Dockerfile`, `nginx.conf`). Настроено проксирование `/api` через Nginx. `docker-compose.yml` обновлен: добавлены профили для разделения Dev и Prod режимов.
+  - **Docs:** Добавлена инструкция по деплою на VPS в `README.md`. Добавлен `.env.production.example`.
+
 - **v1.7 (2026-11-07):**
   - **Frontend Testing:** Настроен Vitest, добавлены тесты для констант (`constants.ts`) и утилит времени (`utils/date.ts`). Всего 8 тестов, покрытие Sad Path.
   - **CI:** GitHub Actions теперь запускает `npm test -- --run` для фронтенда.

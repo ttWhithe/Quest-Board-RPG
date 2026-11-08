@@ -39,25 +39,58 @@ RPG-трекер задач в стилистике доски квестов с
 
 ## 🚀 Быстрый старт
 
-Требования: Docker 24+, Node 20+, npm 10+.
+Требования: Docker 24+.
+
+Теперь весь проект (БД, Redis, API и Frontend) упакован в Docker и запускается одной командой.
 
 ```bash
 git clone https://github.com/ttWhithe/Quest-Board-RPG.git && cd Quest-Board-RPG
 
-# Бэкенд + БД
+# Подготовить переменные окружения
 cp .env.example .env
-cp frontend/.env.example frontend/.env
-docker compose up --build
 
-# Фронт (в отдельном терминале)
-cd frontend
-npm install
-npm run dev
+# Запустить сборку и старт всех контейнеров
+docker compose up --build -d
 ```
 
-- Фронт: http://localhost:5173
-- API: http://localhost:8000/api/v1
-- Docs (Swagger): http://localhost:8000/docs
+- **Фронтенд:** http://localhost:5173
+- **API (Swagger):** http://localhost:8000/docs
+
+*(Для остановки используйте `docker compose down`)*
+
+## 🌍 Деплой на VPS (Production)
+
+Проект полностью готов к развертыванию на любом VPS (например, Timeweb, Beget, Reg.ru) с установленным Docker и Docker Compose.
+
+**Инструкция по деплою:**
+
+1. Арендуйте VPS с Ubuntu 22.04+ (минимум 1 vCPU, 1 GB RAM).
+2. Установите Docker и Docker Compose на сервер:
+   ```bash
+   curl -fsSL https://get.docker.com | sh
+   sudo usermod -aG docker $USER
+   ```
+3. Склонируйте проект на сервер:
+   ```bash
+   git clone https://github.com/ttWhithe/Quest-Board-RPG.git
+   cd Quest-Board-RPG
+   ```
+4. Создайте файл `.env` и **обязательно** измените `JWT_SECRET` на надежный ключ (например, сгенерированный через `openssl rand -hex 32`):
+   ```env
+   POSTGRES_USER=questboard
+   POSTGRES_PASSWORD=super_secret_password
+   POSTGRES_DB=questboard
+   JWT_SECRET=your_super_secret_jwt_key_here
+   JWT_EXPIRES_DAYS=7
+   CORS_ORIGINS=http://your-domain.com
+   ```
+5. Запустите проект в фоне:
+   ```bash
+   docker compose up --build -d
+   ```
+6. (Опционально) Настройте Nginx как Reverse Proxy на хосте для привязки домена и SSL-сертификата (Let's Encrypt).
+
+После этого приложение будет доступно по IP-адресу вашего сервера (порт 5173).
 
 ## 📂 Структура
 

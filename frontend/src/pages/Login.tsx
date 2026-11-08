@@ -43,53 +43,67 @@ export function Login() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">{t('auth.login')}</h2>
+    <div className="parchment-card max-w-md mx-auto mt-20 p-8">
+      <h2 className="text-3xl font-bold mb-8 text-center text-[#3b2f2f] font-fantasy tracking-wider">
+        {t('auth.login')}
+      </h2>
 
-      {error && <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</div>}
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 p-3 rounded mb-4 font-bold text-sm">
+          {error}
+        </div>
+      )}
 
-      <form onSubmit={handleLogin} className="space-y-4">
+      <form onSubmit={handleLogin} className="space-y-5">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Email</label>
+          <label className="block text-sm font-bold text-[#5c4033] mb-1">Email</label>
           <input
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+            className="input-fantasy w-full"
+            placeholder="Введите email..."
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Пароль</label>
+          <label className="block text-sm font-bold text-[#5c4033] mb-1">Пароль</label>
           <input
             type="password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+            className="input-fantasy w-full"
+            placeholder="Введите пароль..."
           />
         </div>
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-slate-800 text-white p-2 rounded hover:bg-slate-700 disabled:opacity-50"
+          className="btn-wood w-full mt-2"
         >
-          {isLoading ? t('common.loading') : t('auth.login')}
+          {isLoading ? t('common.loading') : 'Войти'}
         </button>
       </form>
 
-      <div className="mt-4 text-center">
+      <div className="mt-6">
+        <div className="relative flex py-2 items-center">
+          <div className="flex-grow border-t border-[#8b7355]"></div>
+          <span className="flex-shrink-0 mx-4 text-[#8b7355] font-bold">или</span>
+          <div className="flex-grow border-t border-[#8b7355]"></div>
+        </div>
+
         <button
           onClick={handleDemo}
           disabled={isLoading}
-          className="w-full bg-amber-500 text-white p-2 rounded hover:bg-amber-600 disabled:opacity-50"
+          className="btn-fantasy w-full mt-4"
         >
           {t('auth.demo')}
         </button>
       </div>
 
-      <div className="mt-4 text-center text-sm text-gray-600">
-        Нет аккаунта? <Link to="/register" className="text-blue-600 hover:underline">{t('auth.register')}</Link>
+      <div className="mt-6 text-center text-sm text-[#3b2f2f] font-medium">
+        Нет аккаунта? <Link to="/register" className="text-amber-700 hover:text-amber-600 font-bold ml-1">Зарегистрироваться</Link>
       </div>
     </div>
   );

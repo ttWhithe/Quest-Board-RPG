@@ -19,9 +19,7 @@ export function Register() {
     setError('');
     setIsLoading(true);
     try {
-      // Получаем таймзону из браузера (Spec §5.6)
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
       const data = await authApi.register({ email, password, nickname, timezone });
       login(data.access_token, data.user);
       navigate('/board');
@@ -33,24 +31,31 @@ export function Register() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">{t('auth.register')}</h2>
+    <div className="parchment-card max-w-md mx-auto mt-20 p-8">
+      <h2 className="text-3xl font-bold mb-8 text-center text-[#3b2f2f] font-fantasy tracking-wider">
+        {t('auth.register')}
+      </h2>
 
-      {error && <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</div>}
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 p-3 rounded mb-4 font-bold text-sm">
+          {error}
+        </div>
+      )}
 
-      <form onSubmit={handleRegister} className="space-y-4">
+      <form onSubmit={handleRegister} className="space-y-5">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Email</label>
+          <label className="block text-sm font-bold text-[#5c4033] mb-1">Email</label>
           <input
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+            className="input-fantasy w-full"
+            placeholder="Введите email..."
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Никнейм</label>
+          <label className="block text-sm font-bold text-[#5c4033] mb-1">Никнейм</label>
           <input
             type="text"
             required
@@ -58,31 +63,33 @@ export function Register() {
             maxLength={32}
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+            className="input-fantasy w-full"
+            placeholder="Как вас зовут, странник?"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Пароль</label>
+          <label className="block text-sm font-bold text-[#5c4033] mb-1">Пароль</label>
           <input
             type="password"
             required
             minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+            className="input-fantasy w-full"
+            placeholder="Минимум 8 символов"
           />
         </div>
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-slate-800 text-white p-2 rounded hover:bg-slate-700 disabled:opacity-50"
+          className="btn-wood w-full mt-2"
         >
-          {isLoading ? t('common.loading') : t('auth.register')}
+          {isLoading ? t('common.loading') : 'Создать героя'}
         </button>
       </form>
 
-      <div className="mt-4 text-center text-sm text-gray-600">
-        Уже есть аккаунт? <Link to="/login" className="text-blue-600 hover:underline">{t('auth.login')}</Link>
+      <div className="mt-6 text-center text-sm text-[#3b2f2f] font-medium">
+        Уже есть аккаунт? <Link to="/login" className="text-amber-700 hover:text-amber-600 font-bold ml-1">Войти</Link>
       </div>
     </div>
   );

@@ -24,22 +24,22 @@ export function Board() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto">
       {/* Шапка доски */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">Доска квестов</h1>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <h1 className="text-3xl md:text-4xl font-bold text-parchment-light drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]">Доска квестов</h1>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded shadow"
+          className="btn-fantasy w-full sm:w-auto"
         >
           + Новый квест
         </button>
       </div>
 
       {/* Панель фильтров (Spec §15) */}
-      <div className="bg-white p-4 rounded-lg shadow-sm mb-6 flex flex-wrap gap-4 items-center">
+      <div className="parchment-card p-4 mb-6 flex flex-wrap gap-4 items-center">
         <select
-          className="border rounded p-2 text-sm"
+          className="input-fantasy text-sm"
           value={filters.status}
           onChange={(e) => handleFilterChange('status', e.target.value)}
         >
@@ -50,29 +50,35 @@ export function Board() {
         </select>
 
         <select
-          className="border rounded p-2 text-sm"
+          className="input-fantasy text-sm"
           value={filters.rank}
           onChange={(e) => handleFilterChange('rank', e.target.value)}
         >
-          <option value="">Все ранги</option>
-          {['S', 'A', 'B', 'C', 'D', 'E', 'F'].map((r) => (
-            <option key={r} value={r}>{r}</option>
-          ))}
+          <option value="">Все ранги (сложность)</option>
+          <option value="S">S (высшая сложность)</option>
+          <option value="A">A (очень сложный)</option>
+          <option value="B">B (сложный)</option>
+          <option value="C">C (средний)</option>
+          <option value="D">D (легкий)</option>
+          <option value="E">E (очень легкий)</option>
+          <option value="F">F (пустяк)</option>
         </select>
 
         <select
-          className="border rounded p-2 text-sm"
+          className="input-fantasy text-sm"
           value={filters.rarity}
           onChange={(e) => handleFilterChange('rarity', e.target.value)}
         >
-          <option value="">Вся редкость</option>
-          {['common', 'uncommon', 'rare', 'epic', 'legendary'].map((r) => (
-            <option key={r} value={r}>{r}</option>
-          ))}
+          <option value="">Вся редкость (срочность)</option>
+          <option value="legendary">legendary (горит!)</option>
+          <option value="epic">epic (очень срочно)</option>
+          <option value="rare">rare (срочно)</option>
+          <option value="uncommon">uncommon (не срочно)</option>
+          <option value="common">common (обычный)</option>
         </select>
 
         <select
-          className="border rounded p-2 text-sm"
+          className="input-fantasy text-sm"
           value={filters.sort}
           onChange={(e) => handleFilterChange('sort', e.target.value)}
         >
@@ -97,7 +103,7 @@ export function Board() {
 
       {/* Сетка квестов */}
       {!isLoading && !isError && data?.items.length === 0 && (
-        <div className="text-center py-20 bg-white rounded-lg shadow-sm">
+        <div className="text-center py-20 parchment-card">
           <p className="text-gray-500 text-lg mb-4">Квестов пока нет</p>
           <button
             onClick={() => setIsModalOpen(true)}
@@ -119,7 +125,7 @@ export function Board() {
       {/* Модалка создания квеста */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
+          <div className="parchment-card w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setIsModalOpen(false)}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold leading-none"
