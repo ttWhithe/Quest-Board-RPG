@@ -51,10 +51,10 @@ export function Events() {
   if (isError) return <div className="text-center py-20 text-red-500">Ошибка загрузки событий.</div>;
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">События и напоминания</h1>
-        <button onClick={openCreate} className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded shadow">
+    <div className="p-4 md:p-8 max-w-5xl mx-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">События и напоминания</h1>
+        <button onClick={openCreate} className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded shadow w-full sm:w-auto">
           + Новое событие
         </button>
       </div>
