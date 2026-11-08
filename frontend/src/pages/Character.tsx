@@ -4,6 +4,7 @@ import { Emblem } from '../components/Emblem';
 import { XPBar } from '../components/XPBar';
 import { RANK_COLORS } from '../constants';
 import type { CharacterRank } from '../api/character';
+import { CharacterSkeleton } from '../components/Skeletons';
 
 export function Character() {
   const { updateUser } = useAuth();
@@ -41,7 +42,12 @@ export function Character() {
   };
 
   if (isLoading) {
-    return <div className="text-center py-20 text-gray-500">Загрузка персонажа...</div>;
+    return (
+      <div className="p-8 max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Карточка персонажа</h1>
+        <CharacterSkeleton />
+      </div>
+    );
   }
 
   if (isError || !data) {

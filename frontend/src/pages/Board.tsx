@@ -3,6 +3,7 @@ import { useQuests } from '../api/quests';
 import type { QuestFilters } from '../api/quests';
 import { QuestCard } from '../components/QuestCard';
 import { QuestForm } from '../components/QuestForm';
+import { QuestCardSkeleton } from '../components/Skeletons';
 
 export function Board() {
   // Состояние фильтров
@@ -84,7 +85,11 @@ export function Board() {
 
       {/* Состояния загрузки и ошибок */}
       {isLoading && (
-        <div className="text-center py-10 text-gray-500">Загрузка квестов...</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <QuestCardSkeleton key={i} />
+          ))}
+        </div>
       )}
       {isError && (
         <div className="text-center py-10 text-red-500">Ошибка загрузки квестов.</div>

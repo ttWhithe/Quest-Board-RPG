@@ -300,6 +300,10 @@
 - **Сделано:** Обновлены `spec.md` (Changelog v1.7) и `prompt.md` (разделение на `PROMPT-rules.md` и ежедневный план). Подготовлен финальный PR.
 - **Дальше:** Day 8 — E2E / Полишинг / Деплой.
 
+## [2026-11-08 12:45] — Day 8, шаг 1: Скелетоны загрузки
+- **Сделано:** Создан `frontend/src/components/Skeletons.tsx` с компонентами `QuestCardSkeleton`, `CharacterSkeleton`, `EventCardSkeleton`, `CalendarSkeleton`.
+- **Дальше:** Интегрировать скелетоны в страницы Board, Character, Events, Calendar (заменить текущие индикаторы загрузки).
+
 ## Шаблон для следующих дней
 
 ```markdown

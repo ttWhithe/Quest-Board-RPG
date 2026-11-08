@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useEvents, useDeleteEvent } from '../api/events';
 import type { Event } from '../api/events';
 import { EventForm } from '../components/EventForm';
+import { EventCardSkeleton } from '../components/Skeletons';
 
 const KIND_ICONS: Record<string, string> = {
   birthday: '🎂',
@@ -33,7 +34,20 @@ export function Events() {
     }
   };
 
-  if (isLoading) return <div className="text-center py-20 text-gray-500">Загрузка событий...</div>;
+  if (isLoading) {
+    return (
+      <div className="p-8 max-w-5xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-800">События и напоминания</h1>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <EventCardSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    );
+  }
   if (isError) return <div className="text-center py-20 text-red-500">Ошибка загрузки событий.</div>;
 
   return (

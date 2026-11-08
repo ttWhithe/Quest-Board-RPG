@@ -5,6 +5,7 @@ import { useQuests } from '../api/quests';
 import { useEvents } from '../api/events';
 import type { Event } from '../api/events';
 import { ScrollOfTime } from '../components/ScrollOfTime';
+import { CalendarSkeleton } from '../components/Skeletons';
 
 export function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -35,7 +36,14 @@ export function Calendar() {
   const handleToday = () => setCurrentDate(new Date());
 
   if (isQuestsLoading || isEventsLoading) {
-    return <div className="text-center py-20 text-gray-500">Загрузка свитка времени...</div>;
+    return (
+      <div className="p-8 max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-800">Свиток времени</h1>
+        </div>
+        <CalendarSkeleton />
+      </div>
+    );
   }
 
   return (
