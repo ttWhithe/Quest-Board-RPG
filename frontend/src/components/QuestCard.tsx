@@ -2,106 +2,131 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Quest } from '../api/quests';
 import { useCompleteQuest } from '../api/quests';
-import { RARITY_COLORS, RANK_COLORS } from '../constants';
+import { RARITY_COLORS, RANK_BASE, RARITY_MULT } from '../constants';
+import { formatDeadline } from '../utils/date';
 import { useAuth } from '../contexts/AuthContext';
-import { formatDeadline } from '../utils/date'; // Импортируем нашу утилиту
 
-interface QuestCardProps {
-  quest: Quest;
-}
-
-export function QuestCard({ quest }: QuestCardProps) {
-  const { user, updateUser } = useAuth();
+export function QuestCard({ quest }: { quest: Quest }) {
+  const { updateUser } = useAuth();
   const { mutate: completeQuest, isPending } = useCompleteQuest();
-
-  const [xpPopup, setXpPopup] = useState<number | null>(null);
+  const [showXp, setShowXp] = useState(false);
+  const [earnedXp, setEarnedXp] = useState(0);
 
   const isCompleted = quest.effective_status === 'completed';
-  const isFailed = quest.effective_status === 'failed';
-  const isArchived = quest.effective_status === 'archived';
-
+  // Цвет печати = редкость (срочность)
   const rarityColor = RARITY_COLORS[quest.rarity];
-  const rankColor = RANK_COLORS[quest.rank];
 
-  // Локальная функция formatDeadline УДАЛЕНА, используем импорт
+  // Расчет потенциального XP (для отображения до выполнения)
+  const calculatePotentialXp = () => {
+    let base = RANK_BASE[quest.rank] || 0;
+    let mult = RARITY_MULT[quest.rarity] || 1.0;
+    let urgencyMult = 1.0;
+
+    // Проверка на срочность (ТЗ §5.5)
+    if (quest.recurrence === 'none' && quest.deadline) {
+      const deadlineTime = new Date(quest.deadline).getTime();
+      const now = new Date().getTime();
+      const diffHours = (deadlineTime - now) / (1000 * 60 * 60);
+
+      if (diffHours >= 0 && diffHours < 24) {
+        urgencyMult = 1.5;
+      }
+    }
+
+    return Math.floor(base * mult * urgencyMult);
+  };
+
+  const potentialXp = calculatePotentialXp();
 
   const handleComplete = () => {
     completeQuest(quest.id, {
       onSuccess: (data) => {
-        setXpPopup(data.xp_awarded);
-        setTimeout(() => setXpPopup(null), 1500);
-        if (user) {
-          updateUser({ total_xp: data.user_after.total_xp });
-        }
+        updateUser({ total_xp: data.user_after.total_xp });
+        setEarnedXp(data.xp_awarded);
+        setShowXp(true);
+        setTimeout(() => setShowXp(false), 2000);
       },
-      onError: (error: any) => {
-        const detail = error.response?.data?.detail || 'Ошибка при выполнении';
-        alert(detail);
-      }
+      onError: (err: any) => {
+        const code = err.response?.data?.code;
+        if (code === 'ALREADY_COMPLETED') alert('Квест уже выполнен!');
+        else if (code === 'ALREADY_COMPLETED_IN_PERIOD') alert('Квест уже выполнен в этом периоде!');
+        else if (code === 'QUEST_ARCHIVED') alert('Квест в архиве.');
+        else alert('Ошибка при выполнении квеста');
+      },
     });
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border-l-4 p-4 flex flex-col relative" style={{ borderLeftColor: rarityColor }}>
-      <AnimatePresence>
-        {xpPopup !== null && (
-          <motion.div initial={{ opacity: 0, y: 0, scale: 0.8 }} animate={{ opacity: 1, y: -60, scale: 1.2 }} exit={{ opacity: 0, y: -80, scale: 1 }} transition={{ duration: 1, ease: 'easeOut' }} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none">
-            <span className="text-3xl font-black text-amber-500 drop-shadow-lg whitespace-nowrap">
-              +{xpPopup} XP
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div className="relative group">
+      {/* Гвоздь, прибивающий карточку */}
+      <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 shadow-md border border-gray-600 z-20"></div>
 
-      <div className="flex justify-between items-start mb-2">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold px-2 py-1 rounded text-white" style={{ backgroundColor: rankColor }}>
+      <div
+        className="torn-paper p-4 flex flex-col relative transition-transform group-hover:-translate-y-1"
+      >
+        <AnimatePresence>
+          {showXp && (
+            <motion.div
+              initial={{ opacity: 0, y: 0, scale: 0.5 }}
+              animate={{ opacity: 1, y: -60, scale: 1.2 }}
+              exit={{ opacity: 0, y: -80 }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-4xl font-fantasy font-bold text-tavern-gold drop-shadow-[2px_2px_0px_rgba(0,0,0,1)] z-30 pointer-events-none"
+            >
+              +{earnedXp} XP
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="flex justify-between items-start mb-2 relative z-10">
+          {/* Сургучная печать: Цвет от редкости, Буква от ранга */}
+          <div
+            className="wax-seal"
+            style={{ backgroundColor: rarityColor }}
+            title={`Редкость: ${quest.rarity}, Ранг: ${quest.rank}`}
+          >
             {quest.rank}
-          </span>
-          <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: rarityColor }}>
-            {quest.rarity}
-          </span>
-        </div>
-        {quest.recurrence !== 'none' && (
-          <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">
-            ↻ {quest.recurrence}
-          </span>
-        )}
-      </div>
+          </div>
 
-      <div className="mb-4 flex-1 relative">
-        <h3 className={`font-bold text-lg text-gray-800 ${isCompleted ? 'line-through text-gray-400' : ''}`}>
+          {quest.recurrence !== 'none' && (
+            <span className="text-xs bg-[#eaddc5] text-[#3b2f2f] px-2 py-1 border border-[#3b2f2f] font-bold shadow-sm" style={{ borderRadius: '2px 8px 3px 8px' }}>
+              ↻ {quest.recurrence === 'daily' ? 'Ежедневно' : 'Еженедельно'}
+            </span>
+          )}
+        </div>
+
+        <h3 className={`text-lg font-bold leading-tight mb-4 flex-1 text-[#3b2f2f] ${isCompleted ? 'line-through opacity-50' : ''}`}>
           {quest.title}
         </h3>
-        {quest.description && (
-          <p className="text-sm text-gray-500 line-clamp-2 mt-1">{quest.description}</p>
-        )}
+
         {isCompleted && (
-          <div className="absolute -left-2 top-0 text-red-500 text-2xl font-bold opacity-80 pointer-events-none">✕</div>
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden">
+            <span className="text-red-600 font-black opacity-90 text-[15rem] leading-none rotate-[-15deg] select-none">
+              ✕
+            </span>
+          </div>
         )}
-      </div>
 
-      <div className="mt-auto pt-3 border-t border-gray-100 flex flex-col gap-3">
-        <div className="flex justify-between items-center text-sm">
-          <div className="text-gray-500">
-            {quest.deadline ? (
-              <span className={isFailed ? 'text-red-600 font-medium' : ''}>
-                ⏳ {formatDeadline(quest.deadline)}
-              </span>
-            ) : (
-              <span>Без дедлайна</span>
-            )}
+        <div className="mt-auto pt-4 flex flex-col gap-3 relative z-10">
+          <div className="flex justify-between items-center text-sm border-t-2 border-dashed border-[#8b7355] pt-3 font-bold text-[#5c4033]">
+            <span className="flex items-center gap-1">
+              <span className="text-lg">⌛</span>
+              {quest.deadline ? formatDeadline(quest.deadline) : 'Бессрочно'}
+            </span>
+            <span className="text-amber-800">
+              {isCompleted ? `${quest.xp_awarded_total} XP` : `${potentialXp} XP`}
+            </span>
           </div>
-          <div className="font-semibold text-amber-600">
-            {quest.xp_awarded_total > 0 ? `${quest.xp_awarded_total} XP` : '... XP'}
-          </div>
+
+          {!isCompleted && quest.effective_status !== 'archived' && (
+            <button
+              onClick={handleComplete}
+              disabled={isPending}
+              className="btn-wood w-full text-sm py-2 disabled:opacity-50 border-[#2a1b14] shadow-[0_4px_0_#2a1b14] active:shadow-none hover:-translate-y-[2px] transition-all"
+            >
+              {isPending ? '...' : 'Выполнить'}
+            </button>
+          )}
         </div>
-
-        {!isCompleted && !isArchived && (
-          <button onClick={handleComplete} disabled={isPending} className="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-1.5 px-4 rounded text-sm disabled:opacity-50 transition-colors">
-            {isPending ? 'Выполняется...' : 'Выполнить'}
-          </button>
-        )}
       </div>
     </div>
   );

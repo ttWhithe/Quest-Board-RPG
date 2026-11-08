@@ -4,6 +4,7 @@ import { Emblem } from '../components/Emblem';
 import { XPBar } from '../components/XPBar';
 import { RANK_COLORS } from '../constants';
 import type { CharacterRank } from '../api/character';
+import { CharacterSkeleton } from '../components/Skeletons';
 
 export function Character() {
   const { updateUser } = useAuth();
@@ -41,7 +42,12 @@ export function Character() {
   };
 
   if (isLoading) {
-    return <div className="text-center py-20 text-gray-500">Загрузка персонажа...</div>;
+    return (
+      <div className="p-8 max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Карточка персонажа</h1>
+        <CharacterSkeleton />
+      </div>
+    );
   }
 
   if (isError || !data) {
@@ -52,10 +58,10 @@ export function Character() {
   const ranks: CharacterRank[] = ['S', 'A', 'B', 'C', 'D', 'E', 'F'];
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Карточка персонажа</h1>
+    <div className="p-4 md:p-8 max-w-4xl mx-auto">
+      <h1 className="text-3xl md:text-4xl font-bold text-parchment-light drop-shadow-[2px_2px_0px_rgba(0,0,0,1)] mb-6">Карточка персонажа</h1>
 
-      <div className="bg-white rounded-lg shadow-sm p-8 flex flex-col md:flex-row gap-10 items-center md:items-start">
+      <div className="parchment-card p-4 md:p-8 flex flex-col md:flex-row gap-4 md:gap-10 items-center md:items-start">
 
         {/* Левая колонка: Герб и профиль */}
         <div className="flex flex-col items-center gap-4 shrink-0">
@@ -81,7 +87,7 @@ export function Character() {
 
         {/* Правая колонка: XP и статистика */}
         <div className="flex-1 w-full space-y-8">
-          <div className="bg-gray-50 p-6 rounded-lg border border-gray-100">
+          <div className="bg-parchment-dark p-4 md:p-6 border-2 border-tavern-wood">
             <XPBar current={xp_into_level} max={xp_for_next_level} />
           </div>
 

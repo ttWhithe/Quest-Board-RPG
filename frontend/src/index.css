@@ -1,3 +1,129 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html, body, #root {
+    @apply min-h-screen w-full m-0 p-0 antialiased;
+  }
+
+  body {
+    /* Темный фон с легкой текстурой дерева/камня и запрет выделения */
+    @apply bg-tavern-dark text-parchment-light font-sans overflow-x-hidden select-none;
+    background-image: radial-gradient(circle at 50% 0%, #2a2421 0%, #1e1b18 100%);
+  }
+
+  /* Разрешаем выделять текст в полях ввода */
+  input, textarea {
+    @apply select-text;
+  }
+
+  /* Фентезийные заголовки */
+  h1, h2, h3, h4 {
+    @apply font-fantasy tracking-wide;
+  }
+}
+
+/* Кастомный скроллбар для атмосферы */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-tavern-dark;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-tavern-wood rounded-full border-2 border-tavern-dark;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-parchment-dark;
+}
+
+/* Класс для пергаментных карточек */
+@layer components {
+  .parchment-card {
+    @apply bg-parchment-light text-parchment-text border-2 border-tavern-wood shadow-[0_4px_15px_rgba(0,0,0,0.5)] relative;
+    background-image: url('data:image/svg+xml;utf8,<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.05"/></svg>');
+  }
+}
+
+/* Фентезийные кнопки */
+@layer components {
+  .btn-fantasy {
+    @apply bg-tavern-gold text-black font-fantasy font-bold uppercase tracking-wider py-2 px-4
+           border-2 border-black shadow-[2px_2px_0px_rgba(0,0,0,0.8)]
+           hover:bg-amber-400 hover:shadow-[1px_1px_0px_rgba(0,0,0,0.8)] hover:translate-y-[1px]
+           active:translate-y-[2px] active:shadow-none transition-all duration-100;
+  }
+
+  .btn-wood {
+    @apply bg-tavern-wood text-parchment-light font-fantasy font-bold uppercase tracking-wider py-2 px-4
+           border-2 border-black shadow-[2px_2px_0px_rgba(0,0,0,0.8)]
+           hover:bg-[#4e342e] hover:shadow-[1px_1px_0px_rgba(0,0,0,0.8)] hover:translate-y-[1px]
+           active:translate-y-[2px] active:shadow-none transition-all duration-100;
+  }
+
+  .input-fantasy {
+    @apply bg-parchment-dark border-2 border-tavern-wood text-parchment-text p-2 font-bold outline-none focus:border-tavern-gold focus:ring-1 focus:ring-tavern-gold;
+  }
+}
+
+/* Сургучная печать */
+.wax-seal {
+  @apply flex items-center justify-center font-fantasy font-bold text-white shadow-lg;
+  width: 3rem;
+  height: 3rem;
+  /* Рваная форма круга */
+  border-radius: 45% 55% 50% 50% / 50% 45% 55% 50%;
+  /* Внутренняя тень для объема + внешняя тень для отрыва от бумаги */
+  box-shadow:
+    inset -2px -2px 6px rgba(0,0,0,0.6),
+    inset 2px 2px 4px rgba(255,255,255,0.3),
+    3px 3px 5px rgba(0,0,0,0.4);
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+  transform: rotate(-5deg);
+  transition: transform 0.2s ease-in-out;
+}
+
+.wax-seal:hover {
+  transform: rotate(0deg) scale(1.1);
+}
+
+/* Эффект рваного пергамента для карточек */
+.torn-paper {
+  position: relative;
+  background: #fdf5e6;
+  clip-path: polygon(
+    0% 2%, 3% 0%, 97% 1%, 100% 3%,
+    99% 97%, 96% 100%, 4% 99%, 1% 96%
+  );
+  /* Легкая текстура */
+  background-image: url('data:image/svg+xml;utf8,<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.08"/></svg>');
+}
+
+/* Эффект свитка для календаря */
+.scroll-paper {
+  @apply bg-parchment-light text-parchment-text shadow-[0_10px_25px_rgba(0,0,0,0.6)];
+  border-left: 12px solid #d4af37;
+  border-right: 12px solid #d4af37;
+  border-radius: 4px;
+  background-image: linear-gradient(to right, rgba(0,0,0,0.1) 0%, rgba(255,255,255,0) 10%, rgba(255,255,255,0) 90%, rgba(0,0,0,0.1) 100%);
+}
+
+/* Принудительная стилизация всех инпутов под фентези */
+input, select, textarea {
+  @apply bg-[#fdf5e6] border-2 border-[#8b7355] text-[#3b2f2f] rounded-sm px-3 py-2 outline-none transition-colors !important;
+}
+
+input:focus, select:focus, textarea:focus {
+  @apply border-tavern-gold ring-1 ring-tavern-gold !important;
+}
+
+/* Фикс плейсхолдеров (чтобы текст-подсказка был не белым) */
+input::placeholder, textarea::placeholder {
+  @apply text-[#8b7355] opacity-70;
+}
+
+/* Красим крестик закрытия модалки в темный цвет */
+.absolute.top-4.right-4.text-gray-400 {
+  @apply text-[#8b7355] hover:text-red-700 transition-colors;
+}

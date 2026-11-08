@@ -2,19 +2,9 @@
 setlocal EnableExtensions
 
 rem ============================================================
-rem start-all.bat - dev launcher for Quest Board RPG
-rem
-rem Assumes this file lives in <project>\tools\.
-rem Root is auto-detected as parent of this folder (%~dp0..),
-rem so it works after cloning to any path.
-rem
-rem Opens:
-rem   1) Docker Compose (db + api)
-rem   2) Frontend Dev    (optional until Vite is scaffolded)
-rem   3) Project Console
+rem start-all.bat - DEV launcher (db + api в Docker, frontend локально)
 rem ============================================================
 
-rem --- Resolve project root (parent of tools\) ---
 for %%I in ("%~dp0..") do set "PROJECT_ROOT=%%~fI"
 cd /d "%PROJECT_ROOT%"
 echo [Root] %PROJECT_ROOT%
@@ -71,7 +61,7 @@ goto wait_docker_loop
 :docker_ready
 echo [Docker] Ready.
 
-rem --- 2. Backend + DB (inherits CWD = project root) ---
+rem --- 2. Backend + DB (без фронтенда, так как он в профиле prod) ---
 if not exist "%PROJECT_ROOT%\docker-compose.yml" (
     echo [Compose] docker-compose.yml not found at project root. Aborting.
     pause
@@ -80,11 +70,9 @@ if not exist "%PROJECT_ROOT%\docker-compose.yml" (
 )
 start "Docker Compose (backend+db)" cmd /k "docker compose up"
 
-rem --- 3. Frontend (optional) ---
+rem --- 3. Frontend (Vite, локальный) ---
 if not exist "%PROJECT_ROOT%\frontend\package.json" (
     echo [Frontend] frontend\package.json not found - skipping.
-    echo [Frontend] When ready, run in project root:
-    echo            npm create vite@latest frontend -- --template react-ts
     goto after_frontend
 )
 if not exist "%PROJECT_ROOT%\frontend\node_modules" (

@@ -5,6 +5,7 @@ import { useQuests } from '../api/quests';
 import { useEvents } from '../api/events';
 import type { Event } from '../api/events';
 import { ScrollOfTime } from '../components/ScrollOfTime';
+import { CalendarSkeleton } from '../components/Skeletons';
 
 export function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -35,39 +36,58 @@ export function Calendar() {
   const handleToday = () => setCurrentDate(new Date());
 
   if (isQuestsLoading || isEventsLoading) {
-    return <div className="text-center py-20 text-gray-500">Загрузка свитка времени...</div>;
+    return (
+      <div className="p-8 max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-800">Свиток времени</h1>
+        </div>
+        <CalendarSkeleton />
+      </div>
+    );
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto w-full">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">Свиток времени</h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-parchment-light drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]">Свиток времени</h1>
       </div>
 
       {/* Панель управления датой */}
-      <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm mb-6">
+      <div className="flex flex-col sm:flex-row items-center justify-between parchment-card p-4 mb-6 gap-4">
         <div className="flex items-center gap-4">
           <button onClick={handlePrevDay} className="p-2 hover:bg-gray-100 rounded text-gray-600 font-bold">
             &larr;
           </button>
-          <h2 className="text-xl font-bold text-gray-800 min-w-[200px] text-center capitalize">
+          <h2 className="text-lg md:text-xl font-bold text-gray-800 min-w-[150px] md:min-w-[200px] text-center capitalize">
             {format(currentDate, 'd MMMM yyyy', { locale: ru })}
           </h2>
           <button onClick={handleNextDay} className="p-2 hover:bg-gray-100 rounded text-gray-600 font-bold">
             &rarr;
           </button>
         </div>
-        <button onClick={handleToday} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded font-medium text-sm">
+        <button onClick={handleToday} className="btn-wood text-sm w-full sm:w-auto">
           Сегодня
         </button>
       </div>
 
-      {/* Сам свиток */}
-      <ScrollOfTime
-        quests={questsData?.items || []}
-        events={filteredEvents}
-        currentDate={currentDate}
-      />
+      {/* Подсказка для мобильных устройств */}
+      <div className="md:hidden flex flex-col items-center justify-center bg-parchment-dark border-2 border-tavern-wood text-parchment-text p-3 mb-4 text-sm text-center">
+        <span className="font-bold mb-1">📱 Мобильная версия</span>
+        <span>Листайте шкалу влево/вправо или поверните телефон горизонтально для удобного просмотра.</span>
+      </div>
+
+      {/* Свиток */}
+      <div className="w-full overflow-x-auto pb-4 custom-scrollbar">
+        <div className="min-w-[600px]">
+          <div className="scroll-paper p-6 md:p-10 min-h-[300px]">
+            <ScrollOfTime
+              quests={questsData?.items || []}
+              events={filteredEvents}
+              currentDate={currentDate}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

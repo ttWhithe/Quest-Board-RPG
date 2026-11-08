@@ -18,6 +18,26 @@ export const RANK_COLORS = {
   F: '#6B7280',
 } as const;
 
+// Базовый опыт за ранг (сложность)
+export const RANK_BASE = {
+  F: 10,
+  E: 20,
+  D: 35,
+  C: 55,
+  B: 80,
+  A: 120,
+  S: 200,
+} as const;
+
+// Множитель опыта за редкость (срочность)
+export const RARITY_MULT = {
+  common: 1.0,
+  uncommon: 1.2,
+  rare: 1.5,
+  epic: 2.0,
+  legendary: 3.0,
+} as const;
+
 export type Rank = keyof typeof RANK_COLORS;
 
 /**
