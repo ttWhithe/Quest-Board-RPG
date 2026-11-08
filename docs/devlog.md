@@ -304,6 +304,12 @@
 - **Сделано:** Создан `frontend/src/components/Skeletons.tsx` с компонентами `QuestCardSkeleton`, `CharacterSkeleton`, `EventCardSkeleton`, `CalendarSkeleton`.
 - **Дальше:** Интегрировать скелетоны в страницы Board, Character, Events, Calendar (заменить текущие индикаторы загрузки).
 
+## [2026-11-08 12:50] — Day 8, шаг 1: Скелетоны загрузки
+- **Сделано:** Создан `frontend/src/components/Skeletons.tsx` (светлая тема, `bg-gray-200` shimmer) с `QuestCardSkeleton`, `CharacterSkeleton`, `EventCardSkeleton`, `CalendarSkeleton`. Интегрированы в `Board`, `Character`, `Events`, `Calendar` вместо текстовых «Загрузка ...». Заголовки страниц сохранены, чтобы layout не прыгал.
+- **Застрял / потратил время на:** — (первый прогон скелетонов был под тёмную тему; увидел светлый UI страниц, перевыпустил под светлую палитру).
+- **Решение:** —
+- **Дальше:** Шаг 2 — адаптивность (мобильные разрешения, бургер-навигация если понадобится).
+
 ## Шаблон для следующих дней
 
 ```markdown
