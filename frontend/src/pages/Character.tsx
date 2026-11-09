@@ -1,6 +1,5 @@
 import { useAuth } from '../contexts/AuthContext';
 import { useCharacter, useUpdateCharacter } from '../api/character';
-import { useTalents, useUpgradeTalent } from '../api/talents';
 import { Emblem } from '../components/Emblem';
 import { XPBar } from '../components/XPBar';
 import { RANK_COLORS } from '../constants';
@@ -10,9 +9,7 @@ import { CharacterSkeleton } from '../components/Skeletons';
 export function Character() {
   const { updateUser } = useAuth();
   const { data, isLoading, isError } = useCharacter();
-  const { data: talentData, isLoading: isTalentsLoading } = useTalents();
   const { mutate: updateCharacter, isPending: isUpdating } = useUpdateCharacter();
-  const { mutate: upgradeTalent, isPending: isUpgradingTalent, variables: upgradingCode } = useUpgradeTalent();
 
   const handleNicknameChange = () => {
     if (!data) return;
@@ -125,52 +122,6 @@ export function Character() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Блок Дерева Талантов */}
-      <div className="parchment-card p-4 md:p-8">
-        <div className="flex justify-between items-end mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Дерево Талантов</h2>
-          <div className="bg-tavern-wood text-parchment-light px-4 py-2 rounded-lg font-bold shadow-md">
-            Доступно очков: {talentData?.available_points ?? 0}
-          </div>
-        </div>
-
-        {isTalentsLoading ? (
-          <div className="text-center py-4 text-gray-500">Загрузка талантов...</div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {talentData?.talents.map((talent) => (
-              <div key={talent.code} className="border-2 border-tavern-wood bg-parchment-dark p-4 rounded-lg flex flex-col justify-between">
-                <div>
-                  <h3 className="font-bold text-lg text-gray-800">{talent.title}</h3>
-                  <p className="text-sm text-gray-600 mb-2">
-                    Ранг: {talent.rank} / {talent.max_rank}
-                  </p>
-                  <p className="text-sm text-green-700 font-semibold mb-2">
-                    +{talent.xp_bonus_per_rank}% к XP за ранг
-                  </p>
-                  {Object.keys(talent.requires).length > 0 && (
-                    <p className="text-xs text-gray-500 mb-2">
-                      Требует: {Object.entries(talent.requires).map(([req, lvl]) => `${req} (${lvl})`).join(', ')}
-                    </p>
-                  )}
-                </div>
-                <button
-                  onClick={() => upgradeTalent(talent.code)}
-                  disabled={!talent.can_upgrade || isUpgradingTalent}
-                  className={`mt-4 w-full py-2 rounded font-bold transition-colors ${
-                    talent.can_upgrade
-                      ? 'bg-amber-600 hover:bg-amber-700 text-white shadow'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  }`}
-                >
-                  {isUpgradingTalent && upgradingCode === talent.code ? '...' : 'Изучить'}
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

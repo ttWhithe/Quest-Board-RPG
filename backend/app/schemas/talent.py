@@ -2,21 +2,24 @@ from pydantic import BaseModel
 
 
 class TalentOut(BaseModel):
-    code: str
-    title: str
-    rank: int
+    id: str
+    name: str
+    description: str
+    type: str
+    x: int
+    y: int
     max_rank: int
-    xp_bonus_per_rank: int
-    requires: dict[str, int]
+    rank: int
     can_upgrade: bool
 
 
-class TalentListResponse(BaseModel):
+class TalentTreeOut(BaseModel):
     available_points: int
     total_spent_points: int
-    talents: list[TalentOut]
+    nodes: list[TalentOut]
+    edges: list[list[str]]
 
 
 class TalentUpgradeResponse(BaseModel):
     available_points: int
-    talent: TalentOut
+    node: TalentOut

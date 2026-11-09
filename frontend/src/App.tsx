@@ -11,6 +11,7 @@ import { Board } from './pages/Board';
 import { Character } from './pages/Character';
 import { Events } from './pages/Events';
 import { Calendar } from './pages/Calendar';
+import { Talents } from './pages/Talents';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,6 +41,7 @@ function Header() {
   const navLinks = [
     { to: '/board', label: 'Доска' },
     { to: '/character', label: 'Персонаж' },
+    { to: '/talents', label: 'Таланты' },
     { to: '/events', label: 'События' },
     { to: '/calendar', label: 'Календарь' },
   ];
@@ -161,6 +163,7 @@ function App() {
                   <Route path="/" element={<Navigate to="/board" replace />} />
                   <Route path="/board" element={<Board />} />
                   <Route path="/character" element={<Character />} />
+                  <Route path="/talents" element={<Talents />} />
                   <Route path="/events" element={<Events />} />
                   <Route path="/calendar" element={<Calendar />} />
                 </Route>

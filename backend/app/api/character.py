@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.deps import get_current_user
 from app.core.game import effective_status, level_for_xp, xp_for_next_level, xp_into_level
-from app.core.talents import total_xp_bonus_percent
+from app.core.talents import get_total_bonus_percent
 from app.db import get_session
 from app.models.enums import QuestRank, QuestStatus
 from app.models.quest import Quest
@@ -74,7 +74,7 @@ async def get_character(
     talents_stmt = select(UserTalent).where(UserTalent.user_id == current_user.id)
     user_talents = (await session.scalars(talents_stmt)).all()
     ranks_by_code = {t.talent_code: t.rank for t in user_talents}
-    xp_bonus = total_xp_bonus_percent(ranks_by_code)
+    xp_bonus = get_total_bonus_percent(ranks_by_code)
 
     return CharacterOut(
         user=UserOut.model_validate(current_user),

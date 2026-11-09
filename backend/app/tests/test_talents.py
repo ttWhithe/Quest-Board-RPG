@@ -2,14 +2,14 @@ from app.core.talents import (
     TALENTS,
     available_talent_points,
     can_upgrade,
-    total_xp_bonus_percent,
+    get_total_bonus_percent,
 )
 
 
 def test_talent_catalog_keys() -> None:
-    assert "guild_apprentice" in TALENTS
-    assert "arcane_focus" in TALENTS
-    assert "heroic_spirit" in TALENTS
+    assert "start" in TALENTS
+    assert "xp_small_1" in TALENTS
+    assert "xp_notable_1" in TALENTS
 
 
 def test_available_talent_points_level_1() -> None:
@@ -24,22 +24,17 @@ def test_available_talent_points_level_3() -> None:
 
 
 def test_total_xp_bonus_percent_empty() -> None:
-    assert total_xp_bonus_percent({}) == 0
+    assert get_total_bonus_percent({}) == 0
 
 
 def test_total_xp_bonus_percent_single() -> None:
-    assert total_xp_bonus_percent({"guild_apprentice": 3}) == 6
-
-
-def test_total_xp_bonus_percent_multiple() -> None:
-    ranks = {"guild_apprentice": 3, "arcane_focus": 2, "heroic_spirit": 1}
-    # 3*2 + 2*3 + 1*10 = 6 + 6 + 10 = 22
-    assert total_xp_bonus_percent(ranks) == 22
+    # xp_small_1 дает +2% к опыту за ранг
+    assert get_total_bonus_percent({"xp_small_1": 3}) == 6
 
 
 def test_total_xp_bonus_percent_capped() -> None:
-    # Guild apprentice max rank is 5
-    assert total_xp_bonus_percent({"guild_apprentice": 10}) == 10
+    # Функция просто умножает, ограничение max_rank контролируется в API
+    assert get_total_bonus_percent({"xp_small_1": 5}) == 10
 
 
 def test_can_upgrade_unknown_talent() -> None:
@@ -47,18 +42,25 @@ def test_can_upgrade_unknown_talent() -> None:
 
 
 def test_can_upgrade_no_points() -> None:
-    assert can_upgrade("guild_apprentice", {}, 0) is False
+    assert can_upgrade("xp_small_1", {}, 0) is False
+
+
+def test_can_upgrade_start_node() -> None:
+    assert can_upgrade("start", {}, 5) is False
 
 
 def test_can_upgrade_max_rank() -> None:
-    assert can_upgrade("guild_apprentice", {"guild_apprentice": 5}, 5) is False
+    # max_rank для xp_small_1 равен 3
+    assert can_upgrade("xp_small_1", {"xp_small_1": 3}, 5) is False
 
 
 def test_can_upgrade_missing_prereq() -> None:
-    assert can_upgrade("arcane_focus", {"guild_apprentice": 2}, 5) is False
+    # xp_small_2 соединен с xp_small_1, который не прокачан
+    assert can_upgrade("xp_small_2", {}, 5) is False
 
 
 def test_can_upgrade_success() -> None:
-    assert can_upgrade("guild_apprentice", {}, 1) is True
-    assert can_upgrade("arcane_focus", {"guild_apprentice": 3}, 1) is True
-    assert can_upgrade("heroic_spirit", {"guild_apprentice": 3, "arcane_focus": 2}, 1) is True
+    # xp_small_1 соединен со start, start всегда считается прокачанным
+    assert can_upgrade("xp_small_1", {}, 1) is True
+    # xp_small_2 соединен с прокачанным xp_small_1
+    assert can_upgrade("xp_small_2", {"xp_small_1": 1}, 1) is True

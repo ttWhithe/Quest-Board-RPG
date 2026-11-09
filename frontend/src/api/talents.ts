@@ -2,25 +2,28 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from './client';
 import { characterKeys } from './character';
 
-export interface Talent {
-  code: string;
-  title: string;
-  rank: number;
+export interface TalentNode {
+  id: string;
+  name: string;
+  description: string;
+  type: 'start' | 'small' | 'notable';
+  x: number;
+  y: number;
   max_rank: number;
-  xp_bonus_per_rank: number;
-  requires: Record<string, number>;
+  rank: number;
   can_upgrade: boolean;
 }
 
-export interface TalentListResponse {
+export interface TalentTreeResponse {
   available_points: number;
   total_spent_points: number;
-  talents: Talent[];
+  nodes: TalentNode[];
+  edges: [string, string][];
 }
 
 export interface TalentUpgradeResponse {
   available_points: number;
-  talent: Talent;
+  node: TalentNode;
 }
 
 export const talentKeys = {
@@ -28,10 +31,10 @@ export const talentKeys = {
 };
 
 export function useTalents() {
-  return useQuery<TalentListResponse>({
+  return useQuery<TalentTreeResponse>({
     queryKey: talentKeys.all,
     queryFn: async () => {
-      const { data } = await api.get<TalentListResponse>('/talents');
+      const { data } = await api.get<TalentTreeResponse>('/talents');
       return data;
     },
     staleTime: 30_000,
@@ -46,9 +49,7 @@ export function useUpgradeTalent() {
       return data;
     },
     onSuccess: () => {
-      // Инвалидируем таланты (чтобы обновить очки и статусы can_upgrade)
       queryClient.invalidateQueries({ queryKey: talentKeys.all });
-      // Инвалидируем персонажа (чтобы обновить общий процент бонуса XP)
       queryClient.invalidateQueries({ queryKey: characterKeys.detail() });
     },
   });
