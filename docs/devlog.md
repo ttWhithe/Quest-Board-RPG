@@ -342,7 +342,11 @@
 - **Сделано:** `backend/app/core/talents.py` (каталог `TALENTS`, `available_talent_points`, `total_xp_bonus_percent`, `can_upgrade`). Написаны тесты в `test_talents.py` (все ветки, включая Sad Path).
 - **Дальше:** Шаг 3 — API `GET /api/v1/talents` и `POST /api/v1/talents/{code}/upgrade`.
 
-
+## [2026-11-09 20:58] — Day 9, шаг 3: API талантов
+- **Сделано:** `backend/app/schemas/talent.py` (схемы `TalentOut`, `TalentListResponse`, `TalentUpgradeResponse`). `backend/app/api/talents.py` (`GET /talents` и `POST /talents/{code}/upgrade`). В `main.py` подключен `talents_router`. Написаны интеграционные тесты `test_talents_api.py` с полным циклом (регистрация → выполнение квеста → апгрейд таланта).
+- **Застрял / потратил время на:** при написании тестов сначала использовал несуществующую фикстуру `auth_headers` (в `conftest.py` её нет). Написан локальный хелпер `_get_auth_headers`.
+- **Решение:** для получения токена в тестах используется регистрация нового пользователя через `POST /api/v1/auth/register`.
+- **Дальше:** Шаг 4 — Применение бонуса к XP в `POST /quests/{id}/complete` и вывод `xp_bonus_percent` в `GET /character`.
 
 ## Шаблон для следующих дней
 
