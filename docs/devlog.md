@@ -332,6 +332,12 @@
 - **Решение:** Удален неиспользуемый импорт. Создан `frontend/.dockerignore`, чтобы не тащить `node_modules` в контекст сборки (сборка ускорилась до 1.5 минут).
 - **Дальше:** MVP полностью готов! Слияние в `main`, переход к Post-MVP или реальному деплою.
 
+## [2026-11-09 20:20] — Day 9, шаг 1: модель UserTalent + миграция
+- **Сделано:** `backend/app/models/user_talent.py` (unique `user_id+talent_code`, FK ON DELETE CASCADE, `index=True` на `user_id`). В `user.py` добавлен relationship `talents` с `cascade="all, delete-orphan"`. В `models/__init__.py` зарегистрирован `UserTalent` — без этого autogenerate не видит таблицу. Миграция `e5cc359ca348_create_user_talents.py` сгенерирована Alembic-ом, применена, проверена через `\d user_talents`, обратимость подтверждена (`downgrade -1` → `upgrade head`).
+- **Застрял / потратил время на:** первую миграцию выдал вручную с выдуманным `revision_id` — пришлось откатывать и удалять. Второй autogenerate дал пустую миграцию (`pass`), потому что `UserTalent` не был импортирован в `app/models/__init__.py` — metadata была без него.
+- **Решение:** миграции генерируются только через `alembic revision --autogenerate`; новые модели обязательно регистрируются в `models/__init__.py` до autogenerate.
+- **Дальше:** Шаг 2 — `core/talents.py` (каталог + `available_talent_points`, `total_xp_bonus_percent`, `can_upgrade`) и тесты.
+
 ## Шаблон для следующих дней
 
 ```markdown
