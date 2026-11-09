@@ -1,5 +1,6 @@
 import { useAuth } from '../contexts/AuthContext';
 import { useCharacter, useUpdateCharacter } from '../api/character';
+import { useTalents, useUpgradeTalent } from '../api/talents';
 import { Emblem } from '../components/Emblem';
 import { XPBar } from '../components/XPBar';
 import { RANK_COLORS } from '../constants';
@@ -9,7 +10,9 @@ import { CharacterSkeleton } from '../components/Skeletons';
 export function Character() {
   const { updateUser } = useAuth();
   const { data, isLoading, isError } = useCharacter();
+  const { data: talentData, isLoading: isTalentsLoading } = useTalents();
   const { mutate: updateCharacter, isPending: isUpdating } = useUpdateCharacter();
+  const { mutate: upgradeTalent, isPending: isUpgradingTalent, variables: upgradingCode } = useUpgradeTalent();
 
   const handleNicknameChange = () => {
     if (!data) return;
@@ -18,7 +21,6 @@ export function Character() {
     if (newName && newName !== data.user.nickname) {
       updateCharacter({ nickname: newName }, {
         onSuccess: (res) => {
-          // Обновляем контекст, чтобы хедер сразу показал новый ник
           updateUser(res.user);
         },
         onError: (err: any) => {
@@ -31,7 +33,6 @@ export function Character() {
 
   const handleEmblemChange = () => {
     if (!data) return;
-    // Генерируем случайный seed для нового герба
     const newSeed = Math.random().toString(36).substring(2, 10);
     updateCharacter({ emblem_seed: newSeed }, {
       onSuccess: (res) => {
@@ -54,15 +55,14 @@ export function Character() {
     return <div className="text-center py-20 text-red-500">Ошибка загрузки персонажа.</div>;
   }
 
-  const { user, level, xp_into_level, xp_for_next_level, stats } = data;
+  const { user, level, xp_into_level, xp_for_next_level, stats, xp_bonus_percent } = data;
   const ranks: CharacterRank[] = ['S', 'A', 'B', 'C', 'D', 'E', 'F'];
 
   return (
-    <div className="p-4 md:p-8 max-w-4xl mx-auto">
+    <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-8">
       <h1 className="text-3xl md:text-4xl font-bold text-parchment-light drop-shadow-[2px_2px_0px_rgba(0,0,0,1)] mb-6">Карточка персонажа</h1>
 
       <div className="parchment-card p-4 md:p-8 flex flex-col md:flex-row gap-4 md:gap-10 items-center md:items-start">
-
         {/* Левая колонка: Герб и профиль */}
         <div className="flex flex-col items-center gap-4 shrink-0">
           <div className="relative group cursor-pointer" onClick={handleEmblemChange}>
@@ -89,6 +89,11 @@ export function Character() {
         <div className="flex-1 w-full space-y-8">
           <div className="bg-parchment-dark p-4 md:p-6 border-2 border-tavern-wood">
             <XPBar current={xp_into_level} max={xp_for_next_level} />
+            {xp_bonus_percent > 0 && (
+              <p className="text-sm text-green-700 mt-2 font-semibold text-center">
+                Бонус к опыту: +{xp_bonus_percent}%
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -120,6 +125,52 @@ export function Character() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Блок Дерева Талантов */}
+      <div className="parchment-card p-4 md:p-8">
+        <div className="flex justify-between items-end mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">Дерево Талантов</h2>
+          <div className="bg-tavern-wood text-parchment-light px-4 py-2 rounded-lg font-bold shadow-md">
+            Доступно очков: {talentData?.available_points ?? 0}
+          </div>
+        </div>
+
+        {isTalentsLoading ? (
+          <div className="text-center py-4 text-gray-500">Загрузка талантов...</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {talentData?.talents.map((talent) => (
+              <div key={talent.code} className="border-2 border-tavern-wood bg-parchment-dark p-4 rounded-lg flex flex-col justify-between">
+                <div>
+                  <h3 className="font-bold text-lg text-gray-800">{talent.title}</h3>
+                  <p className="text-sm text-gray-600 mb-2">
+                    Ранг: {talent.rank} / {talent.max_rank}
+                  </p>
+                  <p className="text-sm text-green-700 font-semibold mb-2">
+                    +{talent.xp_bonus_per_rank}% к XP за ранг
+                  </p>
+                  {Object.keys(talent.requires).length > 0 && (
+                    <p className="text-xs text-gray-500 mb-2">
+                      Требует: {Object.entries(talent.requires).map(([req, lvl]) => `${req} (${lvl})`).join(', ')}
+                    </p>
+                  )}
+                </div>
+                <button
+                  onClick={() => upgradeTalent(talent.code)}
+                  disabled={!talent.can_upgrade || isUpgradingTalent}
+                  className={`mt-4 w-full py-2 rounded font-bold transition-colors ${
+                    talent.can_upgrade
+                      ? 'bg-amber-600 hover:bg-amber-700 text-white shadow'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  {isUpgradingTalent && upgradingCode === talent.code ? '...' : 'Изучить'}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
