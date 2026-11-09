@@ -17,6 +17,7 @@ export interface CharacterResponse {
   level: number;
   xp_into_level: number;
   xp_for_next_level: number;
+  xp_bonus_percent: number;
   stats: CharacterStats;
 }
 

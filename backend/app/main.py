@@ -8,6 +8,7 @@ from app.api import events
 from app.api.auth import router as auth_router
 from app.api.character import router as character_router
 from app.api.quests import router as quests_router
+from app.api.talents import router as talents_router
 from app.config import get_settings
 from app.log_setup import RequestContextMiddleware, setup_logging
 
@@ -77,6 +78,7 @@ app.include_router(auth_router, prefix="/api/v1")
 app.include_router(quests_router, prefix="/api/v1")
 app.include_router(character_router, prefix="/api/v1")
 app.include_router(events.router, prefix="/api/v1")
+app.include_router(talents_router, prefix="/api/v1")
 
 
 @app.get("/health")

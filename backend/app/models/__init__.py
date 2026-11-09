@@ -2,5 +2,6 @@ from app.models.base import Base
 from app.models.event import Event
 from app.models.quest import Quest
 from app.models.user import User
+from app.models.user_talent import UserTalent
 
-__all__ = ["Base", "User", "Quest", "Event"]
+__all__ = ["Base", "User", "Quest", "Event", "UserTalent"]

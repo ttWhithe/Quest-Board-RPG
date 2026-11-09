@@ -29,6 +29,7 @@ class CharacterOut(BaseModel):
     level: int
     xp_into_level: int
     xp_for_next_level: int
+    xp_bonus_percent: int
     stats: CharacterStats
 
 

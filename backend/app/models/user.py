@@ -13,6 +13,7 @@ from app.models.base import Base
 if TYPE_CHECKING:
     from app.models.event import Event
     from app.models.quest import Quest
+    from app.models.user_talent import UserTalent
 
 
 class User(Base):
@@ -37,3 +38,6 @@ class User(Base):
     # Relationships
     quests: Mapped[list[Quest]] = relationship(back_populates="user", cascade="all, delete-orphan")
     events: Mapped[list[Event]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    talents: Mapped[list[UserTalent]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
