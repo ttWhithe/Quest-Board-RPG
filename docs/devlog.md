@@ -338,6 +338,12 @@
 - **Решение:** миграции генерируются только через `alembic revision --autogenerate`; новые модели обязательно регистрируются в `models/__init__.py` до autogenerate.
 - **Дальше:** Шаг 2 — `core/talents.py` (каталог + `available_talent_points`, `total_xp_bonus_percent`, `can_upgrade`) и тесты.
 
+## [2026-11-09 20:35] — Day 9, шаг 2: Каталог талантов и чистые функции
+- **Сделано:** `backend/app/core/talents.py` (каталог `TALENTS`, `available_talent_points`, `total_xp_bonus_percent`, `can_upgrade`). Написаны тесты в `test_talents.py` (все ветки, включая Sad Path).
+- **Дальше:** Шаг 3 — API `GET /api/v1/talents` и `POST /api/v1/talents/{code}/upgrade`.
+
+
+
 ## Шаблон для следующих дней
 
 ```markdown
