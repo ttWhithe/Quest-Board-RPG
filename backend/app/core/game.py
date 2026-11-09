@@ -105,8 +105,9 @@ def calc_xp(
     recurrence: str = "none",
     deadline: datetime | None = None,
     now: datetime | None = None,
+    talent_bonus_percent: int = 0,
 ) -> int:
-    """§5.1:  XP = floor(base[rank] × mult[rarity] × urgency_mult).
+    """§5.1:  XP = floor(base[rank] × mult[rarity] × urgency_mult × (1 + bonus/100)).
 
     `now` по умолчанию — текущее UTC; в тестах передавайте явно
     (иначе результат недетерминирован).
@@ -116,7 +117,8 @@ def calc_xp(
     base = BASE_XP[rank]
     mult = RARITY_MULT[rarity]
     urgency = URGENCY_MULT if is_urgent(recurrence, deadline, now) else NORMAL_MULT
-    return math.floor(base * mult * urgency)
+    bonus_mult = 1.0 + (talent_bonus_percent / 100.0)
+    return math.floor(base * mult * urgency * bonus_mult)
 
 
 # ---------------------------------------------------------------------------

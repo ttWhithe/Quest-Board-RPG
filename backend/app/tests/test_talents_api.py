@@ -81,3 +81,36 @@ async def test_upgrade_prereq_not_met(async_client: AsyncClient) -> None:
     response = await async_client.post("/api/v1/talents/arcane_focus/upgrade", headers=headers)
     assert response.status_code == 409
     assert response.json()["code"] == "TALENT_UPGRADE_FAILED"
+
+
+@pytest.mark.asyncio
+async def test_talent_bonus_applied(async_client: AsyncClient) -> None:
+    headers = await _get_auth_headers(async_client)
+
+    # 1. Выполняем S/legendary квест (600 XP -> level 4 -> 3 очка)
+    quest_payload = {
+        "title": "Quest 1",
+        "rank": "S",
+        "rarity": "legendary",
+        "recurrence": "none",
+    }
+    create_resp = await async_client.post("/api/v1/quests", json=quest_payload, headers=headers)
+    quest_id = create_resp.json()["id"]
+    complete_resp = await async_client.post(f"/api/v1/quests/{quest_id}/complete", headers=headers)
+    assert complete_resp.json()["xp_awarded"] == 600
+
+    # 2. Апаем guild_apprentice (2% xp bonus)
+    await async_client.post("/api/v1/talents/guild_apprentice/upgrade", headers=headers)
+
+    # 3. Выполняем еще один S/legendary квест (600 * 1.02 = 612)
+    create_resp2 = await async_client.post("/api/v1/quests", json=quest_payload, headers=headers)
+    quest_id2 = create_resp2.json()["id"]
+    complete_resp2 = await async_client.post(
+        f"/api/v1/quests/{quest_id2}/complete", headers=headers
+    )
+    assert complete_resp2.json()["xp_awarded"] == 612
+
+    # 4. Проверяем, что GET /character возвращает бонус
+    char_resp = await async_client.get("/api/v1/character", headers=headers)
+    assert char_resp.status_code == 200
+    assert char_resp.json()["xp_bonus_percent"] == 2

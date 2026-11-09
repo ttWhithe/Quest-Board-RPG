@@ -12,10 +12,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.deps import get_current_user
 from app.core.game import effective_status, level_for_xp, xp_for_next_level, xp_into_level
+from app.core.talents import total_xp_bonus_percent
 from app.db import get_session
 from app.models.enums import QuestRank, QuestStatus
 from app.models.quest import Quest
 from app.models.user import User
+from app.models.user_talent import UserTalent
 from app.schemas.character import CharacterOut, CharacterStats, CharacterUpdate
 from app.schemas.user import UserOut
 
@@ -68,11 +70,18 @@ async def get_character(
 
     failed_total = sum(1 for q in active_quests if effective_status(q, now, tz) == "failed")
 
+    # 3. Таланты (бонус XP)
+    talents_stmt = select(UserTalent).where(UserTalent.user_id == current_user.id)
+    user_talents = (await session.scalars(talents_stmt)).all()
+    ranks_by_code = {t.talent_code: t.rank for t in user_talents}
+    xp_bonus = total_xp_bonus_percent(ranks_by_code)
+
     return CharacterOut(
         user=UserOut.model_validate(current_user),
         level=level,
         xp_into_level=xp_in,
         xp_for_next_level=xp_next,
+        xp_bonus_percent=xp_bonus,
         stats=CharacterStats(
             completed_total=completed_total,
             failed_total=failed_total,

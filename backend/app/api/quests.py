@@ -20,10 +20,12 @@ from app.core.game import (
     xp_for_next_level,
     xp_into_level,
 )
+from app.core.talents import total_xp_bonus_percent
 from app.db import get_session
 from app.models.enums import QuestRank, QuestRarity, QuestRecurrence, QuestStatus
 from app.models.quest import Quest
 from app.models.user import User
+from app.models.user_talent import UserTalent
 from app.schemas.quest import (
     QuestCompleteQuest,
     QuestCompleteResponse,
@@ -321,7 +323,7 @@ async def complete_quest(
       1. SELECT ... FOR UPDATE.
       2. Проверки статуса (409 на провал — rollback автоматически при выходе
          из `async with SessionLocal()` в `get_session`).
-      3. calc_xp (единая формула §5.1 + §5.5).
+      3. calc_xp (единая формула §5.1 + §5.5 + бонус талантов).
       4. UPDATE quests.
       5. UPDATE users SET total_xp = total_xp + :xp (atomic).
       6. COMMIT.
@@ -358,16 +360,19 @@ async def complete_quest(
                 },
             )
 
-    # Просроченный не-рекуррентный active — валиден к выполнению (urgency=1.0).
-    # Отдельной проверки не нужно: calc_xp вернёт базовый XP.
+    # 3. Compute XP (единственная точка правды + бонус талантов)
+    talents_stmt = select(UserTalent).where(UserTalent.user_id == current_user.id)
+    user_talents = (await session.scalars(talents_stmt)).all()
+    ranks_by_code = {t.talent_code: t.rank for t in user_talents}
+    bonus_percent = total_xp_bonus_percent(ranks_by_code)
 
-    # 3. Compute XP (единственная точка правды)
     xp = calc_xp(
         quest.rank.value,
         quest.rarity.value,
         recurrence=quest.recurrence.value,
         deadline=quest.deadline,
         now=now,
+        talent_bonus_percent=bonus_percent,
     )
 
     # 4. Update quest (в памяти; commit ниже)
