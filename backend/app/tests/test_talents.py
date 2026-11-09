@@ -8,8 +8,8 @@ from app.core.talents import (
 
 def test_talent_catalog_keys() -> None:
     assert "start" in TALENTS
-    assert "xp_small_1" in TALENTS
-    assert "xp_notable_1" in TALENTS
+    assert "xp_1" in TALENTS
+    assert "xp_2" in TALENTS
 
 
 def test_available_talent_points_level_1() -> None:
@@ -28,13 +28,12 @@ def test_total_xp_bonus_percent_empty() -> None:
 
 
 def test_total_xp_bonus_percent_single() -> None:
-    # xp_small_1 дает +2% к опыту за ранг
-    assert get_total_bonus_percent({"xp_small_1": 3}) == 6
+    # xp_1 дает +2% к статам за ранг
+    assert get_total_bonus_percent({"xp_1": 3}) == 6
 
 
 def test_total_xp_bonus_percent_capped() -> None:
-    # Функция просто умножает, ограничение max_rank контролируется в API
-    assert get_total_bonus_percent({"xp_small_1": 5}) == 10
+    assert get_total_bonus_percent({"xp_1": 5}) == 10
 
 
 def test_can_upgrade_unknown_talent() -> None:
@@ -42,7 +41,7 @@ def test_can_upgrade_unknown_talent() -> None:
 
 
 def test_can_upgrade_no_points() -> None:
-    assert can_upgrade("xp_small_1", {}, 0) is False
+    assert can_upgrade("xp_1", {}, 0) is False
 
 
 def test_can_upgrade_start_node() -> None:
@@ -50,17 +49,17 @@ def test_can_upgrade_start_node() -> None:
 
 
 def test_can_upgrade_max_rank() -> None:
-    # max_rank для xp_small_1 равен 3
-    assert can_upgrade("xp_small_1", {"xp_small_1": 3}, 5) is False
+    # max_rank для xp_1 равен 3
+    assert can_upgrade("xp_1", {"xp_1": 3}, 5) is False
 
 
 def test_can_upgrade_missing_prereq() -> None:
-    # xp_small_2 соединен с xp_small_1, который не прокачан
-    assert can_upgrade("xp_small_2", {}, 5) is False
+    # xp_2 соединен с xp_1, который не прокачан
+    assert can_upgrade("xp_2", {}, 5) is False
 
 
 def test_can_upgrade_success() -> None:
-    # xp_small_1 соединен со start, start всегда считается прокачанным
-    assert can_upgrade("xp_small_1", {}, 1) is True
-    # xp_small_2 соединен с прокачанным xp_small_1
-    assert can_upgrade("xp_small_2", {"xp_small_1": 1}, 1) is True
+    # xp_1 соединен со start
+    assert can_upgrade("xp_1", {}, 1) is True
+    # xp_2 соединен с прокачанным xp_1
+    assert can_upgrade("xp_2", {"xp_1": 1}, 1) is True
