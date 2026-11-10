@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { TransformWrapper, TransformComponent, type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useTalents, useUpgradeTalent } from '../api/talents';
 import type { TalentNode } from '../api/talents';
 
