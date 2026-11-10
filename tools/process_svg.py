@@ -3,7 +3,7 @@ import re
 import math
 from pathlib import Path
 
-SVG_PATH = Path("tools/illusion.svg")
+SVG_PATH = Path("tools/Illusion.svg")
 JSON_PATH = Path("backend/app/core/talent_tree.json")
 OUTPUT_JSON = Path("backend/app/core/talent_tree.json")
 

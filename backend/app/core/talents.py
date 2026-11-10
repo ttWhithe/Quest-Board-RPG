@@ -55,7 +55,7 @@ def can_upgrade(talent_code: str, current_ranks: dict[str, int], available_point
     """Проверяет, можно ли прокачать узел."""
     if talent_code not in TALENTS:
         return False
-    if talent_code == "start":
+    if talent_code == "skyrim_start":
         return False
 
     node = TALENTS[talent_code]
@@ -66,7 +66,7 @@ def can_upgrade(talent_code: str, current_ranks: dict[str, int], available_point
 
     # Проверка связей: хотя бы один сосед должен быть прокачан
     for neighbor_id in _NEIGHBORS[talent_code]:
-        if neighbor_id == "start":
+        if neighbor_id == "skyrim_start":
             return True
         if current_ranks.get(neighbor_id, 0) > 0:
             return True

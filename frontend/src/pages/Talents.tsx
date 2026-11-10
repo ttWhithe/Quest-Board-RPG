@@ -136,12 +136,14 @@ export function Talents() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  const handleTransformed = (ref: ReactZoomPanPinchRef) => {
-    sessionStorage.setItem('talent_tree_state', JSON.stringify({
-      scale: ref.state.scale,
-      positionX: ref.state.positionX,
-      positionY: ref.state.positionY
-    }));
+  const handleTransformed = (ref: any) => {
+    if (ref?.state) {
+      sessionStorage.setItem('talent_tree_state', JSON.stringify({
+        scale: ref.state.scale,
+        positionX: ref.state.positionX,
+        positionY: ref.state.positionY
+      }));
+    }
   };
 
   if (isLoading || !data) {
@@ -175,7 +177,7 @@ export function Talents() {
         smooth={false}
         wheel={{ step: 0.05 }}
         doubleClick={{ disabled: true }}
-        onTransformed={handleTransformed}
+        onTransform={handleTransformed}
       >
         <TransformComponent wrapperClass="w-full h-full" contentClass="w-full h-full">
           <div className="relative" style={{ width: bounds.width, height: bounds.height }}>
