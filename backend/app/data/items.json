@@ -1,0 +1,12 @@
+{
+  "items": [
+    { "id": "item_1", "name": "Ржавый меч", "type": "weapon", "slot": "main_hand", "rarity": "common", "icon": "🗡️", "stats": { "strength": 2 } },
+    { "id": "item_2", "name": "Кожаный шлем", "type": "armor", "slot": "head", "rarity": "common", "icon": "🎩", "stats": { "endurance": 1 } },
+    { "id": "item_3", "name": "Деревянный щит", "type": "armor", "slot": "off_hand", "rarity": "common", "icon": "🛡️", "stats": { "endurance": 2 } },
+    { "id": "item_4", "name": "Кольцо силы", "type": "jewelry", "slot": "ring", "rarity": "rare", "icon": "💍", "stats": { "strength": 5 } },
+    { "id": "item_5", "name": "Амулет удачи", "type": "jewelry", "slot": "amulet", "rarity": "epic", "icon": "📿", "stats": { "luck": 10 } },
+    { "id": "item_6", "name": "Стальной нагрудник", "type": "armor", "slot": "chest", "rarity": "uncommon", "icon": "🥋", "stats": { "endurance": 4 } },
+    { "id": "item_7", "name": "Сапоги скорости", "type": "armor", "slot": "feet", "rarity": "rare", "icon": "👢", "stats": { "dexterity": 5 } },
+    { "id": "item_8", "name": "Легендарный клинок", "type": "weapon", "slot": "main_hand", "rarity": "legendary", "icon": "⚔️", "stats": { "strength": 15, "dexterity": 10 } }
+  ]
+}

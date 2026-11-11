@@ -3,7 +3,7 @@ import re
 import math
 from pathlib import Path
 
-JSON_PATH = Path("backend/app/core/talent_tree.json")
+JSON_PATH = Path("backend/app/data/talent_tree.json")
 LEGACY_PATH = Path("tools/legacy_tree.json")
 SVG_DIR = Path("frontend/public/talents")
 
@@ -49,7 +49,8 @@ def main():
                 "type": node["type"],
                 "x": new_x,
                 "y": new_y,
-                "max_rank": node.get("max_rank", 1)
+                "max_rank": node.get("max_rank", 1),
+                "effects": node.get("effects", [])
             })
 
         for edge in legacy_data["edges"]:
@@ -101,7 +102,8 @@ def main():
                 "type": "small",
                 "x": round(base_x + rot_x),
                 "y": round(base_y + rot_y),
-                "max_rank": 1
+                "max_rank": 1,
+                "effects": []
             })
 
         data["edges"].append(["skyrim_start", f"{prefix}_root"])

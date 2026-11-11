@@ -10,6 +10,7 @@ def test_talent_catalog_keys() -> None:
     assert "skyrim_start" in TALENTS
     assert "illusion_root" in TALENTS
     assert "illusion_1" in TALENTS
+    assert "xp_1" in TALENTS
 
 
 def test_available_talent_points_level_1() -> None:
@@ -31,9 +32,29 @@ def test_total_xp_bonus_percent_unknown() -> None:
     assert get_total_bonus_percent({"unknown": 5}) == 0
 
 
-def test_total_xp_bonus_percent_no_percent_in_desc() -> None:
-    # Пока таланты — заглушки без "+X%", бонус должен быть 0
-    assert get_total_bonus_percent({"illusion_root": 1}) == 0
+def test_total_xp_bonus_percent_no_effects() -> None:
+    # У illusion_root и skyrim_start нет эффектов (effects: [])
+    assert get_total_bonus_percent({"illusion_root": 1, "skyrim_start": 1}) == 0
+
+
+def test_total_xp_bonus_percent_linear() -> None:
+    # xp_1 (Жажда знаний): values = [2, 2, 2]
+    assert get_total_bonus_percent({"xp_1": 1}) == 2
+    assert get_total_bonus_percent({"xp_1": 2}) == 4
+    assert get_total_bonus_percent({"xp_1": 3}) == 6
+    # Если ранг передан больше max_rank, sum просто сложит все, что есть
+    assert get_total_bonus_percent({"xp_1": 4}) == 6
+
+
+def test_total_xp_bonus_percent_multiple_nodes() -> None:
+    # xp_1 (+2%) + xp_2 (+3%) + xp_3 (+2%)
+    ranks = {"xp_1": 1, "xp_2": 1, "xp_3": 1}
+    assert get_total_bonus_percent(ranks) == 7
+
+
+def test_total_xp_bonus_percent_non_xp_effects() -> None:
+    # str_1 дает strength_percent, а не xp_percent, поэтому бонус к опыту = 0
+    assert get_total_bonus_percent({"str_1": 3}) == 0
 
 
 def test_can_upgrade_unknown_talent() -> None:

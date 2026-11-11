@@ -5,6 +5,11 @@ import { XPBar } from '../components/XPBar';
 import { RANK_COLORS } from '../constants';
 import type { CharacterRank } from '../api/character';
 import { CharacterSkeleton } from '../components/Skeletons';
+import { SkillStats } from '../components/SkillStats';
+import { HexStatsChart } from '../components/HexStatsChart';
+import { Achievements } from '../components/Achievements';
+import { Equipment } from '../components/Equipment';
+import { Inventory } from '../components/Inventory';
 
 export function Character() {
   const { updateUser } = useAuth();
@@ -56,11 +61,13 @@ export function Character() {
   const ranks: CharacterRank[] = ['S', 'A', 'B', 'C', 'D', 'E', 'F'];
 
   return (
-    <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-8">
-      <h1 className="text-3xl md:text-4xl font-bold text-parchment-light drop-shadow-[2px_2px_0px_rgba(0,0,0,1)] mb-6">Карточка персонажа</h1>
+    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+      <h1 className="text-3xl md:text-4xl font-bold text-parchment-light drop-shadow-[2px_2px_0px_rgba(0,0,0,1)] mb-6">
+        Карточка персонажа
+      </h1>
 
+      {/* ВЕРХНИЙ БЛОК: ПРОФИЛЬ И ОПЫТ */}
       <div className="parchment-card p-4 md:p-8 flex flex-col md:flex-row gap-4 md:gap-10 items-center md:items-start">
-        {/* Левая колонка: Герб и профиль */}
         <div className="flex flex-col items-center gap-4 shrink-0">
           <div className="relative group cursor-pointer" onClick={handleEmblemChange}>
             <Emblem seed={user.emblem_seed} size={160} />
@@ -68,21 +75,15 @@ export function Character() {
               {isUpdating ? '...' : 'Сменить'}
             </div>
           </div>
-
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-800">{user.nickname}</h2>
             <p className="text-amber-600 font-semibold text-lg">Уровень {level}</p>
-            <button
-              onClick={handleNicknameChange}
-              disabled={isUpdating}
-              className="text-sm text-blue-500 hover:underline mt-1 disabled:opacity-50"
-            >
+            <button onClick={handleNicknameChange} disabled={isUpdating} className="text-sm text-blue-500 hover:underline mt-1 disabled:opacity-50">
               Изменить ник
             </button>
           </div>
         </div>
 
-        {/* Правая колонка: XP и статистика */}
         <div className="flex-1 w-full space-y-8">
           <div className="bg-parchment-dark p-4 md:p-6 border-2 border-tavern-wood">
             <XPBar current={xp_into_level} max={xp_for_next_level} />
@@ -105,16 +106,10 @@ export function Character() {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-gray-500 mb-3 uppercase tracking-wider">
-              Выполнено по рангам
-            </h3>
+            <h3 className="text-sm font-semibold text-gray-500 mb-3 uppercase tracking-wider">Выполнено по рангам</h3>
             <div className="flex gap-2 flex-wrap">
               {ranks.map(rank => (
-                <div
-                  key={rank}
-                  className="flex flex-col items-center justify-center w-12 h-12 rounded-lg text-white font-bold shadow-sm"
-                  style={{ backgroundColor: RANK_COLORS[rank] }}
-                >
+                <div key={rank} className="flex flex-col items-center justify-center w-12 h-12 rounded-lg text-white font-bold shadow-sm" style={{ backgroundColor: RANK_COLORS[rank] }}>
                   <span className="text-xs opacity-80">{rank}</span>
                   <span>{stats.by_rank[rank]}</span>
                 </div>
@@ -122,6 +117,34 @@ export function Character() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* НИЖНИЙ БЛОК: МОДУЛИ (Заглушки) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        {/* Левая колонка */}
+        <div className="space-y-6 flex flex-col">
+          <HexStatsChart />
+          <SkillStats />
+        </div>
+
+        {/* Центральная колонка */}
+        <div className="space-y-6 flex flex-col">
+          <Equipment />
+          <Inventory />
+        </div>
+
+        {/* Правая колонка */}
+        <div className="space-y-6 flex flex-col">
+          <Achievements />
+          {/* Плашка "Статистика" (задел на будущее) */}
+          <div className="parchment-card p-6 flex-1 flex flex-col justify-center items-center text-center opacity-50">
+            <span className="text-4xl mb-2">📊</span>
+            <h3 className="text-lg font-bold font-fantasy text-gray-800">Подробная статистика</h3>
+            <p className="text-sm text-gray-600 mt-1">В разработке...</p>
+          </div>
+        </div>
+
       </div>
     </div>
   );
