@@ -1,10 +1,12 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useTalents, useUpgradeTalent } from '../api/talents';
 import type { TalentNode } from '../api/talents';
 
 const NODE_SIZE = 36;
-const PADDING = 700;
+const PADDING = 300;
+
+const edgeKey = (a: string, b: string) => (a < b ? `${a}|${b}` : `${b}|${a}`);
 
 export function Talents() {
   const { data, isLoading } = useTalents();
@@ -13,16 +15,10 @@ export function Talents() {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [hoveredNode, setHoveredNode] = useState<TalentNode | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const transformRef = useRef<any>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
 
-  // Восстановление зума и скролла из sessionStorage
-  const [initialState] = useState(() => {
-    try {
-      const saved = sessionStorage.getItem('talent_tree_state');
-      return saved ? JSON.parse(saved) : { scale: 0.4, positionX: 0, positionY: 0 };
-    } catch {
-      return { scale: 0.4, positionX: 0, positionY: 0 };
-    }
-  });
+  const initialScale = 0.18;
 
   const bounds = useMemo(() => {
     if (!data || data.nodes.length === 0) return { minX: 0, minY: 0, width: 2000, height: 2000 };
@@ -45,84 +41,85 @@ export function Talents() {
     [selectedNodeId, nodesMap]
   );
 
-  // --- ЛОГИКА ПОДСВЕТКИ ПУТИ ---
-  // 1. Находим ВСЕ кратчайшие пути от старта до цели.
-  // 2. Считаем, в скольких путях встречается каждое ребро.
-  // 3. Если ребро во ВСЕХ путях — это общий участок (до развилки) → синий.
-  // 4. Иначе — это ребро конкретной ветки → цвет ветки (оранжевый, зелёный и т.д.).
   const pathEdgeColors = useMemo(() => {
     if (!hoveredNode || !data) return new Map<string, string>();
     const startId = 'skyrim_start';
     const targetId = hoveredNode.id;
     if (startId === targetId) return new Map<string, string>();
 
-    // BFS от старта: кратчайшее расстояние до каждого узла
-    const distFromStart = new Map<string, number>();
-    distFromStart.set(startId, 0);
-    const q1 = [startId];
-    while (q1.length) {
-      const curr = q1.shift()!;
-      data.edges.forEach(([from, to]) => {
-        if (from === curr && !distFromStart.has(to)) {
-          distFromStart.set(to, distFromStart.get(curr)! + 1);
-          q1.push(to);
-        }
-      });
-    }
-    if (!distFromStart.has(targetId)) return new Map<string, string>();
-
-    // Обратный BFS: собираем ВСЕ кратчайшие пути целиком
-    const allPaths: string[][][] = [];
-    const queue: { id: string; path: string[][] }[] = [{ id: targetId, path: [] }];
-    while (queue.length) {
-      const { id, path } = queue.shift()!;
-      if (id === startId) {
-        allPaths.push(path);
-        continue;
-      }
-      const currentDist = distFromStart.get(id)!;
-      data.edges.forEach(([from, to]) => {
-        if (to === id && distFromStart.get(from) === currentDist - 1) {
-          queue.push({ id: from, path: [[from, to], ...path] });
-        }
-      });
-    }
-    if (allPaths.length === 0) return new Map<string, string>();
-
-    // Частота рёбер: сколько путей через них проходит
-    const edgeFrequency = new Map<string, number>();
-    allPaths.forEach(path => {
-      path.forEach(([from, to]) => {
-        const key = `${from}-${to}`;
-        edgeFrequency.set(key, (edgeFrequency.get(key) || 0) + 1);
-      });
+    const adj = new Map<string, string[]>();
+    data.nodes.forEach(n => adj.set(n.id, []));
+    data.edges.forEach(([u, v]) => {
+      adj.get(u)!.push(v);
+      adj.get(v)!.push(u);
     });
 
-    // Цвета веток (не включают основной синий — он зарезервирован за общим путём)
+    const allPaths: string[][] = [];
+    const MAX_PATHS = 2000;
+    const dfs = (curr: string, path: string[], visited: Set<string>) => {
+      if (allPaths.length >= MAX_PATHS) return;
+      if (curr === targetId) {
+        allPaths.push([...path]);
+        return;
+      }
+      visited.add(curr);
+      for (const next of adj.get(curr) || []) {
+        if (!visited.has(next)) {
+          path.push(next);
+          dfs(next, path, visited);
+          path.pop();
+        }
+      }
+      visited.delete(curr);
+    };
+    dfs(startId, [startId], new Set());
+
+    if (allPaths.length === 0) return new Map<string, string>();
+
+    const minLen = Math.min(...allPaths.map(p => p.length));
+    const shortestPaths = allPaths.filter(p => p.length === minLen);
+    const longerPaths = allPaths.filter(p => p.length > minLen);
+
+    const edgeFreq = new Map<string, number>();
+    shortestPaths.forEach(path => {
+      for (let i = 0; i < path.length - 1; i++) {
+        const key = edgeKey(path[i], path[i + 1]);
+        edgeFreq.set(key, (edgeFreq.get(key) || 0) + 1);
+      }
+    });
+
     const MAIN_COLOR = '#3B82F6';
-    const branchColors = ['#F59E0B', '#10B981', '#EF4444', '#8B5CF6', '#EC4899'];
+    const RED_COLOR = '#EF4444';
+    const branchColors = ['#F59E0B', '#10B981', '#8B5CF6', '#EC4899', '#F97316'];
     const edgeColors = new Map<string, string>();
     const branchIdToColor = new Map<string, string>();
     let colorCounter = 0;
 
-    allPaths.forEach(path => {
-      // Ветка идентифицируется первым ребром после стартового (A → X)
-      const branchId = path.length > 1 ? path[1][1] : 'default';
+    shortestPaths.forEach(path => {
+      const branchId = path.length > 2 ? path[2] : 'default';
       if (!branchIdToColor.has(branchId)) {
         branchIdToColor.set(branchId, branchColors[colorCounter % branchColors.length]);
         colorCounter++;
       }
       const branchColor = branchIdToColor.get(branchId)!;
 
-      path.forEach(([from, to]) => {
-        const key = `${from}-${to}`;
-        // Ребро входит во все кратчайшие пути → общий участок → синий
-        if (edgeFrequency.get(key) === allPaths.length) {
+      for (let i = 0; i < path.length - 1; i++) {
+        const key = edgeKey(path[i], path[i + 1]);
+        if (edgeFreq.get(key) === shortestPaths.length) {
           edgeColors.set(key, MAIN_COLOR);
         } else {
           edgeColors.set(key, branchColor);
         }
-      });
+      }
+    });
+
+    longerPaths.forEach(path => {
+      for (let i = 0; i < path.length - 1; i++) {
+        const key = edgeKey(path[i], path[i + 1]);
+        if (!edgeColors.has(key)) {
+          edgeColors.set(key, RED_COLOR);
+        }
+      }
     });
 
     return edgeColors;
@@ -136,14 +133,21 @@ export function Talents() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  const handleTransformed = (ref: any) => {
-    if (ref?.state) {
-      sessionStorage.setItem('talent_tree_state', JSON.stringify({
-        scale: ref.state.scale,
-        positionX: ref.state.positionX,
-        positionY: ref.state.positionY
-      }));
-    }
+  // --- ТОЧНЫЙ СБРОС ВИДА ---
+  const handleReset = () => {
+    if (!transformRef.current) return;
+    if (!canvasRef.current) return;
+
+    const rect = canvasRef.current.getBoundingClientRect();
+    const w = rect.width;
+    const h = rect.height;
+
+    const dotX = 0 - bounds.minX;
+    const dotY = 0 - bounds.minY;
+    const x = w / 2 - dotX * initialScale;
+    const y = h / 2 - dotY * initialScale;
+
+    transformRef.current.setTransform(x, y, initialScale, 300, "easeOut");
   };
 
   if (isLoading || !data) {
@@ -167,129 +171,133 @@ export function Talents() {
         </span>
       </div>
 
-      <TransformWrapper
-        initialScale={initialState.scale}
-        initialPositionX={initialState.positionX}
-        initialPositionY={initialState.positionY}
-        minScale={0.1}
-        maxScale={2}
-        centerOnInit={initialState.scale === 0.4}
-        smooth={false}
-        wheel={{ step: 0.05 }}
-        doubleClick={{ disabled: true }}
-        onTransform={handleTransformed}
+      <button
+        onClick={handleReset}
+        className="absolute top-4 left-4 z-40 bg-black/80 hover:bg-black px-4 py-2 rounded-full border-2 border-amber-600 text-amber-400 text-sm font-bold shadow-xl transition-colors cursor-pointer"
+        title="Вернуть красную точку в центр"
       >
-        <TransformComponent wrapperClass="w-full h-full" contentClass="w-full h-full">
-          <div className="relative" style={{ width: bounds.width, height: bounds.height }}>
-            <svg className="absolute inset-0 pointer-events-none" width={bounds.width} height={bounds.height}>
-              <defs>
-                <filter id="glow">
-                  <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                  <feMerge>
-                    <feMergeNode in="coloredBlur"/>
-                    <feMergeNode in="SourceGraphic"/>
-                  </feMerge>
-                </filter>
-              </defs>
+        ⌖ Сброс вида
+      </button>
 
-              {data.edges.map(([from, to], idx) => {
-                const n1 = nodesMap.get(from);
-                const n2 = nodesMap.get(to);
-                if (!n1 || !n2) return null;
+      <div ref={canvasRef} className="flex-1 relative w-full h-full overflow-hidden">
+        <TransformWrapper
+          ref={transformRef}
+          initialScale={initialScale}
+          minScale={0.05}
+          maxScale={2}
+          centerOnInit={false}
+          limitToBounds={true} // <--- РАЗРЕШАЕТ ТАСКАТЬ ТОЛЬКО В ПРЕДЕЛАХ ГРАНИЦ ДЕРЕВА
+          smooth={false}
+          wheel={{ step: 0.05 }}
+          doubleClick={{ disabled: true }}
+          onInit={() => setTimeout(handleReset, 100)}
+        >
+          <TransformComponent wrapperClass="w-full h-full" wrapperStyle={{ width: '100%', height: '100%' }}>
+            <div className="relative" style={{ width: bounds.width, height: bounds.height }}>
+              <svg className="absolute inset-0 pointer-events-none" width={bounds.width} height={bounds.height}>
+                <defs>
+                  <filter id="glow">
+                    <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                    <feMerge>
+                      <feMergeNode in="coloredBlur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
+                </defs>
 
-                const x1 = n1.x - bounds.minX;
-                const y1 = n1.y - bounds.minY;
-                const x2 = n2.x - bounds.minX;
-                const y2 = n2.y - bounds.minY;
+                {data.edges.map(([from, to], idx) => {
+                  const n1 = nodesMap.get(from);
+                  const n2 = nodesMap.get(to);
+                  if (!n1 || !n2) return null;
 
-                const isActive = (n1.rank > 0 && n2.rank > 0) || (n1.type === 'start' && n2.rank > 0) || (n2.type === 'start' && n1.rank > 0);
+                  const x1 = n1.x - bounds.minX;
+                  const y1 = n1.y - bounds.minY;
+                  const x2 = n2.x - bounds.minX;
+                  const y2 = n2.y - bounds.minY;
 
-                const hoverColor = pathEdgeColors.get(`${from}-${to}`);
-                const isHoveredPath = hoverColor !== undefined;
+                  const isActive = (n1.rank > 0 && n2.rank > 0) || (n1.type === 'start' && n2.rank > 0) || (n2.type === 'start' && n1.rank > 0);
 
-                const midX = (x1 + x2) / 2;
-                const midY = (y1 + y2) / 2;
-                const dx = x2 - x1;
-                const dy = y2 - y1;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                const offset = from === 'skyrim_start' || to === 'skyrim_start' ? 0 : dist * 0.1;
-                const cx = midX - (dy / dist) * offset;
-                const cy = midY + (dx / dist) * offset;
+                  const hoverColor = pathEdgeColors.get(edgeKey(from, to));
+                  const isHoveredPath = hoverColor !== undefined;
 
-                const pathData = `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`;
+                  const midX = (x1 + x2) / 2;
+                  const midY = (y1 + y2) / 2;
+                  const dx = x2 - x1;
+                  const dy = y2 - y1;
+                  const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                  const offset = from === 'skyrim_start' || to === 'skyrim_start' ? 0 : dist * 0.1;
+                  const cx = midX - (dy / dist) * offset;
+                  const cy = midY + (dx / dist) * offset;
 
-                return (
-                  <g key={idx}>
-                    {(isActive || isHoveredPath) && (
+                  const pathData = `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`;
+
+                  return (
+                    <g key={idx}>
+                      {(isActive || isHoveredPath) && (
+                        <path
+                          d={pathData}
+                          fill="none"
+                          stroke={isHoveredPath ? hoverColor : "#F59E0B"}
+                          strokeWidth={6}
+                          strokeOpacity={0.3}
+                          strokeLinecap="round"
+                          filter="url(#glow)"
+                        />
+                      )}
                       <path
                         d={pathData}
                         fill="none"
-                        stroke={isHoveredPath ? hoverColor : "#F59E0B"}
-                        strokeWidth={6}
-                        strokeOpacity={0.3}
+                        stroke={isHoveredPath ? hoverColor : isActive ? '#F59E0B' : '#4B5563'}
+                        strokeWidth={isActive || isHoveredPath ? 3 : 2}
+                        strokeDasharray={isActive || isHoveredPath ? 'none' : '4 6'}
                         strokeLinecap="round"
-                        filter="url(#glow)"
                       />
-                    )}
-                    <path
-                      d={pathData}
-                      fill="none"
-                      stroke={isHoveredPath ? hoverColor : isActive ? '#F59E0B' : '#4B5563'}
-                      strokeWidth={isActive || isHoveredPath ? 3 : 2}
-                      strokeDasharray={isActive || isHoveredPath ? 'none' : '4 6'}
-                      strokeLinecap="round"
-                    />
-                  </g>
+                    </g>
+                  );
+                })}
+              </svg>
+
+              {data.nodes.map(node => {
+                const rx = node.x - bounds.minX;
+                const ry = node.y - bounds.minY;
+
+                return (
+                  <div
+                    key={node.id}
+                    id={`node-${node.id}`}
+                    onClick={() => setSelectedNodeId(node.id)}
+                    onMouseEnter={(e) => {
+                      setHoveredNode(node);
+                      setMousePos({ x: e.clientX, y: e.clientY });
+                    }}
+                    onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
+                    onMouseLeave={() => setHoveredNode(null)}
+                    className={`absolute rounded-full border-[3px] flex items-center justify-center transition-all duration-200 ${getNodeColor(node)} ${
+                      hoveredNode?.id === node.id ? 'scale-125 ring-2 ring-white/50' : ''
+                    }`}
+                    style={{
+                      width: NODE_SIZE,
+                      height: NODE_SIZE,
+                      left: rx - NODE_SIZE / 2,
+                      top: ry - NODE_SIZE / 2,
+                    }}
+                  >
+                    {node.id === 'skyrim_start' ? (
+                      <span className="text-white text-sm">★</span>
+                    ) : node.id.endsWith('_root') ? (
+                      <span className="text-white font-bold text-xs">A</span>
+                    ) : node.id.includes('_') ? (
+                      <span className="text-white font-bold text-xs">
+                        {String.fromCharCode(65 + parseInt(node.id.split('_').pop() || '0'))}
+                      </span>
+                    ) : null}
+                  </div>
                 );
               })}
-            </svg>
-
-            {data.nodes.map(node => {
-              const rx = node.x - bounds.minX;
-              const ry = node.y - bounds.minY;
-
-              return (
-                <div
-                  key={node.id}
-                  onClick={() => setSelectedNodeId(node.id)}
-                  onMouseEnter={(e) => {
-                    setHoveredNode(node);
-                    setMousePos({ x: e.clientX, y: e.clientY });
-                  }}
-                  onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
-                  onMouseLeave={() => setHoveredNode(null)}
-                  className={`absolute rounded-full border-[3px] flex items-center justify-center transition-all duration-200 ${getNodeColor(node)} ${
-                    hoveredNode?.id === node.id ? 'scale-125 ring-2 ring-white/50' : ''
-                  }`}
-                  style={{
-                    width: NODE_SIZE,
-                    height: NODE_SIZE,
-                    left: rx - NODE_SIZE / 2,
-                    top: ry - NODE_SIZE / 2,
-                  }}
-                >
-                  {/* Временная отладка: показываем буквы для ветки иллюзий */}
-                  {node.id === 'illusion_root' ? (
-                    <span className="text-white font-bold text-xs">A</span>
-                  ) : node.id.startsWith('illusion_') ? (
-                    <span className="text-white font-bold text-xs">
-                      {String.fromCharCode(65 + parseInt(node.id.split('_')[1]))}
-                    </span>
-                  ) : (
-                    <>
-                      {node.type === 'notable' && <span className="text-white text-xs">★</span>}
-                      {node.type === 'start' && <span className="text-white text-sm">★</span>}
-                      {node.rank > 0 && node.type === 'small' && (
-                        <span className="text-black font-extrabold text-xs">{node.rank}</span>
-                      )}
-                    </>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </TransformComponent>
-      </TransformWrapper>
+            </div>
+          </TransformComponent>
+        </TransformWrapper>
+      </div>
 
       {hoveredNode && (
         <div

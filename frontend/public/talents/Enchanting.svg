@@ -1,0 +1,45 @@
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Фон -->
+  <rect width="300" height="300" fill="#14640D"/>
+
+  <!-- ЛИНИИ (отдельные элементы) -->
+  <g id="connections" stroke="white" stroke-width="1.5" opacity="0.8">
+    <line id="line-A-B" x1="99" y1="278" x2="58" y2="165" />
+    <line id="line-B-C" x1="58" y1="165" x2="66" y2="99" />
+    <line id="line-C-D" x1="66" y1="99" x2="101" y2="46" />
+    <line id="line-D-E" x1="101" y1="46" x2="159" y2="21" />
+
+    <line id="line-A-F" x1="99" y1="278" x2="135" y2="165" />
+    <line id="line-F-G" x1="135" y1="165" x2="171" y2="98" />
+    <line id="line-G-E" x1="171" y1="98" x2="159" y2="21" />
+
+    <line id="line-A-H" x1="99" y1="278" x2="222" y2="165" />
+    <line id="line-H-I" x1="222" y1="165" x2="204" y2="44" />
+  </g>
+
+  <!-- КРУГИ -->
+  <g id="circles" fill="#0C9E16">
+    <circle id="circle-A" cx="99" cy="278" r="10" />
+    <circle id="circle-B" cx="58" cy="165" r="10" />
+    <circle id="circle-C" cx="66" cy="99" r="10" />
+    <circle id="circle-D" cx="101" cy="46" r="10" />
+    <circle id="circle-E" cx="159" cy="21" r="10" />
+    <circle id="circle-F" cx="135" cy="165" r="10" />
+    <circle id="circle-G" cx="171" cy="98" r="10" />
+    <circle id="circle-H" cx="222" cy="165" r="10" />
+    <circle id="circle-I" cx="204" cy="44" r="10" />
+  </g>
+
+  <!-- ТЕКСТ (Подписи в центрах кругов) -->
+  <g id="labels" fill="white" font-family="sans-serif" font-size="8" font-weight="bold" text-anchor="middle" dominant-baseline="central">
+    <text x="99" y="278">A</text>
+    <text x="58" y="165">B</text>
+    <text x="66" y="99">C</text>
+    <text x="101" y="46">D</text>
+    <text x="159" y="21">E</text>
+    <text x="135" y="165">F</text>
+    <text x="171" y="98">G</text>
+    <text x="222" y="165">H</text>
+    <text x="204" y="44">I</text>
+  </g>
+</svg>
