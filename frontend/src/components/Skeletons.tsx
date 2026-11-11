@@ -73,3 +73,26 @@ export function CalendarSkeleton() {
     </div>
   );
 }
+
+export function ModuleSkeleton() {
+  return (
+    <div className="parchment-card p-6 h-64 animate-pulse flex flex-col">
+      <div className={`${shimmer} h-6 w-1/2 mb-4`} />
+      <div className="flex-1 space-y-3">
+        <div className={`${shimmer} h-4 w-full`} />
+        <div className={`${shimmer} h-4 w-5/6`} />
+        <div className={`${shimmer} h-4 w-4/6`} />
+        <div className={`${shimmer} h-4 w-full`} />
+      </div>
+    </div>
+  );
+}
+
+export function HexSkeleton() {
+  return (
+    <div className="parchment-card p-6 h-[340px] animate-pulse flex flex-col items-center">
+      <div className={`${shimmer} h-6 w-1/2 mb-4 self-start`} />
+      <div className={`${shimmer} h-48 w-48 rounded-full mt-4`} />
+    </div>
+  );
+}

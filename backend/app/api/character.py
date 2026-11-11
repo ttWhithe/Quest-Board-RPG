@@ -161,4 +161,5 @@ async def get_inventory(
     data = load_json("items.json")
     items = data.get("items", [])
 
-    return InventoryResponse(items=items[:12], total=len(items))
+    # Отдаем ВСЕ предметы, чтобы работали фильтры в модалке
+    return InventoryResponse(items=items, total=len(items))
