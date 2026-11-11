@@ -8,6 +8,13 @@ const PADDING = 300;
 
 const edgeKey = (a: string, b: string) => (a < b ? `${a}|${b}` : `${b}|${a}`);
 
+// Легаси-узлы (центр, характеристики): у них эти префиксы ID
+const LEGACY_PREFIXES = ['xp_', 'wis_', 'str_', 'luck_', 'vit_', 'pre_', 'cross_'] as const;
+const isLegacyNode = (id: string): boolean =>
+  id !== 'skyrim_start' && LEGACY_PREFIXES.some(p => id.startsWith(p));
+const isLegacyEdge = (from: string, to: string): boolean =>
+  isLegacyNode(from) || isLegacyNode(to);
+
 export function Talents() {
   const { data, isLoading } = useTalents();
   const { mutate: upgradeTalent, isPending } = useUpgradeTalent();
@@ -133,7 +140,6 @@ export function Talents() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  // --- ТОЧНЫЙ СБРОС ВИДА ---
   const handleReset = () => {
     if (!transformRef.current) return;
     if (!canvasRef.current) return;
@@ -186,7 +192,7 @@ export function Talents() {
           minScale={0.05}
           maxScale={2}
           centerOnInit={false}
-          limitToBounds={true} // <--- РАЗРЕШАЕТ ТАСКАТЬ ТОЛЬКО В ПРЕДЕЛАХ ГРАНИЦ ДЕРЕВА
+          limitToBounds={true}
           smooth={false}
           wheel={{ step: 0.05 }}
           doubleClick={{ disabled: true }}
@@ -220,6 +226,11 @@ export function Talents() {
                   const hoverColor = pathEdgeColors.get(edgeKey(from, to));
                   const isHoveredPath = hoverColor !== undefined;
 
+                  // РАЗЛИЧАЕМ ЛЕГАСИ (центр) И СКАЙРИМ (внешние ветки)
+                  const legacy = isLegacyEdge(from, to);
+                  const inactiveStroke = legacy ? '#78716C' : '#6B7280';
+                  const inactiveDash = legacy ? '3 5' : '6 9';
+
                   const midX = (x1 + x2) / 2;
                   const midY = (y1 + y2) / 2;
                   const dx = x2 - x1;
@@ -247,9 +258,10 @@ export function Talents() {
                       <path
                         d={pathData}
                         fill="none"
-                        stroke={isHoveredPath ? hoverColor : isActive ? '#F59E0B' : '#4B5563'}
+                        stroke={isHoveredPath ? hoverColor : isActive ? '#F59E0B' : inactiveStroke}
                         strokeWidth={isActive || isHoveredPath ? 3 : 2}
-                        strokeDasharray={isActive || isHoveredPath ? 'none' : '4 6'}
+                        strokeDasharray={isActive || isHoveredPath ? 'none' : inactiveDash}
+                        strokeOpacity={isActive || isHoveredPath ? 1 : 0.5}
                         strokeLinecap="round"
                       />
                     </g>

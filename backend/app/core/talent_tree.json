@@ -3,10 +3,721 @@
     {
       "id": "skyrim_start",
       "name": "Созвездие",
-      "description": "Древние знания Скайрима.",
+      "description": "Древние знания Скайрима. Центр Древа Талантов.",
       "type": "start",
       "x": 0,
       "y": 0,
+      "max_rank": 1
+    },
+    {
+      "id": "xp_1",
+      "name": "Жажда знаний",
+      "description": "+2% к получаемому опыту",
+      "type": "small",
+      "x": 195,
+      "y": 13,
+      "max_rank": 3
+    },
+    {
+      "id": "xp_2",
+      "name": "Усердие",
+      "description": "+3% к получаемому опыту",
+      "type": "small",
+      "x": 286,
+      "y": 78,
+      "max_rank": 3
+    },
+    {
+      "id": "xp_3",
+      "name": "Целеустремлённость",
+      "description": "+2% к получаемому опыту",
+      "type": "small",
+      "x": 364,
+      "y": 169,
+      "max_rank": 3
+    },
+    {
+      "id": "xp_4",
+      "name": "Поток опыта",
+      "description": "+10% к получаемому опыту",
+      "type": "notable",
+      "x": 416,
+      "y": 273,
+      "max_rank": 1
+    },
+    {
+      "id": "xp_5",
+      "name": "Пунктуальность",
+      "description": "+3% к опыту за задачи, выполненные вовремя",
+      "type": "small",
+      "x": 546,
+      "y": 260,
+      "max_rank": 2
+    },
+    {
+      "id": "xp_6",
+      "name": "Дисциплина",
+      "description": "+2% к получаемому опыту",
+      "type": "small",
+      "x": 650,
+      "y": 182,
+      "max_rank": 3
+    },
+    {
+      "id": "xp_7",
+      "name": "Одержимость",
+      "description": "+15% к получаемому опыту",
+      "type": "notable",
+      "x": 754,
+      "y": 78,
+      "max_rank": 1
+    },
+    {
+      "id": "xp_8",
+      "name": "Ранний подъём",
+      "description": "+3% к опыту за задачи, выполненные до полудня",
+      "type": "small",
+      "x": 819,
+      "y": -52,
+      "max_rank": 2
+    },
+    {
+      "id": "xp_9",
+      "name": "Настойчивость",
+      "description": "+2% к получаемому опыту",
+      "type": "small",
+      "x": 845,
+      "y": -208,
+      "max_rank": 3
+    },
+    {
+      "id": "xp_10",
+      "name": "Мастерство",
+      "description": "+5% к получаемому опыту и +2% ко всем базовым статам",
+      "type": "notable",
+      "x": 845,
+      "y": -338,
+      "max_rank": 1
+    },
+    {
+      "id": "xp_11",
+      "name": "Планировщик",
+      "description": "+3% к опыту за задачи из плана",
+      "type": "small",
+      "x": 507,
+      "y": 377,
+      "max_rank": 2
+    },
+    {
+      "id": "xp_12",
+      "name": "Системность",
+      "description": "+10% к опыту за задачи из плана",
+      "type": "notable",
+      "x": 611,
+      "y": 442,
+      "max_rank": 1
+    },
+    {
+      "id": "wis_1",
+      "name": "Ученик",
+      "description": "+2% к интеллекту",
+      "type": "small",
+      "x": 130,
+      "y": 143,
+      "max_rank": 3
+    },
+    {
+      "id": "wis_2",
+      "name": "Читатель",
+      "description": "+3% к интеллекту",
+      "type": "small",
+      "x": 156,
+      "y": 247,
+      "max_rank": 3
+    },
+    {
+      "id": "wis_3",
+      "name": "Архивариус",
+      "description": "+10% к интеллекту",
+      "type": "notable",
+      "x": 143,
+      "y": 351,
+      "max_rank": 1
+    },
+    {
+      "id": "wis_4",
+      "name": "Аналитик",
+      "description": "+2% к восприятию",
+      "type": "small",
+      "x": 117,
+      "y": 455,
+      "max_rank": 2
+    },
+    {
+      "id": "wis_5",
+      "name": "Спокойствие",
+      "description": "+3% к духу",
+      "type": "small",
+      "x": 208,
+      "y": 520,
+      "max_rank": 2
+    },
+    {
+      "id": "wis_6",
+      "name": "Просветление",
+      "description": "+1 к максимуму очков действия",
+      "type": "notable",
+      "x": 351,
+      "y": 546,
+      "max_rank": 1
+    },
+    {
+      "id": "wis_7",
+      "name": "Сосредоточение",
+      "description": "+2% к духу",
+      "type": "small",
+      "x": 481,
+      "y": 546,
+      "max_rank": 3
+    },
+    {
+      "id": "wis_8",
+      "name": "Медитация",
+      "description": "+3% к духу",
+      "type": "small",
+      "x": 442,
+      "y": 663,
+      "max_rank": 2
+    },
+    {
+      "id": "wis_9",
+      "name": "Глубокий разум",
+      "description": "+10% к интеллекту и духу",
+      "type": "notable",
+      "x": 338,
+      "y": 767,
+      "max_rank": 1
+    },
+    {
+      "id": "wis_10",
+      "name": "Наблюдательность",
+      "description": "+2% к восприятию",
+      "type": "small",
+      "x": 208,
+      "y": 858,
+      "max_rank": 3
+    },
+    {
+      "id": "wis_11",
+      "name": "Внимание к деталям",
+      "description": "+3% к восприятию",
+      "type": "small",
+      "x": 65,
+      "y": 897,
+      "max_rank": 2
+    },
+    {
+      "id": "wis_12",
+      "name": "Ясность ума",
+      "description": "+8% к опыту за задачи категории «Учёба»",
+      "type": "notable",
+      "x": -91,
+      "y": 884,
+      "max_rank": 1
+    },
+    {
+      "id": "wis_13",
+      "name": "Озарение",
+      "description": "+5% ко всем эффектам интеллекта и духа в дереве",
+      "type": "notable",
+      "x": -234,
+      "y": 819,
+      "max_rank": 1
+    },
+    {
+      "id": "wis_14",
+      "name": "Логик",
+      "description": "+2% к интеллекту",
+      "type": "small",
+      "x": 260,
+      "y": 390,
+      "max_rank": 3
+    },
+    {
+      "id": "wis_15",
+      "name": "Дедукция",
+      "description": "+10% к интеллекту и +5% к восприятию",
+      "type": "notable",
+      "x": 364,
+      "y": 442,
+      "max_rank": 1
+    },
+    {
+      "id": "str_1",
+      "name": "Разминка",
+      "description": "+2% к силе",
+      "type": "small",
+      "x": -104,
+      "y": 169,
+      "max_rank": 3
+    },
+    {
+      "id": "str_2",
+      "name": "Тренировка",
+      "description": "+3% к силе",
+      "type": "small",
+      "x": -195,
+      "y": 234,
+      "max_rank": 3
+    },
+    {
+      "id": "str_3",
+      "name": "Атлет",
+      "description": "+10% к силе",
+      "type": "notable",
+      "x": -299,
+      "y": 273,
+      "max_rank": 1
+    },
+    {
+      "id": "str_4",
+      "name": "Тяга",
+      "description": "+2% к выносливости",
+      "type": "small",
+      "x": -416,
+      "y": 273,
+      "max_rank": 2
+    },
+    {
+      "id": "str_5",
+      "name": "Дыхание",
+      "description": "+3% к выносливости",
+      "type": "small",
+      "x": -429,
+      "y": 390,
+      "max_rank": 2
+    },
+    {
+      "id": "str_6",
+      "name": "Титан",
+      "description": "+1 к максимуму очков действия",
+      "type": "notable",
+      "x": -403,
+      "y": 520,
+      "max_rank": 1
+    },
+    {
+      "id": "str_7",
+      "name": "Закалка",
+      "description": "+2% к силе",
+      "type": "small",
+      "x": -520,
+      "y": 507,
+      "max_rank": 3
+    },
+    {
+      "id": "str_8",
+      "name": "Железная воля",
+      "description": "+10% к выносливости",
+      "type": "notable",
+      "x": -650,
+      "y": 442,
+      "max_rank": 1
+    },
+    {
+      "id": "str_9",
+      "name": "Стойкость",
+      "description": "+3% к выносливости",
+      "type": "small",
+      "x": -754,
+      "y": 338,
+      "max_rank": 2
+    },
+    {
+      "id": "str_10",
+      "name": "Напор",
+      "description": "+2% к силе",
+      "type": "small",
+      "x": -819,
+      "y": 208,
+      "max_rank": 3
+    },
+    {
+      "id": "str_11",
+      "name": "Несгибаемый",
+      "description": "+8% к опыту за задачи высокой сложности",
+      "type": "notable",
+      "x": -858,
+      "y": 65,
+      "max_rank": 1
+    },
+    {
+      "id": "str_12",
+      "name": "Спринтер",
+      "description": "+3% к выносливости",
+      "type": "small",
+      "x": -312,
+      "y": 624,
+      "max_rank": 2
+    },
+    {
+      "id": "str_13",
+      "name": "Марафонец",
+      "description": "+10% к выносливости и +3% к силе",
+      "type": "notable",
+      "x": -403,
+      "y": 715,
+      "max_rank": 1
+    },
+    {
+      "id": "luck_1",
+      "name": "Интуиция",
+      "description": "+2% к удаче",
+      "type": "small",
+      "x": -195,
+      "y": -39,
+      "max_rank": 3
+    },
+    {
+      "id": "luck_2",
+      "name": "Наблюдение",
+      "description": "+3% к удаче",
+      "type": "small",
+      "x": -286,
+      "y": -104,
+      "max_rank": 3
+    },
+    {
+      "id": "luck_3",
+      "name": "Фортуна",
+      "description": "+10% к удаче",
+      "type": "notable",
+      "x": -351,
+      "y": -195,
+      "max_rank": 1
+    },
+    {
+      "id": "luck_4",
+      "name": "Гибкость",
+      "description": "+2% к ловкости",
+      "type": "small",
+      "x": -403,
+      "y": -286,
+      "max_rank": 2
+    },
+    {
+      "id": "luck_5",
+      "name": "Везение",
+      "description": "+3% к удаче",
+      "type": "small",
+      "x": -520,
+      "y": -273,
+      "max_rank": 2
+    },
+    {
+      "id": "luck_6",
+      "name": "Джекпот",
+      "description": "+15% к удаче",
+      "type": "notable",
+      "x": -637,
+      "y": -208,
+      "max_rank": 1
+    },
+    {
+      "id": "luck_7",
+      "name": "Реакция",
+      "description": "+2% к ловкости",
+      "type": "small",
+      "x": -715,
+      "y": -104,
+      "max_rank": 3
+    },
+    {
+      "id": "luck_8",
+      "name": "Проворство",
+      "description": "+3% к ловкости",
+      "type": "small",
+      "x": -754,
+      "y": -221,
+      "max_rank": 2
+    },
+    {
+      "id": "luck_9",
+      "name": "Акробат",
+      "description": "+10% к ловкости",
+      "type": "notable",
+      "x": -741,
+      "y": -364,
+      "max_rank": 1
+    },
+    {
+      "id": "luck_10",
+      "name": "Оптимизм",
+      "description": "+2% к удаче",
+      "type": "small",
+      "x": -689,
+      "y": -494,
+      "max_rank": 3
+    },
+    {
+      "id": "luck_11",
+      "name": "Азарт",
+      "description": "+3% к удаче",
+      "type": "small",
+      "x": -585,
+      "y": -611,
+      "max_rank": 2
+    },
+    {
+      "id": "luck_12",
+      "name": "Клевер",
+      "description": "+5% ко всем базовым статам",
+      "type": "notable",
+      "x": -468,
+      "y": -689,
+      "max_rank": 1
+    },
+    {
+      "id": "luck_13",
+      "name": "Чутьё",
+      "description": "+2% к удаче",
+      "type": "small",
+      "x": -247,
+      "y": -286,
+      "max_rank": 2
+    },
+    {
+      "id": "luck_14",
+      "name": "Предчувствие",
+      "description": "+10% к удаче и +5% к восприятию",
+      "type": "notable",
+      "x": -299,
+      "y": -390,
+      "max_rank": 1
+    },
+    {
+      "id": "vit_1",
+      "name": "Вдох",
+      "description": "+2% к духу",
+      "type": "small",
+      "x": -39,
+      "y": -195,
+      "max_rank": 3
+    },
+    {
+      "id": "vit_2",
+      "name": "Ровное дыхание",
+      "description": "+3% к духу",
+      "type": "small",
+      "x": -26,
+      "y": -286,
+      "max_rank": 2
+    },
+    {
+      "id": "vit_3",
+      "name": "Внутренний баланс",
+      "description": "+10% к духу",
+      "type": "notable",
+      "x": 26,
+      "y": -377,
+      "max_rank": 1
+    },
+    {
+      "id": "vit_4",
+      "name": "Выносливость",
+      "description": "+2% к выносливости",
+      "type": "small",
+      "x": 91,
+      "y": -442,
+      "max_rank": 3
+    },
+    {
+      "id": "vit_5",
+      "name": "Терпение",
+      "description": "+3% к выносливости",
+      "type": "small",
+      "x": 39,
+      "y": -533,
+      "max_rank": 2
+    },
+    {
+      "id": "vit_6",
+      "name": "Второе дыхание",
+      "description": "+1 к максимуму очков действия",
+      "type": "notable",
+      "x": -39,
+      "y": -598,
+      "max_rank": 1
+    },
+    {
+      "id": "vit_7",
+      "name": "Стойкость духа",
+      "description": "+2% к духу",
+      "type": "small",
+      "x": -130,
+      "y": -637,
+      "max_rank": 3
+    },
+    {
+      "id": "vit_8",
+      "name": "Просветлённый",
+      "description": "+8% к опыту и +3% к духу",
+      "type": "notable",
+      "x": -234,
+      "y": -650,
+      "max_rank": 1
+    },
+    {
+      "id": "vit_9",
+      "name": "Спокойный ум",
+      "description": "+3% к духу",
+      "type": "small",
+      "x": -91,
+      "y": -442,
+      "max_rank": 2
+    },
+    {
+      "id": "vit_10",
+      "name": "Гармония",
+      "description": "+10% к духу и +5% к выносливости",
+      "type": "notable",
+      "x": -182,
+      "y": -533,
+      "max_rank": 1
+    },
+    {
+      "id": "pre_1",
+      "name": "Меткость",
+      "description": "+2% к ловкости",
+      "type": "small",
+      "x": 130,
+      "y": -143,
+      "max_rank": 3
+    },
+    {
+      "id": "pre_2",
+      "name": "Точность",
+      "description": "+3% к восприятию",
+      "type": "small",
+      "x": 221,
+      "y": -182,
+      "max_rank": 2
+    },
+    {
+      "id": "pre_3",
+      "name": "Снайпер",
+      "description": "+10% к восприятию",
+      "type": "notable",
+      "x": 325,
+      "y": -195,
+      "max_rank": 1
+    },
+    {
+      "id": "pre_4",
+      "name": "Хладнокровие",
+      "description": "+2% к интеллекту",
+      "type": "small",
+      "x": 416,
+      "y": -182,
+      "max_rank": 3
+    },
+    {
+      "id": "pre_5",
+      "name": "Концентрация",
+      "description": "+3% к восприятию",
+      "type": "small",
+      "x": 455,
+      "y": -286,
+      "max_rank": 2
+    },
+    {
+      "id": "pre_6",
+      "name": "Ясный взор",
+      "description": "+10% к ловкости и восприятию",
+      "type": "notable",
+      "x": 455,
+      "y": -390,
+      "max_rank": 1
+    },
+    {
+      "id": "pre_7",
+      "name": "Расчёт",
+      "description": "+2% к интеллекту",
+      "type": "small",
+      "x": 429,
+      "y": -481,
+      "max_rank": 3
+    },
+    {
+      "id": "pre_8",
+      "name": "Идеальный момент",
+      "description": "+10% к шансу критического успеха задачи",
+      "type": "notable",
+      "x": 390,
+      "y": -572,
+      "max_rank": 1
+    },
+    {
+      "id": "pre_9",
+      "name": "Бдительность",
+      "description": "+3% к восприятию",
+      "type": "small",
+      "x": 312,
+      "y": -637,
+      "max_rank": 2
+    },
+    {
+      "id": "pre_10",
+      "name": "Мастер деталей",
+      "description": "+8% к опыту за задачи с чек-листами",
+      "type": "notable",
+      "x": 221,
+      "y": -689,
+      "max_rank": 1
+    },
+    {
+      "id": "pre_11",
+      "name": "Следопыт",
+      "description": "+3% к восприятию",
+      "type": "small",
+      "x": 234,
+      "y": -299,
+      "max_rank": 2
+    },
+    {
+      "id": "pre_12",
+      "name": "Охотник",
+      "description": "+10% к восприятию и +5% к ловкости",
+      "type": "notable",
+      "x": 156,
+      "y": -390,
+      "max_rank": 1
+    },
+    {
+      "id": "cross_1",
+      "name": "Идеальный баланс",
+      "description": "+5% ко всем базовым статам",
+      "type": "notable",
+      "x": 0,
+      "y": -832,
+      "max_rank": 1
+    },
+    {
+      "id": "cross_2",
+      "name": "Мастер пути",
+      "description": "+2 к максимуму очков действия",
+      "type": "notable",
+      "x": -611,
+      "y": 806,
+      "max_rank": 1
+    },
+    {
+      "id": "cross_3",
+      "name": "Совершенство",
+      "description": "+10% к получаемому опыту и +5% к удаче",
+      "type": "notable",
+      "x": 754,
+      "y": -546,
       "max_rank": 1
     },
     {
@@ -15,7 +726,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": 0,
-      "y": -1300,
+      "y": -1200,
       "max_rank": 1
     },
     {
@@ -24,7 +735,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": -193,
-      "y": -1305,
+      "y": -1205,
       "max_rank": 1
     },
     {
@@ -33,7 +744,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": -128,
-      "y": -1423,
+      "y": -1323,
       "max_rank": 1
     },
     {
@@ -42,7 +753,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": -125,
-      "y": -1523,
+      "y": -1423,
       "max_rank": 1
     },
     {
@@ -51,7 +762,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": -130,
-      "y": -1574,
+      "y": -1474,
       "max_rank": 1
     },
     {
@@ -60,7 +771,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": -70,
-      "y": -1643,
+      "y": -1543,
       "max_rank": 1
     },
     {
@@ -69,7 +780,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": -18,
-      "y": -1458,
+      "y": -1358,
       "max_rank": 1
     },
     {
@@ -78,7 +789,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": -58,
-      "y": -1551,
+      "y": -1451,
       "max_rank": 1
     },
     {
@@ -87,7 +798,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": -23,
-      "y": -1587,
+      "y": -1487,
       "max_rank": 1
     },
     {
@@ -96,7 +807,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": 146,
-      "y": -1388,
+      "y": -1288,
       "max_rank": 1
     },
     {
@@ -105,7 +816,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": 60,
-      "y": -1493,
+      "y": -1393,
       "max_rank": 1
     },
     {
@@ -114,7 +825,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": 51,
-      "y": -1578,
+      "y": -1478,
       "max_rank": 1
     },
     {
@@ -123,7 +834,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": 18,
-      "y": -1643,
+      "y": -1543,
       "max_rank": 1
     },
     {
@@ -131,8 +842,8 @@
       "name": "Талант Conjuration A",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 445,
-      "y": -1222,
+      "x": 410,
+      "y": -1128,
       "max_rank": 1
     },
     {
@@ -140,8 +851,8 @@
       "name": "Талант Conjuration B",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 360,
-      "y": -1398,
+      "x": 326,
+      "y": -1304,
       "max_rank": 1
     },
     {
@@ -149,8 +860,8 @@
       "name": "Талант Conjuration C",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 389,
-      "y": -1518,
+      "x": 355,
+      "y": -1424,
       "max_rank": 1
     },
     {
@@ -158,8 +869,8 @@
       "name": "Талант Conjuration D",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 413,
-      "y": -1568,
+      "x": 379,
+      "y": -1474,
       "max_rank": 1
     },
     {
@@ -167,8 +878,8 @@
       "name": "Талант Conjuration E",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 491,
-      "y": -1569,
+      "x": 456,
+      "y": -1475,
       "max_rank": 1
     },
     {
@@ -176,8 +887,8 @@
       "name": "Талант Conjuration F",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 423,
-      "y": -1342,
+      "x": 389,
+      "y": -1248,
       "max_rank": 1
     },
     {
@@ -185,8 +896,8 @@
       "name": "Талант Conjuration G",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 455,
-      "y": -1494,
+      "x": 420,
+      "y": -1400,
       "max_rank": 1
     },
     {
@@ -194,8 +905,8 @@
       "name": "Талант Conjuration H",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 472,
-      "y": -1542,
+      "x": 438,
+      "y": -1448,
       "max_rank": 1
     },
     {
@@ -203,8 +914,8 @@
       "name": "Талант Conjuration I",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 501,
-      "y": -1313,
+      "x": 467,
+      "y": -1219,
       "max_rank": 1
     },
     {
@@ -212,8 +923,8 @@
       "name": "Талант Conjuration J",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 553,
-      "y": -1438,
+      "x": 518,
+      "y": -1344,
       "max_rank": 1
     },
     {
@@ -221,8 +932,8 @@
       "name": "Талант Conjuration K",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 565,
-      "y": -1473,
+      "x": 531,
+      "y": -1379,
       "max_rank": 1
     },
     {
@@ -230,8 +941,8 @@
       "name": "Талант Conjuration L",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 572,
-      "y": -1321,
+      "x": 537,
+      "y": -1228,
       "max_rank": 1
     },
     {
@@ -239,8 +950,8 @@
       "name": "Талант Conjuration M",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 610,
-      "y": -1388,
+      "x": 576,
+      "y": -1294,
       "max_rank": 1
     },
     {
@@ -248,8 +959,8 @@
       "name": "Талант Conjuration N",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 622,
-      "y": -1448,
+      "x": 588,
+      "y": -1354,
       "max_rank": 1
     },
     {
@@ -257,8 +968,8 @@
       "name": "Талант Conjuration O",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 595,
-      "y": -1531,
+      "x": 561,
+      "y": -1437,
       "max_rank": 1
     },
     {
@@ -266,8 +977,8 @@
       "name": "Талант Destruction A",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 836,
-      "y": -996,
+      "x": 771,
+      "y": -919,
       "max_rank": 1
     },
     {
@@ -275,8 +986,8 @@
       "name": "Талант Destruction B",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 853,
-      "y": -1145,
+      "x": 789,
+      "y": -1068,
       "max_rank": 1
     },
     {
@@ -284,8 +995,8 @@
       "name": "Талант Destruction C",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 894,
-      "y": -1210,
+      "x": 829,
+      "y": -1133,
       "max_rank": 1
     },
     {
@@ -293,8 +1004,8 @@
       "name": "Талант Destruction D",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 917,
-      "y": -1129,
+      "x": 853,
+      "y": -1052,
       "max_rank": 1
     },
     {
@@ -302,8 +1013,8 @@
       "name": "Талант Destruction E",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 967,
-      "y": -1201,
+      "x": 903,
+      "y": -1124,
       "max_rank": 1
     },
     {
@@ -311,8 +1022,8 @@
       "name": "Талант Destruction F",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 953,
-      "y": -1100,
+      "x": 889,
+      "y": -1024,
       "max_rank": 1
     },
     {
@@ -320,8 +1031,8 @@
       "name": "Талант Destruction G",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1021,
-      "y": -1181,
+      "x": 957,
+      "y": -1104,
       "max_rank": 1
     },
     {
@@ -329,8 +1040,8 @@
       "name": "Талант Destruction H",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 960,
-      "y": -1022,
+      "x": 896,
+      "y": -945,
       "max_rank": 1
     },
     {
@@ -338,8 +1049,8 @@
       "name": "Талант Destruction I",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1019,
-      "y": -1105,
+      "x": 955,
+      "y": -1028,
       "max_rank": 1
     },
     {
@@ -347,8 +1058,8 @@
       "name": "Талант Destruction J",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1076,
-      "y": -1135,
+      "x": 1011,
+      "y": -1058,
       "max_rank": 1
     },
     {
@@ -356,8 +1067,8 @@
       "name": "Талант Destruction K",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1123,
-      "y": -1196,
+      "x": 1059,
+      "y": -1119,
       "max_rank": 1
     },
     {
@@ -365,8 +1076,8 @@
       "name": "Талант Destruction L",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1027,
-      "y": -1035,
+      "x": 963,
+      "y": -958,
       "max_rank": 1
     },
     {
@@ -374,8 +1085,8 @@
       "name": "Талант Destruction M",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 949,
-      "y": -948,
+      "x": 885,
+      "y": -872,
       "max_rank": 1
     },
     {
@@ -383,8 +1094,8 @@
       "name": "Талант Destruction N",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1011,
-      "y": -980,
+      "x": 946,
+      "y": -903,
       "max_rank": 1
     },
     {
@@ -392,8 +1103,8 @@
       "name": "Талант Restoration A",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1126,
-      "y": -650,
+      "x": 1039,
+      "y": -600,
       "max_rank": 1
     },
     {
@@ -401,8 +1112,8 @@
       "name": "Талант Restoration B",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1168,
-      "y": -906,
+      "x": 1082,
+      "y": -856,
       "max_rank": 1
     },
     {
@@ -410,8 +1121,8 @@
       "name": "Талант Restoration C",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1203,
-      "y": -799,
+      "x": 1117,
+      "y": -749,
       "max_rank": 1
     },
     {
@@ -419,8 +1130,8 @@
       "name": "Талант Restoration D",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1258,
-      "y": -931,
+      "x": 1171,
+      "y": -881,
       "max_rank": 1
     },
     {
@@ -428,8 +1139,8 @@
       "name": "Талант Restoration E",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1307,
-      "y": -846,
+      "x": 1220,
+      "y": -796,
       "max_rank": 1
     },
     {
@@ -437,8 +1148,8 @@
       "name": "Талант Restoration F",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1252,
-      "y": -705,
+      "x": 1165,
+      "y": -655,
       "max_rank": 1
     },
     {
@@ -446,8 +1157,8 @@
       "name": "Талант Restoration G",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1323,
-      "y": -778,
+      "x": 1236,
+      "y": -728,
       "max_rank": 1
     },
     {
@@ -455,8 +1166,8 @@
       "name": "Талант Restoration H",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1400,
-      "y": -816,
+      "x": 1313,
+      "y": -766,
       "max_rank": 1
     },
     {
@@ -464,8 +1175,8 @@
       "name": "Талант Restoration I",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1402,
-      "y": -865,
+      "x": 1315,
+      "y": -815,
       "max_rank": 1
     },
     {
@@ -473,8 +1184,8 @@
       "name": "Талант Restoration J",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1335,
-      "y": -617,
+      "x": 1249,
+      "y": -567,
       "max_rank": 1
     },
     {
@@ -482,8 +1193,8 @@
       "name": "Талант Restoration K",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1413,
-      "y": -622,
+      "x": 1326,
+      "y": -572,
       "max_rank": 1
     },
     {
@@ -491,8 +1202,8 @@
       "name": "Талант Restoration L",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1275,
-      "y": -578,
+      "x": 1188,
+      "y": -528,
       "max_rank": 1
     },
     {
@@ -500,8 +1211,8 @@
       "name": "Талант Alteration A",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1280,
-      "y": -226,
+      "x": 1182,
+      "y": -208,
       "max_rank": 1
     },
     {
@@ -509,8 +1220,8 @@
       "name": "Талант Alteration B",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1365,
-      "y": -298,
+      "x": 1267,
+      "y": -281,
       "max_rank": 1
     },
     {
@@ -518,8 +1229,8 @@
       "name": "Талант Alteration C",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1409,
-      "y": -231,
+      "x": 1310,
+      "y": -214,
       "max_rank": 1
     },
     {
@@ -527,8 +1238,8 @@
       "name": "Талант Alteration D",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1487,
-      "y": -314,
+      "x": 1388,
+      "y": -297,
       "max_rank": 1
     },
     {
@@ -536,8 +1247,8 @@
       "name": "Талант Alteration E",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1511,
-      "y": -175,
+      "x": 1413,
+      "y": -158,
       "max_rank": 1
     },
     {
@@ -545,8 +1256,8 @@
       "name": "Талант Alteration F",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1520,
-      "y": -251,
+      "x": 1422,
+      "y": -234,
       "max_rank": 1
     },
     {
@@ -554,8 +1265,8 @@
       "name": "Талант Alteration G",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1559,
-      "y": -306,
+      "x": 1460,
+      "y": -289,
       "max_rank": 1
     },
     {
@@ -563,8 +1274,8 @@
       "name": "Талант Alteration H",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1573,
-      "y": -224,
+      "x": 1475,
+      "y": -206,
       "max_rank": 1
     },
     {
@@ -572,8 +1283,8 @@
       "name": "Талант Alteration I",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1590,
-      "y": -351,
+      "x": 1492,
+      "y": -334,
       "max_rank": 1
     },
     {
@@ -581,8 +1292,8 @@
       "name": "Талант Alteration J",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1624,
-      "y": -160,
+      "x": 1525,
+      "y": -142,
       "max_rank": 1
     },
     {
@@ -590,8 +1301,8 @@
       "name": "Талант Enchanting A",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1280,
-      "y": 226,
+      "x": 1182,
+      "y": 208,
       "max_rank": 1
     },
     {
@@ -599,8 +1310,8 @@
       "name": "Талант Enchanting B",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1437,
-      "y": 198,
+      "x": 1339,
+      "y": 181,
       "max_rank": 1
     },
     {
@@ -608,8 +1319,8 @@
       "name": "Талант Enchanting C",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1522,
-      "y": 224,
+      "x": 1423,
+      "y": 207,
       "max_rank": 1
     },
     {
@@ -617,8 +1328,8 @@
       "name": "Талант Enchanting D",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1583,
-      "y": 282,
+      "x": 1484,
+      "y": 264,
       "max_rank": 1
     },
     {
@@ -626,8 +1337,8 @@
       "name": "Талант Enchanting E",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1602,
-      "y": 363,
+      "x": 1504,
+      "y": 346,
       "max_rank": 1
     },
     {
@@ -635,8 +1346,8 @@
       "name": "Талант Enchanting F",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1420,
-      "y": 299,
+      "x": 1321,
+      "y": 281,
       "max_rank": 1
     },
     {
@@ -644,8 +1355,8 @@
       "name": "Талант Enchanting G",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1499,
-      "y": 361,
+      "x": 1400,
+      "y": 344,
       "max_rank": 1
     },
     {
@@ -653,8 +1364,8 @@
       "name": "Талант Enchanting H",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1400,
-      "y": 412,
+      "x": 1301,
+      "y": 395,
       "max_rank": 1
     },
     {
@@ -662,8 +1373,8 @@
       "name": "Талант Enchanting I",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1562,
-      "y": 417,
+      "x": 1463,
+      "y": 399,
       "max_rank": 1
     },
     {
@@ -671,8 +1382,8 @@
       "name": "Талант Smithing A",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1126,
-      "y": 650,
+      "x": 1039,
+      "y": 600,
       "max_rank": 1
     },
     {
@@ -680,8 +1391,8 @@
       "name": "Талант Smithing B",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1228,
-      "y": 723,
+      "x": 1142,
+      "y": 673,
       "max_rank": 1
     },
     {
@@ -689,8 +1400,8 @@
       "name": "Талант Smithing C",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1294,
-      "y": 610,
+      "x": 1207,
+      "y": 560,
       "max_rank": 1
     },
     {
@@ -698,8 +1409,8 @@
       "name": "Талант Smithing D",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1315,
-      "y": 642,
+      "x": 1228,
+      "y": 592,
       "max_rank": 1
     },
     {
@@ -707,8 +1418,8 @@
       "name": "Талант Smithing E",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1312,
-      "y": 726,
+      "x": 1226,
+      "y": 676,
       "max_rank": 1
     },
     {
@@ -716,8 +1427,8 @@
       "name": "Талант Smithing F",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1148,
-      "y": 800,
+      "x": 1062,
+      "y": 750,
       "max_rank": 1
     },
     {
@@ -725,8 +1436,8 @@
       "name": "Талант Smithing G",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1122,
-      "y": 914,
+      "x": 1036,
+      "y": 864,
       "max_rank": 1
     },
     {
@@ -734,8 +1445,8 @@
       "name": "Талант Smithing H",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1090,
-      "y": 998,
+      "x": 1003,
+      "y": 948,
       "max_rank": 1
     },
     {
@@ -743,8 +1454,8 @@
       "name": "Талант Smithing I",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1200,
-      "y": 885,
+      "x": 1114,
+      "y": 835,
       "max_rank": 1
     },
     {
@@ -752,8 +1463,8 @@
       "name": "Талант Smithing J",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1259,
-      "y": 814,
+      "x": 1173,
+      "y": 764,
       "max_rank": 1
     },
     {
@@ -761,8 +1472,8 @@
       "name": "Талант Heavy Armor A",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 836,
-      "y": 996,
+      "x": 771,
+      "y": 919,
       "max_rank": 1
     },
     {
@@ -770,8 +1481,8 @@
       "name": "Талант Heavy Armor B",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 991,
-      "y": 1010,
+      "x": 927,
+      "y": 934,
       "max_rank": 1
     },
     {
@@ -779,8 +1490,8 @@
       "name": "Талант Heavy Armor C",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1100,
-      "y": 1068,
+      "x": 1036,
+      "y": 991,
       "max_rank": 1
     },
     {
@@ -788,8 +1499,8 @@
       "name": "Талант Heavy Armor D",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 1153,
-      "y": 1142,
+      "x": 1088,
+      "y": 1065,
       "max_rank": 1
     },
     {
@@ -797,8 +1508,8 @@
       "name": "Талант Heavy Armor E",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 826,
-      "y": 1149,
+      "x": 762,
+      "y": 1073,
       "max_rank": 1
     },
     {
@@ -806,8 +1517,8 @@
       "name": "Талант Heavy Armor F",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 873,
-      "y": 1258,
+      "x": 809,
+      "y": 1182,
       "max_rank": 1
     },
     {
@@ -815,8 +1526,8 @@
       "name": "Талант Heavy Armor G",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 893,
-      "y": 1322,
+      "x": 829,
+      "y": 1246,
       "max_rank": 1
     },
     {
@@ -824,8 +1535,8 @@
       "name": "Талант Heavy Armor H",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 935,
-      "y": 1332,
+      "x": 871,
+      "y": 1255,
       "max_rank": 1
     },
     {
@@ -833,8 +1544,8 @@
       "name": "Талант Block A",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 445,
-      "y": 1222,
+      "x": 410,
+      "y": 1128,
       "max_rank": 1
     },
     {
@@ -842,8 +1553,8 @@
       "name": "Талант Block B",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 542,
-      "y": 1346,
+      "x": 507,
+      "y": 1252,
       "max_rank": 1
     },
     {
@@ -851,8 +1562,8 @@
       "name": "Талант Block C",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 670,
-      "y": 1255,
+      "x": 636,
+      "y": 1161,
       "max_rank": 1
     },
     {
@@ -860,8 +1571,8 @@
       "name": "Талант Block D",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 681,
-      "y": 1431,
+      "x": 646,
+      "y": 1338,
       "max_rank": 1
     },
     {
@@ -869,8 +1580,8 @@
       "name": "Талант Block E",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 637,
-      "y": 1488,
+      "x": 603,
+      "y": 1394,
       "max_rank": 1
     },
     {
@@ -878,8 +1589,8 @@
       "name": "Талант Block F",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 315,
-      "y": 1389,
+      "x": 281,
+      "y": 1295,
       "max_rank": 1
     },
     {
@@ -887,8 +1598,8 @@
       "name": "Талант Block G",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 367,
-      "y": 1491,
+      "x": 333,
+      "y": 1397,
       "max_rank": 1
     },
     {
@@ -896,8 +1607,8 @@
       "name": "Талант Block H",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 431,
-      "y": 1563,
+      "x": 397,
+      "y": 1469,
       "max_rank": 1
     },
     {
@@ -905,8 +1616,8 @@
       "name": "Талант Block I",
       "description": "Описание таланта...",
       "type": "small",
-      "x": 564,
-      "y": 1550,
+      "x": 530,
+      "y": 1457,
       "max_rank": 1
     },
     {
@@ -915,7 +1626,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": 0,
-      "y": 1300,
+      "y": 1200,
       "max_rank": 1
     },
     {
@@ -924,7 +1635,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": 78,
-      "y": 1423,
+      "y": 1323,
       "max_rank": 1
     },
     {
@@ -933,7 +1644,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": -75,
-      "y": 1436,
+      "y": 1336,
       "max_rank": 1
     },
     {
@@ -942,7 +1653,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": -121,
-      "y": 1436,
+      "y": 1336,
       "max_rank": 1
     },
     {
@@ -951,7 +1662,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": -6,
-      "y": 1390,
+      "y": 1290,
       "max_rank": 1
     },
     {
@@ -960,7 +1671,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": 18,
-      "y": 1496,
+      "y": 1396,
       "max_rank": 1
     },
     {
@@ -969,7 +1680,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": -33,
-      "y": 1494,
+      "y": 1394,
       "max_rank": 1
     },
     {
@@ -978,7 +1689,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": -17,
-      "y": 1591,
+      "y": 1491,
       "max_rank": 1
     },
     {
@@ -987,7 +1698,7 @@
       "description": "Описание таланта...",
       "type": "small",
       "x": -19,
-      "y": 1649,
+      "y": 1549,
       "max_rank": 1
     },
     {
@@ -995,8 +1706,8 @@
       "name": "Талант One-Handed A",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -445,
-      "y": 1222,
+      "x": -410,
+      "y": 1128,
       "max_rank": 1
     },
     {
@@ -1004,8 +1715,8 @@
       "name": "Талант One-Handed B",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -420,
-      "y": 1394,
+      "x": -386,
+      "y": 1300,
       "max_rank": 1
     },
     {
@@ -1013,8 +1724,8 @@
       "name": "Талант One-Handed C",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -478,
-      "y": 1314,
+      "x": -444,
+      "y": 1220,
       "max_rank": 1
     },
     {
@@ -1022,8 +1733,8 @@
       "name": "Талант One-Handed D",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -487,
-      "y": 1441,
+      "x": -452,
+      "y": 1347,
       "max_rank": 1
     },
     {
@@ -1031,8 +1742,8 @@
       "name": "Талант One-Handed E",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -546,
-      "y": 1420,
+      "x": -512,
+      "y": 1326,
       "max_rank": 1
     },
     {
@@ -1040,8 +1751,8 @@
       "name": "Талант One-Handed F",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -564,
-      "y": 1550,
+      "x": -530,
+      "y": 1457,
       "max_rank": 1
     },
     {
@@ -1049,8 +1760,8 @@
       "name": "Талант One-Handed G",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -549,
-      "y": 1347,
+      "x": -515,
+      "y": 1253,
       "max_rank": 1
     },
     {
@@ -1058,8 +1769,8 @@
       "name": "Талант One-Handed H",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -589,
-      "y": 1333,
+      "x": -555,
+      "y": 1239,
       "max_rank": 1
     },
     {
@@ -1067,8 +1778,8 @@
       "name": "Талант One-Handed I",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -619,
-      "y": 1234,
+      "x": -584,
+      "y": 1140,
       "max_rank": 1
     },
     {
@@ -1076,8 +1787,8 @@
       "name": "Талант One-Handed J",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -645,
-      "y": 1460,
+      "x": -611,
+      "y": 1366,
       "max_rank": 1
     },
     {
@@ -1085,8 +1796,8 @@
       "name": "Талант Archery A",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -836,
-      "y": 996,
+      "x": -771,
+      "y": 919,
       "max_rank": 1
     },
     {
@@ -1094,8 +1805,8 @@
       "name": "Талант Archery B",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -778,
-      "y": 1178,
+      "x": -714,
+      "y": 1102,
       "max_rank": 1
     },
     {
@@ -1103,8 +1814,8 @@
       "name": "Талант Archery C",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -837,
-      "y": 1169,
+      "x": -773,
+      "y": 1093,
       "max_rank": 1
     },
     {
@@ -1112,8 +1823,8 @@
       "name": "Талант Archery D",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -801,
-      "y": 1264,
+      "x": -736,
+      "y": 1187,
       "max_rank": 1
     },
     {
@@ -1121,8 +1832,8 @@
       "name": "Талант Archery E",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -868,
-      "y": 1344,
+      "x": -804,
+      "y": 1268,
       "max_rank": 1
     },
     {
@@ -1130,8 +1841,8 @@
       "name": "Талант Archery F",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -896,
-      "y": 1120,
+      "x": -832,
+      "y": 1044,
       "max_rank": 1
     },
     {
@@ -1139,8 +1850,8 @@
       "name": "Талант Archery G",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -919,
-      "y": 1235,
+      "x": -854,
+      "y": 1158,
       "max_rank": 1
     },
     {
@@ -1148,8 +1859,8 @@
       "name": "Талант Archery H",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -936,
-      "y": 1276,
+      "x": -872,
+      "y": 1199,
       "max_rank": 1
     },
     {
@@ -1157,8 +1868,8 @@
       "name": "Талант Archery I",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -919,
-      "y": 1327,
+      "x": -855,
+      "y": 1251,
       "max_rank": 1
     },
     {
@@ -1166,8 +1877,8 @@
       "name": "Талант Light Armor A",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1126,
-      "y": 650,
+      "x": -1039,
+      "y": 600,
       "max_rank": 1
     },
     {
@@ -1175,8 +1886,8 @@
       "name": "Талант Light Armor B",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1223,
-      "y": 744,
+      "x": -1136,
+      "y": 694,
       "max_rank": 1
     },
     {
@@ -1184,8 +1895,8 @@
       "name": "Талант Light Armor C",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1277,
-      "y": 858,
+      "x": -1191,
+      "y": 808,
       "max_rank": 1
     },
     {
@@ -1193,8 +1904,8 @@
       "name": "Талант Light Armor D",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1343,
-      "y": 880,
+      "x": -1256,
+      "y": 830,
       "max_rank": 1
     },
     {
@@ -1202,8 +1913,8 @@
       "name": "Талант Light Armor E",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1411,
-      "y": 853,
+      "x": -1324,
+      "y": 803,
       "max_rank": 1
     },
     {
@@ -1211,8 +1922,8 @@
       "name": "Талант Light Armor F",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1416,
-      "y": 798,
+      "x": -1329,
+      "y": 748,
       "max_rank": 1
     },
     {
@@ -1220,8 +1931,8 @@
       "name": "Талант Sneak A",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1280,
-      "y": 226,
+      "x": -1182,
+      "y": 208,
       "max_rank": 1
     },
     {
@@ -1229,8 +1940,8 @@
       "name": "Талант Sneak B",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1367,
-      "y": 346,
+      "x": -1269,
+      "y": 329,
       "max_rank": 1
     },
     {
@@ -1238,8 +1949,8 @@
       "name": "Талант Sneak C",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1483,
-      "y": 325,
+      "x": -1385,
+      "y": 308,
       "max_rank": 1
     },
     {
@@ -1247,8 +1958,8 @@
       "name": "Талант Sneak D",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1529,
-      "y": 286,
+      "x": -1431,
+      "y": 268,
       "max_rank": 1
     },
     {
@@ -1256,8 +1967,8 @@
       "name": "Талант Sneak E",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1591,
-      "y": 240,
+      "x": -1493,
+      "y": 223,
       "max_rank": 1
     },
     {
@@ -1265,8 +1976,8 @@
       "name": "Талант Sneak F",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1623,
-      "y": 154,
+      "x": -1524,
+      "y": 136,
       "max_rank": 1
     },
     {
@@ -1274,8 +1985,8 @@
       "name": "Талант Sneak G",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1399,
-      "y": 163,
+      "x": -1301,
+      "y": 146,
       "max_rank": 1
     },
     {
@@ -1283,8 +1994,8 @@
       "name": "Талант Sneak H",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1507,
-      "y": 171,
+      "x": -1409,
+      "y": 154,
       "max_rank": 1
     },
     {
@@ -1292,8 +2003,8 @@
       "name": "Талант Sneak I",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1522,
-      "y": 214,
+      "x": -1423,
+      "y": 197,
       "max_rank": 1
     },
     {
@@ -1301,8 +2012,8 @@
       "name": "Талант Lockpicking A",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1280,
-      "y": -226,
+      "x": -1182,
+      "y": -208,
       "max_rank": 1
     },
     {
@@ -1310,8 +2021,8 @@
       "name": "Талант Lockpicking B",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1371,
-      "y": -299,
+      "x": -1272,
+      "y": -281,
       "max_rank": 1
     },
     {
@@ -1319,8 +2030,8 @@
       "name": "Талант Lockpicking C",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1441,
-      "y": -241,
+      "x": -1342,
+      "y": -224,
       "max_rank": 1
     },
     {
@@ -1328,8 +2039,8 @@
       "name": "Талант Lockpicking D",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1488,
-      "y": -179,
+      "x": -1389,
+      "y": -162,
       "max_rank": 1
     },
     {
@@ -1337,8 +2048,8 @@
       "name": "Талант Lockpicking E",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1465,
-      "y": -361,
+      "x": -1366,
+      "y": -343,
       "max_rank": 1
     },
     {
@@ -1346,8 +2057,8 @@
       "name": "Талант Lockpicking F",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1499,
-      "y": -290,
+      "x": -1401,
+      "y": -273,
       "max_rank": 1
     },
     {
@@ -1355,8 +2066,8 @@
       "name": "Талант Lockpicking G",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1548,
-      "y": -247,
+      "x": -1450,
+      "y": -230,
       "max_rank": 1
     },
     {
@@ -1364,8 +2075,8 @@
       "name": "Талант Lockpicking H",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1519,
-      "y": -383,
+      "x": -1421,
+      "y": -366,
       "max_rank": 1
     },
     {
@@ -1373,8 +2084,8 @@
       "name": "Талант Lockpicking I",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1568,
-      "y": -320,
+      "x": -1469,
+      "y": -303,
       "max_rank": 1
     },
     {
@@ -1382,8 +2093,8 @@
       "name": "Талант Lockpicking J",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1603,
-      "y": -283,
+      "x": -1505,
+      "y": -265,
       "max_rank": 1
     },
     {
@@ -1391,8 +2102,8 @@
       "name": "Талант Lockpicking K",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1580,
-      "y": -407,
+      "x": -1481,
+      "y": -389,
       "max_rank": 1
     },
     {
@@ -1400,8 +2111,8 @@
       "name": "Талант Pickpocket A",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1126,
-      "y": -650,
+      "x": -1039,
+      "y": -600,
       "max_rank": 1
     },
     {
@@ -1409,8 +2120,8 @@
       "name": "Талант Pickpocket B",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1188,
-      "y": -744,
+      "x": -1102,
+      "y": -694,
       "max_rank": 1
     },
     {
@@ -1418,8 +2129,8 @@
       "name": "Талант Pickpocket C",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1303,
-      "y": -782,
+      "x": -1216,
+      "y": -732,
       "max_rank": 1
     },
     {
@@ -1427,8 +2138,8 @@
       "name": "Талант Pickpocket D",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1270,
-      "y": -838,
+      "x": -1184,
+      "y": -788,
       "max_rank": 1
     },
     {
@@ -1436,8 +2147,8 @@
       "name": "Талант Pickpocket E",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1326,
-      "y": -818,
+      "x": -1239,
+      "y": -768,
       "max_rank": 1
     },
     {
@@ -1445,8 +2156,8 @@
       "name": "Талант Pickpocket F",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1334,
-      "y": -897,
+      "x": -1247,
+      "y": -847,
       "max_rank": 1
     },
     {
@@ -1454,8 +2165,8 @@
       "name": "Талант Pickpocket G",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1325,
-      "y": -938,
+      "x": -1239,
+      "y": -888,
       "max_rank": 1
     },
     {
@@ -1463,8 +2174,8 @@
       "name": "Талант Pickpocket H",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1237,
-      "y": -886,
+      "x": -1150,
+      "y": -836,
       "max_rank": 1
     },
     {
@@ -1472,8 +2183,8 @@
       "name": "Талант Speech A",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -836,
-      "y": -996,
+      "x": -771,
+      "y": -919,
       "max_rank": 1
     },
     {
@@ -1481,8 +2192,8 @@
       "name": "Талант Speech B",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -884,
-      "y": -1100,
+      "x": -819,
+      "y": -1024,
       "max_rank": 1
     },
     {
@@ -1490,8 +2201,8 @@
       "name": "Талант Speech C",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -971,
-      "y": -1172,
+      "x": -907,
+      "y": -1095,
       "max_rank": 1
     },
     {
@@ -1499,8 +2210,8 @@
       "name": "Талант Speech D",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1027,
-      "y": -1209,
+      "x": -962,
+      "y": -1133,
       "max_rank": 1
     },
     {
@@ -1508,8 +2219,8 @@
       "name": "Талант Speech E",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -1061,
-      "y": -1230,
+      "x": -997,
+      "y": -1153,
       "max_rank": 1
     },
     {
@@ -1517,8 +2228,8 @@
       "name": "Талант Speech F",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -962,
-      "y": -1322,
+      "x": -897,
+      "y": -1246,
       "max_rank": 1
     },
     {
@@ -1526,8 +2237,8 @@
       "name": "Талант Speech G",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -815,
-      "y": -1158,
+      "x": -751,
+      "y": -1081,
       "max_rank": 1
     },
     {
@@ -1535,8 +2246,8 @@
       "name": "Талант Speech H",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -850,
-      "y": -1273,
+      "x": -785,
+      "y": -1197,
       "max_rank": 1
     },
     {
@@ -1544,8 +2255,8 @@
       "name": "Талант Speech I",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -871,
-      "y": -1340,
+      "x": -807,
+      "y": -1263,
       "max_rank": 1
     },
     {
@@ -1553,8 +2264,8 @@
       "name": "Талант Alchemy A",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -445,
-      "y": -1222,
+      "x": -410,
+      "y": -1128,
       "max_rank": 1
     },
     {
@@ -1562,8 +2273,8 @@
       "name": "Талант Alchemy B",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -288,
-      "y": -1314,
+      "x": -254,
+      "y": -1220,
       "max_rank": 1
     },
     {
@@ -1571,8 +2282,8 @@
       "name": "Талант Alchemy C",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -450,
-      "y": -1341,
+      "x": -416,
+      "y": -1247,
       "max_rank": 1
     },
     {
@@ -1580,8 +2291,8 @@
       "name": "Талант Alchemy D",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -469,
-      "y": -1403,
+      "x": -434,
+      "y": -1309,
       "max_rank": 1
     },
     {
@@ -1589,8 +2300,8 @@
       "name": "Талант Alchemy E",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -486,
-      "y": -1488,
+      "x": -451,
+      "y": -1394,
       "max_rank": 1
     },
     {
@@ -1598,8 +2309,8 @@
       "name": "Талант Alchemy F",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -352,
-      "y": -1377,
+      "x": -317,
+      "y": -1283,
       "max_rank": 1
     },
     {
@@ -1607,8 +2318,8 @@
       "name": "Талант Alchemy G",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -386,
-      "y": -1433,
+      "x": -352,
+      "y": -1339,
       "max_rank": 1
     },
     {
@@ -1616,8 +2327,8 @@
       "name": "Талант Alchemy H",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -434,
-      "y": -1527,
+      "x": -400,
+      "y": -1433,
       "max_rank": 1
     },
     {
@@ -1625,12 +2336,344 @@
       "name": "Талант Alchemy I",
       "description": "Описание таланта...",
       "type": "small",
-      "x": -468,
-      "y": -1571,
+      "x": -434,
+      "y": -1477,
       "max_rank": 1
     }
   ],
   "edges": [
+    [
+      "skyrim_start",
+      "xp_1"
+    ],
+    [
+      "xp_1",
+      "xp_2"
+    ],
+    [
+      "xp_2",
+      "xp_3"
+    ],
+    [
+      "xp_3",
+      "xp_4"
+    ],
+    [
+      "xp_4",
+      "xp_5"
+    ],
+    [
+      "xp_5",
+      "xp_6"
+    ],
+    [
+      "xp_6",
+      "xp_7"
+    ],
+    [
+      "xp_7",
+      "xp_8"
+    ],
+    [
+      "xp_8",
+      "xp_9"
+    ],
+    [
+      "xp_9",
+      "xp_10"
+    ],
+    [
+      "xp_4",
+      "xp_11"
+    ],
+    [
+      "xp_11",
+      "xp_12"
+    ],
+    [
+      "skyrim_start",
+      "wis_1"
+    ],
+    [
+      "wis_1",
+      "wis_2"
+    ],
+    [
+      "wis_2",
+      "wis_3"
+    ],
+    [
+      "wis_3",
+      "wis_4"
+    ],
+    [
+      "wis_4",
+      "wis_5"
+    ],
+    [
+      "wis_5",
+      "wis_6"
+    ],
+    [
+      "wis_6",
+      "wis_7"
+    ],
+    [
+      "wis_7",
+      "wis_8"
+    ],
+    [
+      "wis_8",
+      "wis_9"
+    ],
+    [
+      "wis_9",
+      "wis_10"
+    ],
+    [
+      "wis_10",
+      "wis_11"
+    ],
+    [
+      "wis_11",
+      "wis_12"
+    ],
+    [
+      "wis_12",
+      "wis_13"
+    ],
+    [
+      "wis_3",
+      "wis_14"
+    ],
+    [
+      "wis_14",
+      "wis_15"
+    ],
+    [
+      "skyrim_start",
+      "str_1"
+    ],
+    [
+      "str_1",
+      "str_2"
+    ],
+    [
+      "str_2",
+      "str_3"
+    ],
+    [
+      "str_3",
+      "str_4"
+    ],
+    [
+      "str_4",
+      "str_5"
+    ],
+    [
+      "str_5",
+      "str_6"
+    ],
+    [
+      "str_6",
+      "str_7"
+    ],
+    [
+      "str_7",
+      "str_8"
+    ],
+    [
+      "str_8",
+      "str_9"
+    ],
+    [
+      "str_9",
+      "str_10"
+    ],
+    [
+      "str_10",
+      "str_11"
+    ],
+    [
+      "str_6",
+      "str_12"
+    ],
+    [
+      "str_12",
+      "str_13"
+    ],
+    [
+      "skyrim_start",
+      "luck_1"
+    ],
+    [
+      "luck_1",
+      "luck_2"
+    ],
+    [
+      "luck_2",
+      "luck_3"
+    ],
+    [
+      "luck_3",
+      "luck_4"
+    ],
+    [
+      "luck_4",
+      "luck_5"
+    ],
+    [
+      "luck_5",
+      "luck_6"
+    ],
+    [
+      "luck_6",
+      "luck_7"
+    ],
+    [
+      "luck_7",
+      "luck_8"
+    ],
+    [
+      "luck_8",
+      "luck_9"
+    ],
+    [
+      "luck_9",
+      "luck_10"
+    ],
+    [
+      "luck_10",
+      "luck_11"
+    ],
+    [
+      "luck_11",
+      "luck_12"
+    ],
+    [
+      "luck_3",
+      "luck_13"
+    ],
+    [
+      "luck_13",
+      "luck_14"
+    ],
+    [
+      "skyrim_start",
+      "vit_1"
+    ],
+    [
+      "vit_1",
+      "vit_2"
+    ],
+    [
+      "vit_2",
+      "vit_3"
+    ],
+    [
+      "vit_3",
+      "vit_4"
+    ],
+    [
+      "vit_4",
+      "vit_5"
+    ],
+    [
+      "vit_5",
+      "vit_6"
+    ],
+    [
+      "vit_6",
+      "vit_7"
+    ],
+    [
+      "vit_7",
+      "vit_8"
+    ],
+    [
+      "vit_3",
+      "vit_9"
+    ],
+    [
+      "vit_9",
+      "vit_10"
+    ],
+    [
+      "skyrim_start",
+      "pre_1"
+    ],
+    [
+      "pre_1",
+      "pre_2"
+    ],
+    [
+      "pre_2",
+      "pre_3"
+    ],
+    [
+      "pre_3",
+      "pre_4"
+    ],
+    [
+      "pre_4",
+      "pre_5"
+    ],
+    [
+      "pre_5",
+      "pre_6"
+    ],
+    [
+      "pre_6",
+      "pre_7"
+    ],
+    [
+      "pre_7",
+      "pre_8"
+    ],
+    [
+      "pre_8",
+      "pre_9"
+    ],
+    [
+      "pre_9",
+      "pre_10"
+    ],
+    [
+      "pre_3",
+      "pre_11"
+    ],
+    [
+      "pre_11",
+      "pre_12"
+    ],
+    [
+      "vit_8",
+      "cross_1"
+    ],
+    [
+      "luck_12",
+      "cross_1"
+    ],
+    [
+      "pre_10",
+      "cross_1"
+    ],
+    [
+      "str_8",
+      "cross_2"
+    ],
+    [
+      "wis_13",
+      "cross_2"
+    ],
+    [
+      "xp_10",
+      "cross_3"
+    ],
+    [
+      "pre_8",
+      "cross_3"
+    ],
     [
       "skyrim_start",
       "illusion_root"

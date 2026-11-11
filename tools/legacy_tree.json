@@ -85,7 +85,7 @@
     { "id": "pre_12", "name": "Охотник", "description": "+10% к восприятию и +5% к ловкости", "type": "notable", "x": 120, "y": -300, "max_rank": 1 },
 
     { "id": "cross_1", "name": "Идеальный баланс", "description": "+5% ко всем базовым статам", "type": "notable", "x": 0, "y": -640, "max_rank": 1 },
-    { "id": "cross_2", "name": "Мастер пути", "description": "+2 к максимуму очков действия", "type": "notable", "x": -470, "y": 620, "max_rank": 1 }
+    { "id": "cross_2", "name": "Мастер пути", "description": "+2 к максимуму очков действия", "type": "notable", "x": -470, "y": 620, "max_rank": 1 },
     { "id": "cross_3", "name": "Совершенство", "description": "+10% к получаемому опыту и +5% к удаче", "type": "notable", "x": 580, "y": -420, "max_rank": 1 }
   ],
   "edges": [

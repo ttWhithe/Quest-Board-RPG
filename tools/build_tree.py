@@ -4,10 +4,12 @@ import math
 from pathlib import Path
 
 JSON_PATH = Path("backend/app/core/talent_tree.json")
+LEGACY_PATH = Path("tools/legacy_tree.json")
 SVG_DIR = Path("frontend/public/talents")
 
-RADIUS = 1300      # Увеличили до 1300, чтобы ветки разошлись
-TARGET_SPAN = 350  # Оставили 350
+RADIUS = 1200        # Внешние ветки отойдут на 1200 (было 1300)
+TARGET_SPAN = 350    # Размер внешних веток (без изменений)
+LEGACY_SCALE = 1.3   # Растянули старую ветку в 3 раза (было 0.45)
 
 BRANCH_NAMES = [
     "Illusion", "Conjuration", "Destruction", "Restoration", "Alteration", "Enchanting",
@@ -25,15 +27,42 @@ def parse_svg(file_path):
 def main():
     data = {
         "nodes": [
-            {"id": "skyrim_start", "name": "Созвездие", "description": "Древние знания Скайрима.", "type": "start", "x": 0, "y": 0, "max_rank": 1}
+            {"id": "skyrim_start", "name": "Созвездие", "description": "Древние знания Скайрима. Центр Древа Талантов.", "type": "start", "x": 0, "y": 0, "max_rank": 1}
         ],
         "edges": []
     }
 
+    # 1. ДОБАВЛЯЕМ СТАРУЮ ВЕТКУ В ЦЕНТР
+    if LEGACY_PATH.exists():
+        legacy_data = json.loads(LEGACY_PATH.read_text(encoding="utf-8"))
+
+        for node in legacy_data["nodes"]:
+            if node["id"] == "start":
+                continue
+            new_x = round(node["x"] * LEGACY_SCALE)
+            new_y = round(node["y"] * LEGACY_SCALE)
+
+            data["nodes"].append({
+                "id": node["id"],
+                "name": node["name"],
+                "description": node["description"],
+                "type": node["type"],
+                "x": new_x,
+                "y": new_y,
+                "max_rank": node.get("max_rank", 1)
+            })
+
+        for edge in legacy_data["edges"]:
+            u, v = edge
+            if u == "start":
+                data["edges"].append(["skyrim_start", v])
+            else:
+                data["edges"].append([u, v])
+
+    # 2. ДОБАВЛЯЕМ 18 ВНЕШНИХ ВЕТОК
     for i, branch_name in enumerate(BRANCH_NAMES):
         file_path = SVG_DIR / f"{branch_name}.svg"
         if not file_path.exists():
-            print(f"Пропуск {branch_name}")
             continue
 
         dots, lines = parse_svg(file_path)
@@ -109,7 +138,7 @@ def main():
                     data["edges"].append([id2, id1])
 
     JSON_PATH.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"✓ Дерево пересобрано! Узлов: {len(data['nodes'])}, веток: {len(BRANCH_NAMES)}")
+    print(f"✓ Дерево пересобрано! Узлов: {len(data['nodes'])}, связей: {len(data['edges'])}")
 
 if __name__ == "__main__":
     main()
