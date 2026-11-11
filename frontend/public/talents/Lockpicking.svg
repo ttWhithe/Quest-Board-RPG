@@ -1,0 +1,50 @@
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Фон -->
+  <rect width="300" height="300" fill="#14640D"/>
+
+  <!-- ЛИНИИ (отдельные элементы) -->
+  <g id="connections" stroke="white" stroke-width="1.5" opacity="0.8">
+    <line id="line-A-B" x1="123" y1="278" x2="167" y2="198" />
+    <line id="line-B-C" x1="167" y1="198" x2="113" y2="152" />
+    <line id="line-C-D" x1="113" y1="152" x2="59" y2="124" />
+
+    <line id="line-B-E" x1="167" y1="198" x2="202" y2="117" />
+    <line id="line-E-F" x1="202" y1="117" x2="143" y2="100" />
+    <line id="line-F-G" x1="143" y1="100" x2="103" y2="68" />
+
+    <line id="line-E-H" x1="202" y1="117" x2="212" y2="72" />
+    <line id="line-H-I" x1="212" y1="72" x2="157" y2="43" />
+    <line id="line-I-J" x1="157" y1="43" x2="123" y2="21" />
+    <line id="line-H-K" x1="212" y1="72" x2="222" y2="22" />
+  </g>
+
+  <!-- КРУГИ -->
+  <g id="circles" fill="#0C9E16">
+    <circle id="circle-A" cx="123" cy="278" r="10" />
+    <circle id="circle-B" cx="167" cy="198" r="10" />
+    <circle id="circle-C" cx="113" cy="152" r="10" />
+    <circle id="circle-D" cx="59" cy="124" r="10" />
+    <circle id="circle-E" cx="202" cy="117" r="10" />
+    <circle id="circle-F" cx="143" cy="100" r="10" />
+    <circle id="circle-G" cx="103" cy="68" r="10" />
+    <circle id="circle-H" cx="212" cy="72" r="10" />
+    <circle id="circle-I" cx="157" cy="43" r="10" />
+    <circle id="circle-J" cx="123" cy="21" r="10" />
+    <circle id="circle-K" cx="222" cy="22" r="10" />
+  </g>
+
+  <!-- ТЕКСТ (Подписи в центрах кругов) -->
+  <g id="labels" fill="white" font-family="sans-serif" font-size="8" font-weight="bold" text-anchor="middle" dominant-baseline="central">
+    <text x="123" y="278">A</text>
+    <text x="167" y="198">B</text>
+    <text x="113" y="152">C</text>
+    <text x="59" y="124">D</text>
+    <text x="202" y="117">E</text>
+    <text x="143" y="100">F</text>
+    <text x="103" y="68">G</text>
+    <text x="212" y="72">H</text>
+    <text x="157" y="43">I</text>
+    <text x="123" y="21">J</text>
+    <text x="222" y="22">K</text>
+  </g>
+</svg>

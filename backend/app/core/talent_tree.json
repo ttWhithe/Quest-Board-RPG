@@ -1,146 +1,3438 @@
 {
   "nodes": [
-    { "id": "start", "name": "Начало пути", "description": "Точка входа в дерево талантов.", "type": "start", "x": 0, "y": 0, "max_rank": 1 },
-
-    { "id": "xp_1", "name": "Жажда знаний", "description": "+2% к получаемому опыту", "type": "small", "x": 150, "y": 10, "max_rank": 3 },
-    { "id": "xp_2", "name": "Усердие", "description": "+3% к получаемому опыту", "type": "small", "x": 220, "y": 60, "max_rank": 3 },
-    { "id": "xp_3", "name": "Целеустремлённость", "description": "+2% к получаемому опыту", "type": "small", "x": 280, "y": 130, "max_rank": 3 },
-    { "id": "xp_4", "name": "Поток опыта", "description": "+10% к получаемому опыту", "type": "notable", "x": 320, "y": 210, "max_rank": 1 },
-    { "id": "xp_5", "name": "Пунктуальность", "description": "+3% к опыту за задачи, выполненные вовремя", "type": "small", "x": 420, "y": 200, "max_rank": 2 },
-    { "id": "xp_6", "name": "Дисциплина", "description": "+2% к получаемому опыту", "type": "small", "x": 500, "y": 140, "max_rank": 3 },
-    { "id": "xp_7", "name": "Одержимость", "description": "+15% к получаемому опыту", "type": "notable", "x": 580, "y": 60, "max_rank": 1 },
-    { "id": "xp_8", "name": "Ранний подъём", "description": "+3% к опыту за задачи, выполненные до полудня", "type": "small", "x": 630, "y": -40, "max_rank": 2 },
-    { "id": "xp_9", "name": "Настойчивость", "description": "+2% к получаемому опыту", "type": "small", "x": 650, "y": -160, "max_rank": 3 },
-    { "id": "xp_10", "name": "Мастерство", "description": "+5% к получаемому опыту и +2% ко всем базовым статам", "type": "notable", "x": 650, "y": -260, "max_rank": 1 },
-
-    { "id": "wis_1", "name": "Ученик", "description": "+2% к интеллекту", "type": "small", "x": 100, "y": 110, "max_rank": 3 },
-    { "id": "wis_2", "name": "Читатель", "description": "+3% к интеллекту", "type": "small", "x": 120, "y": 190, "max_rank": 3 },
-    { "id": "wis_3", "name": "Архивариус", "description": "+10% к интеллекту", "type": "notable", "x": 110, "y": 270, "max_rank": 1 },
-    { "id": "wis_4", "name": "Аналитик", "description": "+2% к восприятию", "type": "small", "x": 90, "y": 350, "max_rank": 2 },
-    { "id": "wis_5", "name": "Спокойствие", "description": "+3% к духу", "type": "small", "x": 160, "y": 400, "max_rank": 2 },
-    { "id": "wis_6", "name": "Просветление", "description": "+1 к максимуму очков действия", "type": "notable", "x": 270, "y": 420, "max_rank": 1 },
-    { "id": "wis_7", "name": "Сосредоточение", "description": "+2% к духу", "type": "small", "x": 370, "y": 420, "max_rank": 3 },
-    { "id": "wis_8", "name": "Медитация", "description": "+3% к духу", "type": "small", "x": 340, "y": 510, "max_rank": 2 },
-    { "id": "wis_9", "name": "Глубокий разум", "description": "+10% к интеллекту и духу", "type": "notable", "x": 260, "y": 590, "max_rank": 1 },
-    { "id": "wis_10", "name": "Наблюдательность", "description": "+2% к восприятию", "type": "small", "x": 160, "y": 660, "max_rank": 3 },
-    { "id": "wis_11", "name": "Внимание к деталям", "description": "+3% к восприятию", "type": "small", "x": 50, "y": 690, "max_rank": 2 },
-    { "id": "wis_12", "name": "Ясность ума", "description": "+8% к опыту за задачи категории «Учёба»", "type": "notable", "x": -70, "y": 680, "max_rank": 1 },
-    { "id": "wis_13", "name": "Озарение", "description": "+5% ко всем эффектам интеллекта и духа в дереве", "type": "notable", "x": -180, "y": 630, "max_rank": 1 },
-
-    { "id": "str_1", "name": "Разминка", "description": "+2% к силе", "type": "small", "x": -80, "y": 130, "max_rank": 3 },
-    { "id": "str_2", "name": "Тренировка", "description": "+3% к силе", "type": "small", "x": -150, "y": 180, "max_rank": 3 },
-    { "id": "str_3", "name": "Атлет", "description": "+10% к силе", "type": "notable", "x": -230, "y": 210, "max_rank": 1 },
-    { "id": "str_4", "name": "Тяга", "description": "+2% к выносливости", "type": "small", "x": -320, "y": 210, "max_rank": 2 },
-    { "id": "str_5", "name": "Дыхание", "description": "+3% к выносливости", "type": "small", "x": -330, "y": 300, "max_rank": 2 },
-    { "id": "str_6", "name": "Титан", "description": "+1 к максимуму очков действия", "type": "notable", "x": -310, "y": 400, "max_rank": 1 },
-    { "id": "str_7", "name": "Закалка", "description": "+2% к силе", "type": "small", "x": -400, "y": 390, "max_rank": 3 },
-    { "id": "str_8", "name": "Железная воля", "description": "+10% к выносливости", "type": "notable", "x": -500, "y": 340, "max_rank": 1 },
-    { "id": "str_9", "name": "Стойкость", "description": "+3% к выносливости", "type": "small", "x": -580, "y": 260, "max_rank": 2 },
-    { "id": "str_10", "name": "Напор", "description": "+2% к силе", "type": "small", "x": -630, "y": 160, "max_rank": 3 },
-    { "id": "str_11", "name": "Несгибаемый", "description": "+8% к опыту за задачи высокой сложности", "type": "notable", "x": -660, "y": 50, "max_rank": 1 },
-
-    { "id": "luck_1", "name": "Интуиция", "description": "+2% к удаче", "type": "small", "x": -150, "y": -30, "max_rank": 3 },
-    { "id": "luck_2", "name": "Наблюдение", "description": "+3% к удаче", "type": "small", "x": -220, "y": -80, "max_rank": 3 },
-    { "id": "luck_3", "name": "Фортуна", "description": "+10% к удаче", "type": "notable", "x": -270, "y": -150, "max_rank": 1 },
-    { "id": "luck_4", "name": "Гибкость", "description": "+2% к ловкости", "type": "small", "x": -310, "y": -220, "max_rank": 2 },
-    { "id": "luck_5", "name": "Везение", "description": "+3% к удаче", "type": "small", "x": -400, "y": -210, "max_rank": 2 },
-    { "id": "luck_6", "name": "Джекпот", "description": "+15% к удаче", "type": "notable", "x": -490, "y": -160, "max_rank": 1 },
-    { "id": "luck_7", "name": "Реакция", "description": "+2% к ловкости", "type": "small", "x": -550, "y": -80, "max_rank": 3 },
-    { "id": "luck_8", "name": "Проворство", "description": "+3% к ловкости", "type": "small", "x": -580, "y": -170, "max_rank": 2 },
-    { "id": "luck_9", "name": "Акробат", "description": "+10% к ловкости", "type": "notable", "x": -570, "y": -280, "max_rank": 1 },
-    { "id": "luck_10", "name": "Оптимизм", "description": "+2% к удаче", "type": "small", "x": -530, "y": -380, "max_rank": 3 },
-    { "id": "luck_11", "name": "Азарт", "description": "+3% к удаче", "type": "small", "x": -450, "y": -470, "max_rank": 2 },
-    { "id": "luck_12", "name": "Клевер", "description": "+5% ко всем базовым статам", "type": "notable", "x": -360, "y": -530, "max_rank": 1 },
-
-    { "id": "vit_1", "name": "Вдох", "description": "+2% к духу", "type": "small", "x": -30, "y": -150, "max_rank": 3 },
-    { "id": "vit_2", "name": "Ровное дыхание", "description": "+3% к духу", "type": "small", "x": -20, "y": -220, "max_rank": 2 },
-    { "id": "vit_3", "name": "Внутренний баланс", "description": "+10% к духу", "type": "notable", "x": 20, "y": -290, "max_rank": 1 },
-    { "id": "vit_4", "name": "Выносливость", "description": "+2% к выносливости", "type": "small", "x": 70, "y": -340, "max_rank": 3 },
-    { "id": "vit_5", "name": "Терпение", "description": "+3% к выносливости", "type": "small", "x": 30, "y": -410, "max_rank": 2 },
-    { "id": "vit_6", "name": "Второе дыхание", "description": "+1 к максимуму очков действия", "type": "notable", "x": -30, "y": -460, "max_rank": 1 },
-    { "id": "vit_7", "name": "Стойкость духа", "description": "+2% к духу", "type": "small", "x": -100, "y": -490, "max_rank": 3 },
-    { "id": "vit_8", "name": "Просветлённый", "description": "+8% к опыту и +3% к духу", "type": "notable", "x": -180, "y": -500, "max_rank": 1 },
-
-    { "id": "pre_1", "name": "Меткость", "description": "+2% к ловкости", "type": "small", "x": 100, "y": -110, "max_rank": 3 },
-    { "id": "pre_2", "name": "Точность", "description": "+3% к восприятию", "type": "small", "x": 170, "y": -140, "max_rank": 2 },
-    { "id": "pre_3", "name": "Снайпер", "description": "+10% к восприятию", "type": "notable", "x": 250, "y": -150, "max_rank": 1 },
-    { "id": "pre_4", "name": "Хладнокровие", "description": "+2% к интеллекту", "type": "small", "x": 320, "y": -140, "max_rank": 3 },
-    { "id": "pre_5", "name": "Концентрация", "description": "+3% к восприятию", "type": "small", "x": 350, "y": -220, "max_rank": 2 },
-    { "id": "pre_6", "name": "Ясный взор", "description": "+10% к ловкости и восприятию", "type": "notable", "x": 350, "y": -300, "max_rank": 1 },
-    { "id": "pre_7", "name": "Расчёт", "description": "+2% к интеллекту", "type": "small", "x": 330, "y": -370, "max_rank": 3 },
-    { "id": "pre_8", "name": "Идеальный момент", "description": "+10% к шансу критического успеха задачи", "type": "notable", "x": 300, "y": -440, "max_rank": 1 },
-    { "id": "pre_9", "name": "Бдительность", "description": "+3% к восприятию", "type": "small", "x": 240, "y": -490, "max_rank": 2 },
-    { "id": "pre_10", "name": "Мастер деталей", "description": "+8% к опыту за задачи с чек-листами", "type": "notable", "x": 170, "y": -530, "max_rank": 1 }
+    {
+      "id": "skyrim_start",
+      "name": "Созвездие",
+      "description": "Древние знания Скайрима. Центр Древа Талантов.",
+      "type": "start",
+      "x": 0,
+      "y": 0,
+      "max_rank": 1
+    },
+    {
+      "id": "xp_1",
+      "name": "Жажда знаний",
+      "description": "+2% к получаемому опыту",
+      "type": "small",
+      "x": 195,
+      "y": 13,
+      "max_rank": 3
+    },
+    {
+      "id": "xp_2",
+      "name": "Усердие",
+      "description": "+3% к получаемому опыту",
+      "type": "small",
+      "x": 286,
+      "y": 78,
+      "max_rank": 3
+    },
+    {
+      "id": "xp_3",
+      "name": "Целеустремлённость",
+      "description": "+2% к получаемому опыту",
+      "type": "small",
+      "x": 364,
+      "y": 169,
+      "max_rank": 3
+    },
+    {
+      "id": "xp_4",
+      "name": "Поток опыта",
+      "description": "+10% к получаемому опыту",
+      "type": "notable",
+      "x": 416,
+      "y": 273,
+      "max_rank": 1
+    },
+    {
+      "id": "xp_5",
+      "name": "Пунктуальность",
+      "description": "+3% к опыту за задачи, выполненные вовремя",
+      "type": "small",
+      "x": 546,
+      "y": 260,
+      "max_rank": 2
+    },
+    {
+      "id": "xp_6",
+      "name": "Дисциплина",
+      "description": "+2% к получаемому опыту",
+      "type": "small",
+      "x": 650,
+      "y": 182,
+      "max_rank": 3
+    },
+    {
+      "id": "xp_7",
+      "name": "Одержимость",
+      "description": "+15% к получаемому опыту",
+      "type": "notable",
+      "x": 754,
+      "y": 78,
+      "max_rank": 1
+    },
+    {
+      "id": "xp_8",
+      "name": "Ранний подъём",
+      "description": "+3% к опыту за задачи, выполненные до полудня",
+      "type": "small",
+      "x": 819,
+      "y": -52,
+      "max_rank": 2
+    },
+    {
+      "id": "xp_9",
+      "name": "Настойчивость",
+      "description": "+2% к получаемому опыту",
+      "type": "small",
+      "x": 845,
+      "y": -208,
+      "max_rank": 3
+    },
+    {
+      "id": "xp_10",
+      "name": "Мастерство",
+      "description": "+5% к получаемому опыту и +2% ко всем базовым статам",
+      "type": "notable",
+      "x": 845,
+      "y": -338,
+      "max_rank": 1
+    },
+    {
+      "id": "xp_11",
+      "name": "Планировщик",
+      "description": "+3% к опыту за задачи из плана",
+      "type": "small",
+      "x": 507,
+      "y": 377,
+      "max_rank": 2
+    },
+    {
+      "id": "xp_12",
+      "name": "Системность",
+      "description": "+10% к опыту за задачи из плана",
+      "type": "notable",
+      "x": 611,
+      "y": 442,
+      "max_rank": 1
+    },
+    {
+      "id": "wis_1",
+      "name": "Ученик",
+      "description": "+2% к интеллекту",
+      "type": "small",
+      "x": 130,
+      "y": 143,
+      "max_rank": 3
+    },
+    {
+      "id": "wis_2",
+      "name": "Читатель",
+      "description": "+3% к интеллекту",
+      "type": "small",
+      "x": 156,
+      "y": 247,
+      "max_rank": 3
+    },
+    {
+      "id": "wis_3",
+      "name": "Архивариус",
+      "description": "+10% к интеллекту",
+      "type": "notable",
+      "x": 143,
+      "y": 351,
+      "max_rank": 1
+    },
+    {
+      "id": "wis_4",
+      "name": "Аналитик",
+      "description": "+2% к восприятию",
+      "type": "small",
+      "x": 117,
+      "y": 455,
+      "max_rank": 2
+    },
+    {
+      "id": "wis_5",
+      "name": "Спокойствие",
+      "description": "+3% к духу",
+      "type": "small",
+      "x": 208,
+      "y": 520,
+      "max_rank": 2
+    },
+    {
+      "id": "wis_6",
+      "name": "Просветление",
+      "description": "+1 к максимуму очков действия",
+      "type": "notable",
+      "x": 351,
+      "y": 546,
+      "max_rank": 1
+    },
+    {
+      "id": "wis_7",
+      "name": "Сосредоточение",
+      "description": "+2% к духу",
+      "type": "small",
+      "x": 481,
+      "y": 546,
+      "max_rank": 3
+    },
+    {
+      "id": "wis_8",
+      "name": "Медитация",
+      "description": "+3% к духу",
+      "type": "small",
+      "x": 442,
+      "y": 663,
+      "max_rank": 2
+    },
+    {
+      "id": "wis_9",
+      "name": "Глубокий разум",
+      "description": "+10% к интеллекту и духу",
+      "type": "notable",
+      "x": 338,
+      "y": 767,
+      "max_rank": 1
+    },
+    {
+      "id": "wis_10",
+      "name": "Наблюдательность",
+      "description": "+2% к восприятию",
+      "type": "small",
+      "x": 208,
+      "y": 858,
+      "max_rank": 3
+    },
+    {
+      "id": "wis_11",
+      "name": "Внимание к деталям",
+      "description": "+3% к восприятию",
+      "type": "small",
+      "x": 65,
+      "y": 897,
+      "max_rank": 2
+    },
+    {
+      "id": "wis_12",
+      "name": "Ясность ума",
+      "description": "+8% к опыту за задачи категории «Учёба»",
+      "type": "notable",
+      "x": -91,
+      "y": 884,
+      "max_rank": 1
+    },
+    {
+      "id": "wis_13",
+      "name": "Озарение",
+      "description": "+5% ко всем эффектам интеллекта и духа в дереве",
+      "type": "notable",
+      "x": -234,
+      "y": 819,
+      "max_rank": 1
+    },
+    {
+      "id": "wis_14",
+      "name": "Логик",
+      "description": "+2% к интеллекту",
+      "type": "small",
+      "x": 260,
+      "y": 390,
+      "max_rank": 3
+    },
+    {
+      "id": "wis_15",
+      "name": "Дедукция",
+      "description": "+10% к интеллекту и +5% к восприятию",
+      "type": "notable",
+      "x": 364,
+      "y": 442,
+      "max_rank": 1
+    },
+    {
+      "id": "str_1",
+      "name": "Разминка",
+      "description": "+2% к силе",
+      "type": "small",
+      "x": -104,
+      "y": 169,
+      "max_rank": 3
+    },
+    {
+      "id": "str_2",
+      "name": "Тренировка",
+      "description": "+3% к силе",
+      "type": "small",
+      "x": -195,
+      "y": 234,
+      "max_rank": 3
+    },
+    {
+      "id": "str_3",
+      "name": "Атлет",
+      "description": "+10% к силе",
+      "type": "notable",
+      "x": -299,
+      "y": 273,
+      "max_rank": 1
+    },
+    {
+      "id": "str_4",
+      "name": "Тяга",
+      "description": "+2% к выносливости",
+      "type": "small",
+      "x": -416,
+      "y": 273,
+      "max_rank": 2
+    },
+    {
+      "id": "str_5",
+      "name": "Дыхание",
+      "description": "+3% к выносливости",
+      "type": "small",
+      "x": -429,
+      "y": 390,
+      "max_rank": 2
+    },
+    {
+      "id": "str_6",
+      "name": "Титан",
+      "description": "+1 к максимуму очков действия",
+      "type": "notable",
+      "x": -403,
+      "y": 520,
+      "max_rank": 1
+    },
+    {
+      "id": "str_7",
+      "name": "Закалка",
+      "description": "+2% к силе",
+      "type": "small",
+      "x": -520,
+      "y": 507,
+      "max_rank": 3
+    },
+    {
+      "id": "str_8",
+      "name": "Железная воля",
+      "description": "+10% к выносливости",
+      "type": "notable",
+      "x": -650,
+      "y": 442,
+      "max_rank": 1
+    },
+    {
+      "id": "str_9",
+      "name": "Стойкость",
+      "description": "+3% к выносливости",
+      "type": "small",
+      "x": -754,
+      "y": 338,
+      "max_rank": 2
+    },
+    {
+      "id": "str_10",
+      "name": "Напор",
+      "description": "+2% к силе",
+      "type": "small",
+      "x": -819,
+      "y": 208,
+      "max_rank": 3
+    },
+    {
+      "id": "str_11",
+      "name": "Несгибаемый",
+      "description": "+8% к опыту за задачи высокой сложности",
+      "type": "notable",
+      "x": -858,
+      "y": 65,
+      "max_rank": 1
+    },
+    {
+      "id": "str_12",
+      "name": "Спринтер",
+      "description": "+3% к выносливости",
+      "type": "small",
+      "x": -312,
+      "y": 624,
+      "max_rank": 2
+    },
+    {
+      "id": "str_13",
+      "name": "Марафонец",
+      "description": "+10% к выносливости и +3% к силе",
+      "type": "notable",
+      "x": -403,
+      "y": 715,
+      "max_rank": 1
+    },
+    {
+      "id": "luck_1",
+      "name": "Интуиция",
+      "description": "+2% к удаче",
+      "type": "small",
+      "x": -195,
+      "y": -39,
+      "max_rank": 3
+    },
+    {
+      "id": "luck_2",
+      "name": "Наблюдение",
+      "description": "+3% к удаче",
+      "type": "small",
+      "x": -286,
+      "y": -104,
+      "max_rank": 3
+    },
+    {
+      "id": "luck_3",
+      "name": "Фортуна",
+      "description": "+10% к удаче",
+      "type": "notable",
+      "x": -351,
+      "y": -195,
+      "max_rank": 1
+    },
+    {
+      "id": "luck_4",
+      "name": "Гибкость",
+      "description": "+2% к ловкости",
+      "type": "small",
+      "x": -403,
+      "y": -286,
+      "max_rank": 2
+    },
+    {
+      "id": "luck_5",
+      "name": "Везение",
+      "description": "+3% к удаче",
+      "type": "small",
+      "x": -520,
+      "y": -273,
+      "max_rank": 2
+    },
+    {
+      "id": "luck_6",
+      "name": "Джекпот",
+      "description": "+15% к удаче",
+      "type": "notable",
+      "x": -637,
+      "y": -208,
+      "max_rank": 1
+    },
+    {
+      "id": "luck_7",
+      "name": "Реакция",
+      "description": "+2% к ловкости",
+      "type": "small",
+      "x": -715,
+      "y": -104,
+      "max_rank": 3
+    },
+    {
+      "id": "luck_8",
+      "name": "Проворство",
+      "description": "+3% к ловкости",
+      "type": "small",
+      "x": -754,
+      "y": -221,
+      "max_rank": 2
+    },
+    {
+      "id": "luck_9",
+      "name": "Акробат",
+      "description": "+10% к ловкости",
+      "type": "notable",
+      "x": -741,
+      "y": -364,
+      "max_rank": 1
+    },
+    {
+      "id": "luck_10",
+      "name": "Оптимизм",
+      "description": "+2% к удаче",
+      "type": "small",
+      "x": -689,
+      "y": -494,
+      "max_rank": 3
+    },
+    {
+      "id": "luck_11",
+      "name": "Азарт",
+      "description": "+3% к удаче",
+      "type": "small",
+      "x": -585,
+      "y": -611,
+      "max_rank": 2
+    },
+    {
+      "id": "luck_12",
+      "name": "Клевер",
+      "description": "+5% ко всем базовым статам",
+      "type": "notable",
+      "x": -468,
+      "y": -689,
+      "max_rank": 1
+    },
+    {
+      "id": "luck_13",
+      "name": "Чутьё",
+      "description": "+2% к удаче",
+      "type": "small",
+      "x": -247,
+      "y": -286,
+      "max_rank": 2
+    },
+    {
+      "id": "luck_14",
+      "name": "Предчувствие",
+      "description": "+10% к удаче и +5% к восприятию",
+      "type": "notable",
+      "x": -299,
+      "y": -390,
+      "max_rank": 1
+    },
+    {
+      "id": "vit_1",
+      "name": "Вдох",
+      "description": "+2% к духу",
+      "type": "small",
+      "x": -39,
+      "y": -195,
+      "max_rank": 3
+    },
+    {
+      "id": "vit_2",
+      "name": "Ровное дыхание",
+      "description": "+3% к духу",
+      "type": "small",
+      "x": -26,
+      "y": -286,
+      "max_rank": 2
+    },
+    {
+      "id": "vit_3",
+      "name": "Внутренний баланс",
+      "description": "+10% к духу",
+      "type": "notable",
+      "x": 26,
+      "y": -377,
+      "max_rank": 1
+    },
+    {
+      "id": "vit_4",
+      "name": "Выносливость",
+      "description": "+2% к выносливости",
+      "type": "small",
+      "x": 91,
+      "y": -442,
+      "max_rank": 3
+    },
+    {
+      "id": "vit_5",
+      "name": "Терпение",
+      "description": "+3% к выносливости",
+      "type": "small",
+      "x": 39,
+      "y": -533,
+      "max_rank": 2
+    },
+    {
+      "id": "vit_6",
+      "name": "Второе дыхание",
+      "description": "+1 к максимуму очков действия",
+      "type": "notable",
+      "x": -39,
+      "y": -598,
+      "max_rank": 1
+    },
+    {
+      "id": "vit_7",
+      "name": "Стойкость духа",
+      "description": "+2% к духу",
+      "type": "small",
+      "x": -130,
+      "y": -637,
+      "max_rank": 3
+    },
+    {
+      "id": "vit_8",
+      "name": "Просветлённый",
+      "description": "+8% к опыту и +3% к духу",
+      "type": "notable",
+      "x": -234,
+      "y": -650,
+      "max_rank": 1
+    },
+    {
+      "id": "vit_9",
+      "name": "Спокойный ум",
+      "description": "+3% к духу",
+      "type": "small",
+      "x": -91,
+      "y": -442,
+      "max_rank": 2
+    },
+    {
+      "id": "vit_10",
+      "name": "Гармония",
+      "description": "+10% к духу и +5% к выносливости",
+      "type": "notable",
+      "x": -182,
+      "y": -533,
+      "max_rank": 1
+    },
+    {
+      "id": "pre_1",
+      "name": "Меткость",
+      "description": "+2% к ловкости",
+      "type": "small",
+      "x": 130,
+      "y": -143,
+      "max_rank": 3
+    },
+    {
+      "id": "pre_2",
+      "name": "Точность",
+      "description": "+3% к восприятию",
+      "type": "small",
+      "x": 221,
+      "y": -182,
+      "max_rank": 2
+    },
+    {
+      "id": "pre_3",
+      "name": "Снайпер",
+      "description": "+10% к восприятию",
+      "type": "notable",
+      "x": 325,
+      "y": -195,
+      "max_rank": 1
+    },
+    {
+      "id": "pre_4",
+      "name": "Хладнокровие",
+      "description": "+2% к интеллекту",
+      "type": "small",
+      "x": 416,
+      "y": -182,
+      "max_rank": 3
+    },
+    {
+      "id": "pre_5",
+      "name": "Концентрация",
+      "description": "+3% к восприятию",
+      "type": "small",
+      "x": 455,
+      "y": -286,
+      "max_rank": 2
+    },
+    {
+      "id": "pre_6",
+      "name": "Ясный взор",
+      "description": "+10% к ловкости и восприятию",
+      "type": "notable",
+      "x": 455,
+      "y": -390,
+      "max_rank": 1
+    },
+    {
+      "id": "pre_7",
+      "name": "Расчёт",
+      "description": "+2% к интеллекту",
+      "type": "small",
+      "x": 429,
+      "y": -481,
+      "max_rank": 3
+    },
+    {
+      "id": "pre_8",
+      "name": "Идеальный момент",
+      "description": "+10% к шансу критического успеха задачи",
+      "type": "notable",
+      "x": 390,
+      "y": -572,
+      "max_rank": 1
+    },
+    {
+      "id": "pre_9",
+      "name": "Бдительность",
+      "description": "+3% к восприятию",
+      "type": "small",
+      "x": 312,
+      "y": -637,
+      "max_rank": 2
+    },
+    {
+      "id": "pre_10",
+      "name": "Мастер деталей",
+      "description": "+8% к опыту за задачи с чек-листами",
+      "type": "notable",
+      "x": 221,
+      "y": -689,
+      "max_rank": 1
+    },
+    {
+      "id": "pre_11",
+      "name": "Следопыт",
+      "description": "+3% к восприятию",
+      "type": "small",
+      "x": 234,
+      "y": -299,
+      "max_rank": 2
+    },
+    {
+      "id": "pre_12",
+      "name": "Охотник",
+      "description": "+10% к восприятию и +5% к ловкости",
+      "type": "notable",
+      "x": 156,
+      "y": -390,
+      "max_rank": 1
+    },
+    {
+      "id": "cross_1",
+      "name": "Идеальный баланс",
+      "description": "+5% ко всем базовым статам",
+      "type": "notable",
+      "x": 0,
+      "y": -832,
+      "max_rank": 1
+    },
+    {
+      "id": "cross_2",
+      "name": "Мастер пути",
+      "description": "+2 к максимуму очков действия",
+      "type": "notable",
+      "x": -611,
+      "y": 806,
+      "max_rank": 1
+    },
+    {
+      "id": "cross_3",
+      "name": "Совершенство",
+      "description": "+10% к получаемому опыту и +5% к удаче",
+      "type": "notable",
+      "x": 754,
+      "y": -546,
+      "max_rank": 1
+    },
+    {
+      "id": "illusion_root",
+      "name": "Талант Illusion A",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 0,
+      "y": -1200,
+      "max_rank": 1
+    },
+    {
+      "id": "illusion_1",
+      "name": "Талант Illusion B",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -193,
+      "y": -1205,
+      "max_rank": 1
+    },
+    {
+      "id": "illusion_2",
+      "name": "Талант Illusion C",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -128,
+      "y": -1323,
+      "max_rank": 1
+    },
+    {
+      "id": "illusion_3",
+      "name": "Талант Illusion D",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -125,
+      "y": -1423,
+      "max_rank": 1
+    },
+    {
+      "id": "illusion_4",
+      "name": "Талант Illusion E",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -130,
+      "y": -1474,
+      "max_rank": 1
+    },
+    {
+      "id": "illusion_5",
+      "name": "Талант Illusion F",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -70,
+      "y": -1543,
+      "max_rank": 1
+    },
+    {
+      "id": "illusion_6",
+      "name": "Талант Illusion G",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -18,
+      "y": -1358,
+      "max_rank": 1
+    },
+    {
+      "id": "illusion_7",
+      "name": "Талант Illusion H",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -58,
+      "y": -1451,
+      "max_rank": 1
+    },
+    {
+      "id": "illusion_8",
+      "name": "Талант Illusion I",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -23,
+      "y": -1487,
+      "max_rank": 1
+    },
+    {
+      "id": "illusion_9",
+      "name": "Талант Illusion J",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 146,
+      "y": -1288,
+      "max_rank": 1
+    },
+    {
+      "id": "illusion_10",
+      "name": "Талант Illusion K",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 60,
+      "y": -1393,
+      "max_rank": 1
+    },
+    {
+      "id": "illusion_11",
+      "name": "Талант Illusion L",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 51,
+      "y": -1478,
+      "max_rank": 1
+    },
+    {
+      "id": "illusion_12",
+      "name": "Талант Illusion M",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 18,
+      "y": -1543,
+      "max_rank": 1
+    },
+    {
+      "id": "conjuration_root",
+      "name": "Талант Conjuration A",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 410,
+      "y": -1128,
+      "max_rank": 1
+    },
+    {
+      "id": "conjuration_1",
+      "name": "Талант Conjuration B",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 326,
+      "y": -1304,
+      "max_rank": 1
+    },
+    {
+      "id": "conjuration_2",
+      "name": "Талант Conjuration C",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 355,
+      "y": -1424,
+      "max_rank": 1
+    },
+    {
+      "id": "conjuration_3",
+      "name": "Талант Conjuration D",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 379,
+      "y": -1474,
+      "max_rank": 1
+    },
+    {
+      "id": "conjuration_4",
+      "name": "Талант Conjuration E",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 456,
+      "y": -1475,
+      "max_rank": 1
+    },
+    {
+      "id": "conjuration_5",
+      "name": "Талант Conjuration F",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 389,
+      "y": -1248,
+      "max_rank": 1
+    },
+    {
+      "id": "conjuration_6",
+      "name": "Талант Conjuration G",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 420,
+      "y": -1400,
+      "max_rank": 1
+    },
+    {
+      "id": "conjuration_7",
+      "name": "Талант Conjuration H",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 438,
+      "y": -1448,
+      "max_rank": 1
+    },
+    {
+      "id": "conjuration_8",
+      "name": "Талант Conjuration I",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 467,
+      "y": -1219,
+      "max_rank": 1
+    },
+    {
+      "id": "conjuration_9",
+      "name": "Талант Conjuration J",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 518,
+      "y": -1344,
+      "max_rank": 1
+    },
+    {
+      "id": "conjuration_10",
+      "name": "Талант Conjuration K",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 531,
+      "y": -1379,
+      "max_rank": 1
+    },
+    {
+      "id": "conjuration_11",
+      "name": "Талант Conjuration L",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 537,
+      "y": -1228,
+      "max_rank": 1
+    },
+    {
+      "id": "conjuration_12",
+      "name": "Талант Conjuration M",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 576,
+      "y": -1294,
+      "max_rank": 1
+    },
+    {
+      "id": "conjuration_13",
+      "name": "Талант Conjuration N",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 588,
+      "y": -1354,
+      "max_rank": 1
+    },
+    {
+      "id": "conjuration_14",
+      "name": "Талант Conjuration O",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 561,
+      "y": -1437,
+      "max_rank": 1
+    },
+    {
+      "id": "destruction_root",
+      "name": "Талант Destruction A",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 771,
+      "y": -919,
+      "max_rank": 1
+    },
+    {
+      "id": "destruction_1",
+      "name": "Талант Destruction B",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 789,
+      "y": -1068,
+      "max_rank": 1
+    },
+    {
+      "id": "destruction_2",
+      "name": "Талант Destruction C",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 829,
+      "y": -1133,
+      "max_rank": 1
+    },
+    {
+      "id": "destruction_3",
+      "name": "Талант Destruction D",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 853,
+      "y": -1052,
+      "max_rank": 1
+    },
+    {
+      "id": "destruction_4",
+      "name": "Талант Destruction E",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 903,
+      "y": -1124,
+      "max_rank": 1
+    },
+    {
+      "id": "destruction_5",
+      "name": "Талант Destruction F",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 889,
+      "y": -1024,
+      "max_rank": 1
+    },
+    {
+      "id": "destruction_6",
+      "name": "Талант Destruction G",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 957,
+      "y": -1104,
+      "max_rank": 1
+    },
+    {
+      "id": "destruction_7",
+      "name": "Талант Destruction H",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 896,
+      "y": -945,
+      "max_rank": 1
+    },
+    {
+      "id": "destruction_8",
+      "name": "Талант Destruction I",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 955,
+      "y": -1028,
+      "max_rank": 1
+    },
+    {
+      "id": "destruction_9",
+      "name": "Талант Destruction J",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1011,
+      "y": -1058,
+      "max_rank": 1
+    },
+    {
+      "id": "destruction_10",
+      "name": "Талант Destruction K",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1059,
+      "y": -1119,
+      "max_rank": 1
+    },
+    {
+      "id": "destruction_11",
+      "name": "Талант Destruction L",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 963,
+      "y": -958,
+      "max_rank": 1
+    },
+    {
+      "id": "destruction_12",
+      "name": "Талант Destruction M",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 885,
+      "y": -872,
+      "max_rank": 1
+    },
+    {
+      "id": "destruction_13",
+      "name": "Талант Destruction N",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 946,
+      "y": -903,
+      "max_rank": 1
+    },
+    {
+      "id": "restoration_root",
+      "name": "Талант Restoration A",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1039,
+      "y": -600,
+      "max_rank": 1
+    },
+    {
+      "id": "restoration_1",
+      "name": "Талант Restoration B",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1082,
+      "y": -856,
+      "max_rank": 1
+    },
+    {
+      "id": "restoration_2",
+      "name": "Талант Restoration C",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1117,
+      "y": -749,
+      "max_rank": 1
+    },
+    {
+      "id": "restoration_3",
+      "name": "Талант Restoration D",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1171,
+      "y": -881,
+      "max_rank": 1
+    },
+    {
+      "id": "restoration_4",
+      "name": "Талант Restoration E",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1220,
+      "y": -796,
+      "max_rank": 1
+    },
+    {
+      "id": "restoration_5",
+      "name": "Талант Restoration F",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1165,
+      "y": -655,
+      "max_rank": 1
+    },
+    {
+      "id": "restoration_6",
+      "name": "Талант Restoration G",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1236,
+      "y": -728,
+      "max_rank": 1
+    },
+    {
+      "id": "restoration_7",
+      "name": "Талант Restoration H",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1313,
+      "y": -766,
+      "max_rank": 1
+    },
+    {
+      "id": "restoration_8",
+      "name": "Талант Restoration I",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1315,
+      "y": -815,
+      "max_rank": 1
+    },
+    {
+      "id": "restoration_9",
+      "name": "Талант Restoration J",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1249,
+      "y": -567,
+      "max_rank": 1
+    },
+    {
+      "id": "restoration_10",
+      "name": "Талант Restoration K",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1326,
+      "y": -572,
+      "max_rank": 1
+    },
+    {
+      "id": "restoration_11",
+      "name": "Талант Restoration L",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1188,
+      "y": -528,
+      "max_rank": 1
+    },
+    {
+      "id": "alteration_root",
+      "name": "Талант Alteration A",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1182,
+      "y": -208,
+      "max_rank": 1
+    },
+    {
+      "id": "alteration_1",
+      "name": "Талант Alteration B",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1267,
+      "y": -281,
+      "max_rank": 1
+    },
+    {
+      "id": "alteration_2",
+      "name": "Талант Alteration C",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1310,
+      "y": -214,
+      "max_rank": 1
+    },
+    {
+      "id": "alteration_3",
+      "name": "Талант Alteration D",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1388,
+      "y": -297,
+      "max_rank": 1
+    },
+    {
+      "id": "alteration_4",
+      "name": "Талант Alteration E",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1413,
+      "y": -158,
+      "max_rank": 1
+    },
+    {
+      "id": "alteration_5",
+      "name": "Талант Alteration F",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1422,
+      "y": -234,
+      "max_rank": 1
+    },
+    {
+      "id": "alteration_6",
+      "name": "Талант Alteration G",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1460,
+      "y": -289,
+      "max_rank": 1
+    },
+    {
+      "id": "alteration_7",
+      "name": "Талант Alteration H",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1475,
+      "y": -206,
+      "max_rank": 1
+    },
+    {
+      "id": "alteration_8",
+      "name": "Талант Alteration I",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1492,
+      "y": -334,
+      "max_rank": 1
+    },
+    {
+      "id": "alteration_9",
+      "name": "Талант Alteration J",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1525,
+      "y": -142,
+      "max_rank": 1
+    },
+    {
+      "id": "enchanting_root",
+      "name": "Талант Enchanting A",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1182,
+      "y": 208,
+      "max_rank": 1
+    },
+    {
+      "id": "enchanting_1",
+      "name": "Талант Enchanting B",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1339,
+      "y": 181,
+      "max_rank": 1
+    },
+    {
+      "id": "enchanting_2",
+      "name": "Талант Enchanting C",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1423,
+      "y": 207,
+      "max_rank": 1
+    },
+    {
+      "id": "enchanting_3",
+      "name": "Талант Enchanting D",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1484,
+      "y": 264,
+      "max_rank": 1
+    },
+    {
+      "id": "enchanting_4",
+      "name": "Талант Enchanting E",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1504,
+      "y": 346,
+      "max_rank": 1
+    },
+    {
+      "id": "enchanting_5",
+      "name": "Талант Enchanting F",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1321,
+      "y": 281,
+      "max_rank": 1
+    },
+    {
+      "id": "enchanting_6",
+      "name": "Талант Enchanting G",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1400,
+      "y": 344,
+      "max_rank": 1
+    },
+    {
+      "id": "enchanting_7",
+      "name": "Талант Enchanting H",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1301,
+      "y": 395,
+      "max_rank": 1
+    },
+    {
+      "id": "enchanting_8",
+      "name": "Талант Enchanting I",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1463,
+      "y": 399,
+      "max_rank": 1
+    },
+    {
+      "id": "smithing_root",
+      "name": "Талант Smithing A",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1039,
+      "y": 600,
+      "max_rank": 1
+    },
+    {
+      "id": "smithing_1",
+      "name": "Талант Smithing B",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1142,
+      "y": 673,
+      "max_rank": 1
+    },
+    {
+      "id": "smithing_2",
+      "name": "Талант Smithing C",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1207,
+      "y": 560,
+      "max_rank": 1
+    },
+    {
+      "id": "smithing_3",
+      "name": "Талант Smithing D",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1228,
+      "y": 592,
+      "max_rank": 1
+    },
+    {
+      "id": "smithing_4",
+      "name": "Талант Smithing E",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1226,
+      "y": 676,
+      "max_rank": 1
+    },
+    {
+      "id": "smithing_5",
+      "name": "Талант Smithing F",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1062,
+      "y": 750,
+      "max_rank": 1
+    },
+    {
+      "id": "smithing_6",
+      "name": "Талант Smithing G",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1036,
+      "y": 864,
+      "max_rank": 1
+    },
+    {
+      "id": "smithing_7",
+      "name": "Талант Smithing H",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1003,
+      "y": 948,
+      "max_rank": 1
+    },
+    {
+      "id": "smithing_8",
+      "name": "Талант Smithing I",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1114,
+      "y": 835,
+      "max_rank": 1
+    },
+    {
+      "id": "smithing_9",
+      "name": "Талант Smithing J",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1173,
+      "y": 764,
+      "max_rank": 1
+    },
+    {
+      "id": "heavy_armor_root",
+      "name": "Талант Heavy Armor A",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 771,
+      "y": 919,
+      "max_rank": 1
+    },
+    {
+      "id": "heavy_armor_1",
+      "name": "Талант Heavy Armor B",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 927,
+      "y": 934,
+      "max_rank": 1
+    },
+    {
+      "id": "heavy_armor_2",
+      "name": "Талант Heavy Armor C",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1036,
+      "y": 991,
+      "max_rank": 1
+    },
+    {
+      "id": "heavy_armor_3",
+      "name": "Талант Heavy Armor D",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 1088,
+      "y": 1065,
+      "max_rank": 1
+    },
+    {
+      "id": "heavy_armor_4",
+      "name": "Талант Heavy Armor E",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 762,
+      "y": 1073,
+      "max_rank": 1
+    },
+    {
+      "id": "heavy_armor_5",
+      "name": "Талант Heavy Armor F",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 809,
+      "y": 1182,
+      "max_rank": 1
+    },
+    {
+      "id": "heavy_armor_6",
+      "name": "Талант Heavy Armor G",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 829,
+      "y": 1246,
+      "max_rank": 1
+    },
+    {
+      "id": "heavy_armor_7",
+      "name": "Талант Heavy Armor H",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 871,
+      "y": 1255,
+      "max_rank": 1
+    },
+    {
+      "id": "block_root",
+      "name": "Талант Block A",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 410,
+      "y": 1128,
+      "max_rank": 1
+    },
+    {
+      "id": "block_1",
+      "name": "Талант Block B",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 507,
+      "y": 1252,
+      "max_rank": 1
+    },
+    {
+      "id": "block_2",
+      "name": "Талант Block C",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 636,
+      "y": 1161,
+      "max_rank": 1
+    },
+    {
+      "id": "block_3",
+      "name": "Талант Block D",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 646,
+      "y": 1338,
+      "max_rank": 1
+    },
+    {
+      "id": "block_4",
+      "name": "Талант Block E",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 603,
+      "y": 1394,
+      "max_rank": 1
+    },
+    {
+      "id": "block_5",
+      "name": "Талант Block F",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 281,
+      "y": 1295,
+      "max_rank": 1
+    },
+    {
+      "id": "block_6",
+      "name": "Талант Block G",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 333,
+      "y": 1397,
+      "max_rank": 1
+    },
+    {
+      "id": "block_7",
+      "name": "Талант Block H",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 397,
+      "y": 1469,
+      "max_rank": 1
+    },
+    {
+      "id": "block_8",
+      "name": "Талант Block I",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 530,
+      "y": 1457,
+      "max_rank": 1
+    },
+    {
+      "id": "two_handed_root",
+      "name": "Талант Two-Handed A",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 0,
+      "y": 1200,
+      "max_rank": 1
+    },
+    {
+      "id": "two_handed_1",
+      "name": "Талант Two-Handed B",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 78,
+      "y": 1323,
+      "max_rank": 1
+    },
+    {
+      "id": "two_handed_2",
+      "name": "Талант Two-Handed C",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -75,
+      "y": 1336,
+      "max_rank": 1
+    },
+    {
+      "id": "two_handed_3",
+      "name": "Талант Two-Handed D",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -121,
+      "y": 1336,
+      "max_rank": 1
+    },
+    {
+      "id": "two_handed_4",
+      "name": "Талант Two-Handed E",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -6,
+      "y": 1290,
+      "max_rank": 1
+    },
+    {
+      "id": "two_handed_5",
+      "name": "Талант Two-Handed F",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": 18,
+      "y": 1396,
+      "max_rank": 1
+    },
+    {
+      "id": "two_handed_6",
+      "name": "Талант Two-Handed G",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -33,
+      "y": 1394,
+      "max_rank": 1
+    },
+    {
+      "id": "two_handed_7",
+      "name": "Талант Two-Handed H",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -17,
+      "y": 1491,
+      "max_rank": 1
+    },
+    {
+      "id": "two_handed_8",
+      "name": "Талант Two-Handed I",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -19,
+      "y": 1549,
+      "max_rank": 1
+    },
+    {
+      "id": "one_handed_root",
+      "name": "Талант One-Handed A",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -410,
+      "y": 1128,
+      "max_rank": 1
+    },
+    {
+      "id": "one_handed_1",
+      "name": "Талант One-Handed B",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -386,
+      "y": 1300,
+      "max_rank": 1
+    },
+    {
+      "id": "one_handed_2",
+      "name": "Талант One-Handed C",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -444,
+      "y": 1220,
+      "max_rank": 1
+    },
+    {
+      "id": "one_handed_3",
+      "name": "Талант One-Handed D",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -452,
+      "y": 1347,
+      "max_rank": 1
+    },
+    {
+      "id": "one_handed_4",
+      "name": "Талант One-Handed E",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -512,
+      "y": 1326,
+      "max_rank": 1
+    },
+    {
+      "id": "one_handed_5",
+      "name": "Талант One-Handed F",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -530,
+      "y": 1457,
+      "max_rank": 1
+    },
+    {
+      "id": "one_handed_6",
+      "name": "Талант One-Handed G",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -515,
+      "y": 1253,
+      "max_rank": 1
+    },
+    {
+      "id": "one_handed_7",
+      "name": "Талант One-Handed H",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -555,
+      "y": 1239,
+      "max_rank": 1
+    },
+    {
+      "id": "one_handed_8",
+      "name": "Талант One-Handed I",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -584,
+      "y": 1140,
+      "max_rank": 1
+    },
+    {
+      "id": "one_handed_9",
+      "name": "Талант One-Handed J",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -611,
+      "y": 1366,
+      "max_rank": 1
+    },
+    {
+      "id": "archery_root",
+      "name": "Талант Archery A",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -771,
+      "y": 919,
+      "max_rank": 1
+    },
+    {
+      "id": "archery_1",
+      "name": "Талант Archery B",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -714,
+      "y": 1102,
+      "max_rank": 1
+    },
+    {
+      "id": "archery_2",
+      "name": "Талант Archery C",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -773,
+      "y": 1093,
+      "max_rank": 1
+    },
+    {
+      "id": "archery_3",
+      "name": "Талант Archery D",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -736,
+      "y": 1187,
+      "max_rank": 1
+    },
+    {
+      "id": "archery_4",
+      "name": "Талант Archery E",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -804,
+      "y": 1268,
+      "max_rank": 1
+    },
+    {
+      "id": "archery_5",
+      "name": "Талант Archery F",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -832,
+      "y": 1044,
+      "max_rank": 1
+    },
+    {
+      "id": "archery_6",
+      "name": "Талант Archery G",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -854,
+      "y": 1158,
+      "max_rank": 1
+    },
+    {
+      "id": "archery_7",
+      "name": "Талант Archery H",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -872,
+      "y": 1199,
+      "max_rank": 1
+    },
+    {
+      "id": "archery_8",
+      "name": "Талант Archery I",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -855,
+      "y": 1251,
+      "max_rank": 1
+    },
+    {
+      "id": "light_armor_root",
+      "name": "Талант Light Armor A",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1039,
+      "y": 600,
+      "max_rank": 1
+    },
+    {
+      "id": "light_armor_1",
+      "name": "Талант Light Armor B",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1136,
+      "y": 694,
+      "max_rank": 1
+    },
+    {
+      "id": "light_armor_2",
+      "name": "Талант Light Armor C",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1191,
+      "y": 808,
+      "max_rank": 1
+    },
+    {
+      "id": "light_armor_3",
+      "name": "Талант Light Armor D",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1256,
+      "y": 830,
+      "max_rank": 1
+    },
+    {
+      "id": "light_armor_4",
+      "name": "Талант Light Armor E",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1324,
+      "y": 803,
+      "max_rank": 1
+    },
+    {
+      "id": "light_armor_5",
+      "name": "Талант Light Armor F",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1329,
+      "y": 748,
+      "max_rank": 1
+    },
+    {
+      "id": "sneak_root",
+      "name": "Талант Sneak A",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1182,
+      "y": 208,
+      "max_rank": 1
+    },
+    {
+      "id": "sneak_1",
+      "name": "Талант Sneak B",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1269,
+      "y": 329,
+      "max_rank": 1
+    },
+    {
+      "id": "sneak_2",
+      "name": "Талант Sneak C",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1385,
+      "y": 308,
+      "max_rank": 1
+    },
+    {
+      "id": "sneak_3",
+      "name": "Талант Sneak D",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1431,
+      "y": 268,
+      "max_rank": 1
+    },
+    {
+      "id": "sneak_4",
+      "name": "Талант Sneak E",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1493,
+      "y": 223,
+      "max_rank": 1
+    },
+    {
+      "id": "sneak_5",
+      "name": "Талант Sneak F",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1524,
+      "y": 136,
+      "max_rank": 1
+    },
+    {
+      "id": "sneak_6",
+      "name": "Талант Sneak G",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1301,
+      "y": 146,
+      "max_rank": 1
+    },
+    {
+      "id": "sneak_7",
+      "name": "Талант Sneak H",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1409,
+      "y": 154,
+      "max_rank": 1
+    },
+    {
+      "id": "sneak_8",
+      "name": "Талант Sneak I",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1423,
+      "y": 197,
+      "max_rank": 1
+    },
+    {
+      "id": "lockpicking_root",
+      "name": "Талант Lockpicking A",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1182,
+      "y": -208,
+      "max_rank": 1
+    },
+    {
+      "id": "lockpicking_1",
+      "name": "Талант Lockpicking B",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1272,
+      "y": -281,
+      "max_rank": 1
+    },
+    {
+      "id": "lockpicking_2",
+      "name": "Талант Lockpicking C",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1342,
+      "y": -224,
+      "max_rank": 1
+    },
+    {
+      "id": "lockpicking_3",
+      "name": "Талант Lockpicking D",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1389,
+      "y": -162,
+      "max_rank": 1
+    },
+    {
+      "id": "lockpicking_4",
+      "name": "Талант Lockpicking E",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1366,
+      "y": -343,
+      "max_rank": 1
+    },
+    {
+      "id": "lockpicking_5",
+      "name": "Талант Lockpicking F",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1401,
+      "y": -273,
+      "max_rank": 1
+    },
+    {
+      "id": "lockpicking_6",
+      "name": "Талант Lockpicking G",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1450,
+      "y": -230,
+      "max_rank": 1
+    },
+    {
+      "id": "lockpicking_7",
+      "name": "Талант Lockpicking H",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1421,
+      "y": -366,
+      "max_rank": 1
+    },
+    {
+      "id": "lockpicking_8",
+      "name": "Талант Lockpicking I",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1469,
+      "y": -303,
+      "max_rank": 1
+    },
+    {
+      "id": "lockpicking_9",
+      "name": "Талант Lockpicking J",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1505,
+      "y": -265,
+      "max_rank": 1
+    },
+    {
+      "id": "lockpicking_10",
+      "name": "Талант Lockpicking K",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1481,
+      "y": -389,
+      "max_rank": 1
+    },
+    {
+      "id": "pickpocket_root",
+      "name": "Талант Pickpocket A",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1039,
+      "y": -600,
+      "max_rank": 1
+    },
+    {
+      "id": "pickpocket_1",
+      "name": "Талант Pickpocket B",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1102,
+      "y": -694,
+      "max_rank": 1
+    },
+    {
+      "id": "pickpocket_2",
+      "name": "Талант Pickpocket C",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1216,
+      "y": -732,
+      "max_rank": 1
+    },
+    {
+      "id": "pickpocket_3",
+      "name": "Талант Pickpocket D",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1184,
+      "y": -788,
+      "max_rank": 1
+    },
+    {
+      "id": "pickpocket_4",
+      "name": "Талант Pickpocket E",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1239,
+      "y": -768,
+      "max_rank": 1
+    },
+    {
+      "id": "pickpocket_5",
+      "name": "Талант Pickpocket F",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1247,
+      "y": -847,
+      "max_rank": 1
+    },
+    {
+      "id": "pickpocket_6",
+      "name": "Талант Pickpocket G",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1239,
+      "y": -888,
+      "max_rank": 1
+    },
+    {
+      "id": "pickpocket_7",
+      "name": "Талант Pickpocket H",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -1150,
+      "y": -836,
+      "max_rank": 1
+    },
+    {
+      "id": "speech_root",
+      "name": "Талант Speech A",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -771,
+      "y": -919,
+      "max_rank": 1
+    },
+    {
+      "id": "speech_1",
+      "name": "Талант Speech B",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -819,
+      "y": -1024,
+      "max_rank": 1
+    },
+    {
+      "id": "speech_2",
+      "name": "Талант Speech C",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -907,
+      "y": -1095,
+      "max_rank": 1
+    },
+    {
+      "id": "speech_3",
+      "name": "Талант Speech D",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -962,
+      "y": -1133,
+      "max_rank": 1
+    },
+    {
+      "id": "speech_4",
+      "name": "Талант Speech E",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -997,
+      "y": -1153,
+      "max_rank": 1
+    },
+    {
+      "id": "speech_5",
+      "name": "Талант Speech F",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -897,
+      "y": -1246,
+      "max_rank": 1
+    },
+    {
+      "id": "speech_6",
+      "name": "Талант Speech G",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -751,
+      "y": -1081,
+      "max_rank": 1
+    },
+    {
+      "id": "speech_7",
+      "name": "Талант Speech H",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -785,
+      "y": -1197,
+      "max_rank": 1
+    },
+    {
+      "id": "speech_8",
+      "name": "Талант Speech I",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -807,
+      "y": -1263,
+      "max_rank": 1
+    },
+    {
+      "id": "alchemy_root",
+      "name": "Талант Alchemy A",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -410,
+      "y": -1128,
+      "max_rank": 1
+    },
+    {
+      "id": "alchemy_1",
+      "name": "Талант Alchemy B",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -254,
+      "y": -1220,
+      "max_rank": 1
+    },
+    {
+      "id": "alchemy_2",
+      "name": "Талант Alchemy C",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -416,
+      "y": -1247,
+      "max_rank": 1
+    },
+    {
+      "id": "alchemy_3",
+      "name": "Талант Alchemy D",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -434,
+      "y": -1309,
+      "max_rank": 1
+    },
+    {
+      "id": "alchemy_4",
+      "name": "Талант Alchemy E",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -451,
+      "y": -1394,
+      "max_rank": 1
+    },
+    {
+      "id": "alchemy_5",
+      "name": "Талант Alchemy F",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -317,
+      "y": -1283,
+      "max_rank": 1
+    },
+    {
+      "id": "alchemy_6",
+      "name": "Талант Alchemy G",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -352,
+      "y": -1339,
+      "max_rank": 1
+    },
+    {
+      "id": "alchemy_7",
+      "name": "Талант Alchemy H",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -400,
+      "y": -1433,
+      "max_rank": 1
+    },
+    {
+      "id": "alchemy_8",
+      "name": "Талант Alchemy I",
+      "description": "Описание таланта...",
+      "type": "small",
+      "x": -434,
+      "y": -1477,
+      "max_rank": 1
+    }
   ],
   "edges": [
-    ["start", "xp_1"],
-    ["xp_1", "xp_2"],
-    ["xp_2", "xp_3"],
-    ["xp_3", "xp_4"],
-    ["xp_4", "xp_5"],
-    ["xp_5", "xp_6"],
-    ["xp_6", "xp_7"],
-    ["xp_7", "xp_8"],
-    ["xp_8", "xp_9"],
-    ["xp_9", "xp_10"],
-
-    ["start", "wis_1"],
-    ["wis_1", "wis_2"],
-    ["wis_2", "wis_3"],
-    ["wis_3", "wis_4"],
-    ["wis_4", "wis_5"],
-    ["wis_5", "wis_6"],
-    ["wis_6", "wis_7"],
-    ["wis_7", "wis_8"],
-    ["wis_8", "wis_9"],
-    ["wis_9", "wis_10"],
-    ["wis_10", "wis_11"],
-    ["wis_11", "wis_12"],
-    ["wis_12", "wis_13"],
-
-    ["start", "str_1"],
-    ["str_1", "str_2"],
-    ["str_2", "str_3"],
-    ["str_3", "str_4"],
-    ["str_4", "str_5"],
-    ["str_5", "str_6"],
-    ["str_6", "str_7"],
-    ["str_7", "str_8"],
-    ["str_8", "str_9"],
-    ["str_9", "str_10"],
-    ["str_10", "str_11"],
-
-    ["start", "luck_1"],
-    ["luck_1", "luck_2"],
-    ["luck_2", "luck_3"],
-    ["luck_3", "luck_4"],
-    ["luck_4", "luck_5"],
-    ["luck_5", "luck_6"],
-    ["luck_6", "luck_7"],
-    ["luck_7", "luck_8"],
-    ["luck_8", "luck_9"],
-    ["luck_9", "luck_10"],
-    ["luck_10", "luck_11"],
-    ["luck_11", "luck_12"],
-
-    ["start", "vit_1"],
-    ["vit_1", "vit_2"],
-    ["vit_2", "vit_3"],
-    ["vit_3", "vit_4"],
-    ["vit_4", "vit_5"],
-    ["vit_5", "vit_6"],
-    ["vit_6", "vit_7"],
-    ["vit_7", "vit_8"],
-
-    ["start", "pre_1"],
-    ["pre_1", "pre_2"],
-    ["pre_2", "pre_3"],
-    ["pre_3", "pre_4"],
-    ["pre_4", "pre_5"],
-    ["pre_5", "pre_6"],
-    ["pre_6", "pre_7"],
-    ["pre_7", "pre_8"],
-    ["pre_8", "pre_9"],
-    ["pre_9", "pre_10"]
+    [
+      "skyrim_start",
+      "xp_1"
+    ],
+    [
+      "xp_1",
+      "xp_2"
+    ],
+    [
+      "xp_2",
+      "xp_3"
+    ],
+    [
+      "xp_3",
+      "xp_4"
+    ],
+    [
+      "xp_4",
+      "xp_5"
+    ],
+    [
+      "xp_5",
+      "xp_6"
+    ],
+    [
+      "xp_6",
+      "xp_7"
+    ],
+    [
+      "xp_7",
+      "xp_8"
+    ],
+    [
+      "xp_8",
+      "xp_9"
+    ],
+    [
+      "xp_9",
+      "xp_10"
+    ],
+    [
+      "xp_4",
+      "xp_11"
+    ],
+    [
+      "xp_11",
+      "xp_12"
+    ],
+    [
+      "skyrim_start",
+      "wis_1"
+    ],
+    [
+      "wis_1",
+      "wis_2"
+    ],
+    [
+      "wis_2",
+      "wis_3"
+    ],
+    [
+      "wis_3",
+      "wis_4"
+    ],
+    [
+      "wis_4",
+      "wis_5"
+    ],
+    [
+      "wis_5",
+      "wis_6"
+    ],
+    [
+      "wis_6",
+      "wis_7"
+    ],
+    [
+      "wis_7",
+      "wis_8"
+    ],
+    [
+      "wis_8",
+      "wis_9"
+    ],
+    [
+      "wis_9",
+      "wis_10"
+    ],
+    [
+      "wis_10",
+      "wis_11"
+    ],
+    [
+      "wis_11",
+      "wis_12"
+    ],
+    [
+      "wis_12",
+      "wis_13"
+    ],
+    [
+      "wis_3",
+      "wis_14"
+    ],
+    [
+      "wis_14",
+      "wis_15"
+    ],
+    [
+      "skyrim_start",
+      "str_1"
+    ],
+    [
+      "str_1",
+      "str_2"
+    ],
+    [
+      "str_2",
+      "str_3"
+    ],
+    [
+      "str_3",
+      "str_4"
+    ],
+    [
+      "str_4",
+      "str_5"
+    ],
+    [
+      "str_5",
+      "str_6"
+    ],
+    [
+      "str_6",
+      "str_7"
+    ],
+    [
+      "str_7",
+      "str_8"
+    ],
+    [
+      "str_8",
+      "str_9"
+    ],
+    [
+      "str_9",
+      "str_10"
+    ],
+    [
+      "str_10",
+      "str_11"
+    ],
+    [
+      "str_6",
+      "str_12"
+    ],
+    [
+      "str_12",
+      "str_13"
+    ],
+    [
+      "skyrim_start",
+      "luck_1"
+    ],
+    [
+      "luck_1",
+      "luck_2"
+    ],
+    [
+      "luck_2",
+      "luck_3"
+    ],
+    [
+      "luck_3",
+      "luck_4"
+    ],
+    [
+      "luck_4",
+      "luck_5"
+    ],
+    [
+      "luck_5",
+      "luck_6"
+    ],
+    [
+      "luck_6",
+      "luck_7"
+    ],
+    [
+      "luck_7",
+      "luck_8"
+    ],
+    [
+      "luck_8",
+      "luck_9"
+    ],
+    [
+      "luck_9",
+      "luck_10"
+    ],
+    [
+      "luck_10",
+      "luck_11"
+    ],
+    [
+      "luck_11",
+      "luck_12"
+    ],
+    [
+      "luck_3",
+      "luck_13"
+    ],
+    [
+      "luck_13",
+      "luck_14"
+    ],
+    [
+      "skyrim_start",
+      "vit_1"
+    ],
+    [
+      "vit_1",
+      "vit_2"
+    ],
+    [
+      "vit_2",
+      "vit_3"
+    ],
+    [
+      "vit_3",
+      "vit_4"
+    ],
+    [
+      "vit_4",
+      "vit_5"
+    ],
+    [
+      "vit_5",
+      "vit_6"
+    ],
+    [
+      "vit_6",
+      "vit_7"
+    ],
+    [
+      "vit_7",
+      "vit_8"
+    ],
+    [
+      "vit_3",
+      "vit_9"
+    ],
+    [
+      "vit_9",
+      "vit_10"
+    ],
+    [
+      "skyrim_start",
+      "pre_1"
+    ],
+    [
+      "pre_1",
+      "pre_2"
+    ],
+    [
+      "pre_2",
+      "pre_3"
+    ],
+    [
+      "pre_3",
+      "pre_4"
+    ],
+    [
+      "pre_4",
+      "pre_5"
+    ],
+    [
+      "pre_5",
+      "pre_6"
+    ],
+    [
+      "pre_6",
+      "pre_7"
+    ],
+    [
+      "pre_7",
+      "pre_8"
+    ],
+    [
+      "pre_8",
+      "pre_9"
+    ],
+    [
+      "pre_9",
+      "pre_10"
+    ],
+    [
+      "pre_3",
+      "pre_11"
+    ],
+    [
+      "pre_11",
+      "pre_12"
+    ],
+    [
+      "vit_8",
+      "cross_1"
+    ],
+    [
+      "luck_12",
+      "cross_1"
+    ],
+    [
+      "pre_10",
+      "cross_1"
+    ],
+    [
+      "str_8",
+      "cross_2"
+    ],
+    [
+      "wis_13",
+      "cross_2"
+    ],
+    [
+      "xp_10",
+      "cross_3"
+    ],
+    [
+      "pre_8",
+      "cross_3"
+    ],
+    [
+      "skyrim_start",
+      "illusion_root"
+    ],
+    [
+      "illusion_root",
+      "illusion_1"
+    ],
+    [
+      "illusion_root",
+      "illusion_9"
+    ],
+    [
+      "illusion_root",
+      "illusion_2"
+    ],
+    [
+      "illusion_root",
+      "illusion_6"
+    ],
+    [
+      "illusion_2",
+      "illusion_3"
+    ],
+    [
+      "illusion_3",
+      "illusion_4"
+    ],
+    [
+      "illusion_4",
+      "illusion_5"
+    ],
+    [
+      "illusion_6",
+      "illusion_7"
+    ],
+    [
+      "illusion_7",
+      "illusion_8"
+    ],
+    [
+      "illusion_8",
+      "illusion_12"
+    ],
+    [
+      "illusion_9",
+      "illusion_10"
+    ],
+    [
+      "illusion_10",
+      "illusion_11"
+    ],
+    [
+      "illusion_11",
+      "illusion_12"
+    ],
+    [
+      "skyrim_start",
+      "conjuration_root"
+    ],
+    [
+      "conjuration_root",
+      "conjuration_1"
+    ],
+    [
+      "conjuration_1",
+      "conjuration_2"
+    ],
+    [
+      "conjuration_2",
+      "conjuration_3"
+    ],
+    [
+      "conjuration_3",
+      "conjuration_4"
+    ],
+    [
+      "conjuration_root",
+      "conjuration_5"
+    ],
+    [
+      "conjuration_root",
+      "conjuration_6"
+    ],
+    [
+      "conjuration_6",
+      "conjuration_7"
+    ],
+    [
+      "conjuration_7",
+      "conjuration_4"
+    ],
+    [
+      "conjuration_root",
+      "conjuration_8"
+    ],
+    [
+      "conjuration_8",
+      "conjuration_9"
+    ],
+    [
+      "conjuration_9",
+      "conjuration_10"
+    ],
+    [
+      "conjuration_root",
+      "conjuration_11"
+    ],
+    [
+      "conjuration_11",
+      "conjuration_12"
+    ],
+    [
+      "conjuration_12",
+      "conjuration_13"
+    ],
+    [
+      "conjuration_13",
+      "conjuration_14"
+    ],
+    [
+      "skyrim_start",
+      "destruction_root"
+    ],
+    [
+      "destruction_root",
+      "destruction_1"
+    ],
+    [
+      "destruction_1",
+      "destruction_2"
+    ],
+    [
+      "destruction_root",
+      "destruction_3"
+    ],
+    [
+      "destruction_3",
+      "destruction_4"
+    ],
+    [
+      "destruction_root",
+      "destruction_5"
+    ],
+    [
+      "destruction_5",
+      "destruction_6"
+    ],
+    [
+      "destruction_root",
+      "destruction_7"
+    ],
+    [
+      "destruction_7",
+      "destruction_8"
+    ],
+    [
+      "destruction_8",
+      "destruction_9"
+    ],
+    [
+      "destruction_9",
+      "destruction_10"
+    ],
+    [
+      "destruction_7",
+      "destruction_11"
+    ],
+    [
+      "destruction_root",
+      "destruction_12"
+    ],
+    [
+      "destruction_12",
+      "destruction_13"
+    ],
+    [
+      "skyrim_start",
+      "restoration_root"
+    ],
+    [
+      "restoration_root",
+      "restoration_1"
+    ],
+    [
+      "restoration_root",
+      "restoration_2"
+    ],
+    [
+      "restoration_2",
+      "restoration_3"
+    ],
+    [
+      "restoration_root",
+      "restoration_4"
+    ],
+    [
+      "restoration_root",
+      "restoration_5"
+    ],
+    [
+      "restoration_5",
+      "restoration_6"
+    ],
+    [
+      "restoration_6",
+      "restoration_7"
+    ],
+    [
+      "restoration_7",
+      "restoration_8"
+    ],
+    [
+      "restoration_root",
+      "restoration_11"
+    ],
+    [
+      "restoration_root",
+      "restoration_9"
+    ],
+    [
+      "restoration_9",
+      "restoration_10"
+    ],
+    [
+      "skyrim_start",
+      "alteration_root"
+    ],
+    [
+      "alteration_root",
+      "alteration_1"
+    ],
+    [
+      "alteration_root",
+      "alteration_2"
+    ],
+    [
+      "alteration_2",
+      "alteration_3"
+    ],
+    [
+      "alteration_2",
+      "alteration_4"
+    ],
+    [
+      "alteration_2",
+      "alteration_5"
+    ],
+    [
+      "alteration_5",
+      "alteration_6"
+    ],
+    [
+      "alteration_5",
+      "alteration_7"
+    ],
+    [
+      "alteration_7",
+      "alteration_8"
+    ],
+    [
+      "alteration_7",
+      "alteration_9"
+    ],
+    [
+      "skyrim_start",
+      "enchanting_root"
+    ],
+    [
+      "enchanting_root",
+      "enchanting_1"
+    ],
+    [
+      "enchanting_1",
+      "enchanting_2"
+    ],
+    [
+      "enchanting_2",
+      "enchanting_3"
+    ],
+    [
+      "enchanting_3",
+      "enchanting_4"
+    ],
+    [
+      "enchanting_root",
+      "enchanting_5"
+    ],
+    [
+      "enchanting_5",
+      "enchanting_6"
+    ],
+    [
+      "enchanting_6",
+      "enchanting_4"
+    ],
+    [
+      "enchanting_root",
+      "enchanting_7"
+    ],
+    [
+      "enchanting_7",
+      "enchanting_8"
+    ],
+    [
+      "skyrim_start",
+      "smithing_root"
+    ],
+    [
+      "smithing_root",
+      "smithing_1"
+    ],
+    [
+      "smithing_root",
+      "smithing_2"
+    ],
+    [
+      "smithing_2",
+      "smithing_3"
+    ],
+    [
+      "smithing_3",
+      "smithing_4"
+    ],
+    [
+      "smithing_4",
+      "smithing_9"
+    ],
+    [
+      "smithing_root",
+      "smithing_5"
+    ],
+    [
+      "smithing_5",
+      "smithing_6"
+    ],
+    [
+      "smithing_6",
+      "smithing_7"
+    ],
+    [
+      "smithing_7",
+      "smithing_8"
+    ],
+    [
+      "smithing_9",
+      "smithing_8"
+    ],
+    [
+      "skyrim_start",
+      "heavy_armor_root"
+    ],
+    [
+      "heavy_armor_root",
+      "heavy_armor_1"
+    ],
+    [
+      "heavy_armor_1",
+      "heavy_armor_2"
+    ],
+    [
+      "heavy_armor_2",
+      "heavy_armor_3"
+    ],
+    [
+      "heavy_armor_root",
+      "heavy_armor_4"
+    ],
+    [
+      "heavy_armor_4",
+      "heavy_armor_5"
+    ],
+    [
+      "heavy_armor_5",
+      "heavy_armor_6"
+    ],
+    [
+      "heavy_armor_6",
+      "heavy_armor_7"
+    ],
+    [
+      "skyrim_start",
+      "block_root"
+    ],
+    [
+      "block_root",
+      "block_1"
+    ],
+    [
+      "block_root",
+      "block_2"
+    ],
+    [
+      "block_2",
+      "block_3"
+    ],
+    [
+      "block_3",
+      "block_4"
+    ],
+    [
+      "block_4",
+      "block_8"
+    ],
+    [
+      "block_root",
+      "block_5"
+    ],
+    [
+      "block_5",
+      "block_6"
+    ],
+    [
+      "block_6",
+      "block_7"
+    ],
+    [
+      "block_7",
+      "block_8"
+    ],
+    [
+      "skyrim_start",
+      "two_handed_root"
+    ],
+    [
+      "two_handed_root",
+      "two_handed_1"
+    ],
+    [
+      "two_handed_root",
+      "two_handed_2"
+    ],
+    [
+      "two_handed_root",
+      "two_handed_3"
+    ],
+    [
+      "two_handed_root",
+      "two_handed_4"
+    ],
+    [
+      "two_handed_4",
+      "two_handed_5"
+    ],
+    [
+      "two_handed_4",
+      "two_handed_6"
+    ],
+    [
+      "two_handed_5",
+      "two_handed_7"
+    ],
+    [
+      "two_handed_6",
+      "two_handed_7"
+    ],
+    [
+      "two_handed_7",
+      "two_handed_8"
+    ],
+    [
+      "skyrim_start",
+      "one_handed_root"
+    ],
+    [
+      "one_handed_root",
+      "one_handed_1"
+    ],
+    [
+      "one_handed_root",
+      "one_handed_2"
+    ],
+    [
+      "one_handed_2",
+      "one_handed_3"
+    ],
+    [
+      "one_handed_3",
+      "one_handed_5"
+    ],
+    [
+      "one_handed_2",
+      "one_handed_4"
+    ],
+    [
+      "one_handed_4",
+      "one_handed_5"
+    ],
+    [
+      "one_handed_root",
+      "one_handed_6"
+    ],
+    [
+      "one_handed_root",
+      "one_handed_7"
+    ],
+    [
+      "one_handed_root",
+      "one_handed_8"
+    ],
+    [
+      "one_handed_8",
+      "one_handed_9"
+    ],
+    [
+      "skyrim_start",
+      "archery_root"
+    ],
+    [
+      "archery_root",
+      "archery_1"
+    ],
+    [
+      "archery_1",
+      "archery_2"
+    ],
+    [
+      "archery_1",
+      "archery_3"
+    ],
+    [
+      "archery_3",
+      "archery_4"
+    ],
+    [
+      "archery_4",
+      "archery_8"
+    ],
+    [
+      "archery_root",
+      "archery_5"
+    ],
+    [
+      "archery_5",
+      "archery_6"
+    ],
+    [
+      "archery_6",
+      "archery_7"
+    ],
+    [
+      "archery_7",
+      "archery_8"
+    ],
+    [
+      "skyrim_start",
+      "light_armor_root"
+    ],
+    [
+      "light_armor_root",
+      "light_armor_1"
+    ],
+    [
+      "light_armor_1",
+      "light_armor_2"
+    ],
+    [
+      "light_armor_2",
+      "light_armor_3"
+    ],
+    [
+      "light_armor_3",
+      "light_armor_4"
+    ],
+    [
+      "light_armor_5",
+      "light_armor_4"
+    ],
+    [
+      "light_armor_1",
+      "light_armor_5"
+    ],
+    [
+      "skyrim_start",
+      "sneak_root"
+    ],
+    [
+      "sneak_root",
+      "sneak_1"
+    ],
+    [
+      "sneak_1",
+      "sneak_2"
+    ],
+    [
+      "sneak_2",
+      "sneak_3"
+    ],
+    [
+      "sneak_3",
+      "sneak_4"
+    ],
+    [
+      "sneak_4",
+      "sneak_5"
+    ],
+    [
+      "sneak_root",
+      "sneak_6"
+    ],
+    [
+      "sneak_6",
+      "sneak_7"
+    ],
+    [
+      "sneak_7",
+      "sneak_8"
+    ],
+    [
+      "skyrim_start",
+      "lockpicking_root"
+    ],
+    [
+      "lockpicking_root",
+      "lockpicking_1"
+    ],
+    [
+      "lockpicking_1",
+      "lockpicking_2"
+    ],
+    [
+      "lockpicking_2",
+      "lockpicking_3"
+    ],
+    [
+      "lockpicking_1",
+      "lockpicking_4"
+    ],
+    [
+      "lockpicking_4",
+      "lockpicking_5"
+    ],
+    [
+      "lockpicking_5",
+      "lockpicking_6"
+    ],
+    [
+      "lockpicking_4",
+      "lockpicking_7"
+    ],
+    [
+      "lockpicking_7",
+      "lockpicking_8"
+    ],
+    [
+      "lockpicking_8",
+      "lockpicking_9"
+    ],
+    [
+      "lockpicking_7",
+      "lockpicking_10"
+    ],
+    [
+      "skyrim_start",
+      "pickpocket_root"
+    ],
+    [
+      "pickpocket_root",
+      "pickpocket_1"
+    ],
+    [
+      "pickpocket_1",
+      "pickpocket_2"
+    ],
+    [
+      "pickpocket_1",
+      "pickpocket_3"
+    ],
+    [
+      "pickpocket_3",
+      "pickpocket_4"
+    ],
+    [
+      "pickpocket_3",
+      "pickpocket_5"
+    ],
+    [
+      "pickpocket_5",
+      "pickpocket_6"
+    ],
+    [
+      "pickpocket_1",
+      "pickpocket_7"
+    ],
+    [
+      "skyrim_start",
+      "speech_root"
+    ],
+    [
+      "speech_root",
+      "speech_1"
+    ],
+    [
+      "speech_1",
+      "speech_2"
+    ],
+    [
+      "speech_2",
+      "speech_3"
+    ],
+    [
+      "speech_3",
+      "speech_4"
+    ],
+    [
+      "speech_4",
+      "speech_5"
+    ],
+    [
+      "speech_root",
+      "speech_6"
+    ],
+    [
+      "speech_6",
+      "speech_7"
+    ],
+    [
+      "speech_7",
+      "speech_8"
+    ],
+    [
+      "skyrim_start",
+      "alchemy_root"
+    ],
+    [
+      "alchemy_root",
+      "alchemy_1"
+    ],
+    [
+      "alchemy_1",
+      "alchemy_2"
+    ],
+    [
+      "alchemy_2",
+      "alchemy_3"
+    ],
+    [
+      "alchemy_3",
+      "alchemy_4"
+    ],
+    [
+      "alchemy_3",
+      "alchemy_7"
+    ],
+    [
+      "alchemy_1",
+      "alchemy_5"
+    ],
+    [
+      "alchemy_5",
+      "alchemy_6"
+    ],
+    [
+      "alchemy_6",
+      "alchemy_7"
+    ],
+    [
+      "alchemy_7",
+      "alchemy_8"
+    ]
   ]
 }

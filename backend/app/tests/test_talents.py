@@ -7,9 +7,9 @@ from app.core.talents import (
 
 
 def test_talent_catalog_keys() -> None:
-    assert "start" in TALENTS
-    assert "xp_1" in TALENTS
-    assert "xp_2" in TALENTS
+    assert "skyrim_start" in TALENTS
+    assert "illusion_root" in TALENTS
+    assert "illusion_1" in TALENTS
 
 
 def test_available_talent_points_level_1() -> None:
@@ -27,13 +27,13 @@ def test_total_xp_bonus_percent_empty() -> None:
     assert get_total_bonus_percent({}) == 0
 
 
-def test_total_xp_bonus_percent_single() -> None:
-    # xp_1 дает +2% к статам за ранг
-    assert get_total_bonus_percent({"xp_1": 3}) == 6
+def test_total_xp_bonus_percent_unknown() -> None:
+    assert get_total_bonus_percent({"unknown": 5}) == 0
 
 
-def test_total_xp_bonus_percent_capped() -> None:
-    assert get_total_bonus_percent({"xp_1": 5}) == 10
+def test_total_xp_bonus_percent_no_percent_in_desc() -> None:
+    # Пока таланты — заглушки без "+X%", бонус должен быть 0
+    assert get_total_bonus_percent({"illusion_root": 1}) == 0
 
 
 def test_can_upgrade_unknown_talent() -> None:
@@ -41,25 +41,28 @@ def test_can_upgrade_unknown_talent() -> None:
 
 
 def test_can_upgrade_no_points() -> None:
-    assert can_upgrade("xp_1", {}, 0) is False
+    assert can_upgrade("illusion_root", {}, 0) is False
 
 
 def test_can_upgrade_start_node() -> None:
-    assert can_upgrade("start", {}, 5) is False
+    assert can_upgrade("skyrim_start", {}, 5) is False
 
 
 def test_can_upgrade_max_rank() -> None:
-    # max_rank для xp_1 равен 3
-    assert can_upgrade("xp_1", {"xp_1": 3}, 5) is False
+    # illusion_root имеет max_rank=1, уже прокачан -> нельзя
+    assert can_upgrade("illusion_root", {"illusion_root": 1}, 5) is False
 
 
 def test_can_upgrade_missing_prereq() -> None:
-    # xp_2 соединен с xp_1, который не прокачан
-    assert can_upgrade("xp_2", {}, 5) is False
+    # illusion_1 требует illusion_root (rank=0) -> нельзя
+    assert can_upgrade("illusion_1", {}, 5) is False
+
+
+def test_can_upgrade_root_from_start() -> None:
+    # illusion_root связан с skyrim_start -> можно
+    assert can_upgrade("illusion_root", {}, 1) is True
 
 
 def test_can_upgrade_success() -> None:
-    # xp_1 соединен со start
-    assert can_upgrade("xp_1", {}, 1) is True
-    # xp_2 соединен с прокачанным xp_1
-    assert can_upgrade("xp_2", {"xp_1": 1}, 1) is True
+    # illusion_1 требует прокачанный illusion_root
+    assert can_upgrade("illusion_1", {"illusion_root": 1}, 1) is True

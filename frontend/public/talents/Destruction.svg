@@ -1,0 +1,62 @@
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Фон -->
+  <rect width="300" height="300" fill="#14640D"/>
+
+  <!-- ЛИНИИ (отдельные элементы) -->
+  <g id="connections" stroke="white" stroke-width="1.5" opacity="0.8">
+    <line id="line-A-B" x1="121" y1="265" x2="60" y2="172" />
+    <line id="line-B-C" x1="60" y1="172" x2="52" y2="116" />
+
+    <line id="line-A-D" x1="121" y1="265" x2="104" y2="151" />
+    <line id="line-D-E" x1="104" y1="151" x2="98" y2="86" />
+
+    <line id="line-A-F" x1="121" y1="265" x2="138" y2="150" />
+    <line id="line-F-G" x1="138" y1="150" x2="138" y2="72" />
+
+    <line id="line-A-H" x1="121" y1="265" x2="179" y2="191" />
+    <line id="line-H-I" x1="179" y1="191" x2="173" y2="116" />
+    <line id="line-I-J" x1="173" y1="116" x2="191" y2="72" />
+    <line id="line-J-K" x1="191" y1="72" x2="189" y2="15" />
+
+    <line id="line-H-L" x1="179" y1="191" x2="211" y2="152" />
+
+    <line id="line-A-M" x1="121" y1="265" x2="208" y2="238" />
+    <line id="line-M-N" x1="208" y1="238" x2="228" y2="191" />
+  </g>
+
+  <!-- КРУГИ -->
+  <g id="circles" fill="#0C9E16">
+    <circle id="circle-A" cx="121" cy="265" r="10" />
+    <circle id="circle-B" cx="60" cy="172" r="10" />
+    <circle id="circle-C" cx="52" cy="116" r="10" />
+    <circle id="circle-D" cx="104" cy="151" r="10" />
+    <circle id="circle-E" cx="98" cy="86" r="10" />
+    <circle id="circle-F" cx="138" cy="150" r="10" />
+    <circle id="circle-G" cx="138" cy="72" r="10" />
+    <circle id="circle-H" cx="179" cy="191" r="10" />
+    <circle id="circle-I" cx="173" cy="116" r="10" />
+    <circle id="circle-J" cx="191" cy="72" r="10" />
+    <circle id="circle-K" cx="189" cy="15" r="10" />
+    <circle id="circle-L" cx="211" cy="152" r="10" />
+    <circle id="circle-M" cx="208" cy="238" r="10" />
+    <circle id="circle-N" cx="228" cy="191" r="10" />
+  </g>
+
+  <!-- ТЕКСТ (Подписи в центрах кругов) -->
+  <g id="labels" fill="white" font-family="sans-serif" font-size="8" font-weight="bold" text-anchor="middle" dominant-baseline="central">
+    <text x="121" y="265">A</text>
+    <text x="60" y="172">B</text>
+    <text x="52" y="116">C</text>
+    <text x="104" y="151">D</text>
+    <text x="98" y="86">E</text>
+    <text x="138" y="150">F</text>
+    <text x="138" y="72">G</text>
+    <text x="179" y="191">H</text>
+    <text x="173" y="116">I</text>
+    <text x="191" y="72">J</text>
+    <text x="189" y="15">K</text>
+    <text x="211" y="152">L</text>
+    <text x="208" y="238">M</text>
+    <text x="228" y="191">N</text>
+  </g>
+</svg>

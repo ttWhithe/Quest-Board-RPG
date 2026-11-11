@@ -1,0 +1,49 @@
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Фон -->
+  <rect width="300" height="300" fill="#14640D"/>
+
+  <!-- ЛИНИИ (отдельные элементы) -->
+  <g id="connections" stroke="white" stroke-width="1.5" opacity="0.8">
+    <line id="line-A-B" x1="112" y1="277" x2="52" y2="165" />
+    <line id="line-A-C" x1="112" y1="277" x2="112" y2="205" />
+
+    <line id="line-C-D" x1="112" y1="205" x2="86" y2="116" />
+    <line id="line-D-F" x1="86" y1="116" x2="112" y2="22" />
+
+    <line id="line-C-E" x1="112" y1="205" x2="132" y2="116" />
+    <line id="line-E-F" x1="132" y1="116" x2="112" y2="22" />
+
+    <line id="line-A-G" x1="112" y1="277" x2="152" y2="165" />
+    <line id="line-A-H" x1="112" y1="277" x2="183" y2="165" />
+    <line id="line-A-I" x1="112" y1="277" x2="228" y2="225" />
+    <line id="line-I-J" x1="228" y1="225" x2="190" y2="64" />
+  </g>
+
+  <!-- КРУГИ -->
+  <g id="circles" fill="#0C9E16">
+    <circle id="circle-A" cx="112" cy="277" r="10" />
+    <circle id="circle-B" cx="52" cy="165" r="10" />
+    <circle id="circle-C" cx="112" cy="205" r="10" />
+    <circle id="circle-D" cx="86" cy="116" r="10" />
+    <circle id="circle-E" cx="132" cy="116" r="10" />
+    <circle id="circle-F" cx="112" cy="22" r="10" />
+    <circle id="circle-G" cx="152" cy="165" r="10" />
+    <circle id="circle-H" cx="183" cy="165" r="10" />
+    <circle id="circle-I" cx="228" cy="225" r="10" />
+    <circle id="circle-J" cx="190" cy="64" r="10" />
+  </g>
+
+  <!-- ТЕКСТ (Подписи в центрах кругов) -->
+  <g id="labels" fill="white" font-family="sans-serif" font-size="8" font-weight="bold" text-anchor="middle" dominant-baseline="central">
+    <text x="112" y="277">A</text>
+    <text x="52" y="165">B</text>
+    <text x="112" y="205">C</text>
+    <text x="86" y="116">D</text>
+    <text x="132" y="116">E</text>
+    <text x="112" y="22">F</text>
+    <text x="152" y="165">G</text>
+    <text x="183" y="165">H</text>
+    <text x="228" y="225">I</text>
+    <text x="190" y="64">J</text>
+  </g>
+</svg>

@@ -25,10 +25,11 @@ async def test_get_talents_tree(async_client: AsyncClient) -> None:
     assert response.status_code == 200
     data = response.json()
     assert data["available_points"] == 0
-    assert len(data["nodes"]) > 10
-    assert len(data["edges"]) > 10
+    assert len(data["nodes"]) >= 13
+    assert len(data["edges"]) >= 12
 
-    start_node = next(n for n in data["nodes"] if n["id"] == "start")
+    start_node = next(n for n in data["nodes"] if n["id"] == "skyrim_start")
+    assert start_node["type"] == "start"
     assert start_node["can_upgrade"] is False
 
 
@@ -47,16 +48,15 @@ async def test_upgrade_talent_success(async_client: AsyncClient) -> None:
     quest_id = create_resp.json()["id"]
     await async_client.post(f"/api/v1/quests/{quest_id}/complete", headers=headers)
 
-    # Пытаемся прокачать узел xp_2 (сосед xp_1 не прокачан) -> 409
-    resp_fail = await async_client.post("/api/v1/talents/xp_2/upgrade", headers=headers)
+    # Пытаемся прокачать illusion_1 (родитель illusion_root не прокачан) -> 409
+    resp_fail = await async_client.post("/api/v1/talents/illusion_1/upgrade", headers=headers)
     assert resp_fail.status_code == 409
 
-    # Прокачиваем первый узел от старта
-    resp_ok = await async_client.post("/api/v1/talents/xp_1/upgrade", headers=headers)
-    assert resp_ok.status_code == 200
-    assert resp_ok.json()["available_points"] == 2
-    assert resp_ok.json()["node"]["rank"] == 1
+    # Прокачиваем illusion_root (связан со skyrim_start)
+    resp_root = await async_client.post("/api/v1/talents/illusion_root/upgrade", headers=headers)
+    assert resp_root.status_code == 200
+    assert resp_root.json()["node"]["rank"] == 1
 
-    # Теперь xp_2 должен разблокироваться
-    resp_ok2 = await async_client.post("/api/v1/talents/xp_2/upgrade", headers=headers)
-    assert resp_ok2.status_code == 200
+    # Теперь illusion_1 должен разблокироваться
+    resp_ok = await async_client.post("/api/v1/talents/illusion_1/upgrade", headers=headers)
+    assert resp_ok.status_code == 200
