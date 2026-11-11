@@ -1,12 +1,12 @@
 {
   "items": [
-    { "id": "item_1", "name": "Ржавый меч", "type": "weapon", "slot": "main_hand", "rarity": "common", "icon": "🗡️", "stats": { "strength": 2 } },
-    { "id": "item_2", "name": "Кожаный шлем", "type": "armor", "slot": "head", "rarity": "common", "icon": "🎩", "stats": { "endurance": 1 } },
-    { "id": "item_3", "name": "Деревянный щит", "type": "armor", "slot": "off_hand", "rarity": "common", "icon": "🛡️", "stats": { "endurance": 2 } },
-    { "id": "item_4", "name": "Кольцо силы", "type": "jewelry", "slot": "ring", "rarity": "rare", "icon": "💍", "stats": { "strength": 5 } },
-    { "id": "item_5", "name": "Амулет удачи", "type": "jewelry", "slot": "amulet", "rarity": "epic", "icon": "📿", "stats": { "luck": 10 } },
-    { "id": "item_6", "name": "Стальной нагрудник", "type": "armor", "slot": "chest", "rarity": "uncommon", "icon": "🥋", "stats": { "endurance": 4 } },
-    { "id": "item_7", "name": "Сапоги скорости", "type": "armor", "slot": "feet", "rarity": "rare", "icon": "👢", "stats": { "dexterity": 5 } },
-    { "id": "item_8", "name": "Легендарный клинок", "type": "weapon", "slot": "main_hand", "rarity": "legendary", "icon": "⚔️", "stats": { "strength": 15, "dexterity": 10 } }
+    { "id": "item_001", "name": "Аргонианский двуручник", "type": "weapon", "slot": "main_hand", "rarity": "legendary", "icon_path": "/items/item_001.png", "stats": { "strength": 10 } },
+    { "id": "item_002", "name": "Кинжал Теней", "type": "weapon", "slot": "main_hand", "rarity": "epic", "icon_path": "/items/item_002.png", "stats": { "dexterity": 8 } },
+    { "id": "item_003", "name": "Боевой топор Бури", "type": "weapon", "slot": "main_hand", "rarity": "rare", "icon_path": "/items/item_003.png", "stats": { "strength": 5 } },
+    { "id": "item_004", "name": "Длинный меч", "type": "weapon", "slot": "main_hand", "rarity": "common", "icon_path": "/items/item_004.png", "stats": { "strength": 3 } },
+    { "id": "item_005", "name": "Кольцо Силы", "type": "jewelry", "slot": "ring", "rarity": "rare", "icon_path": "/items/item_061.png", "stats": { "strength": 5 } },
+    { "id": "item_006", "name": "Амулет Здоровья", "type": "jewelry", "slot": "amulet", "rarity": "epic", "icon_path": "/items/item_071.png", "stats": { "endurance": 10 } },
+    { "id": "item_007", "name": "Шлем Доблести", "type": "armor", "slot": "head", "rarity": "uncommon", "icon_path": "/items/item_021.png", "stats": { "endurance": 4 } },
+    { "id": "item_008", "name": "Нагрудник Рыцаря", "type": "armor", "slot": "chest", "rarity": "rare", "icon_path": "/items/item_031.png", "stats": { "endurance": 7 } }
   ]
 }
