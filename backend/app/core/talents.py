@@ -1,7 +1,7 @@
-import json
-import re
 from dataclasses import dataclass
-from pathlib import Path
+from typing import Any
+
+from app.data import load_json
 
 
 @dataclass(frozen=True)
@@ -13,14 +13,13 @@ class TalentNode:
     x: int
     y: int
     max_rank: int
+    effects: list[dict[str, Any]]
     rank: int = 0
     can_upgrade: bool = False
 
 
 # Загружаем JSON при старте
-_TREE_PATH = Path(__file__).parent / "talent_tree.json"
-with open(_TREE_PATH, encoding="utf-8") as f:
-    _TREE_DATA = json.load(f)
+_TREE_DATA = load_json("talent_tree.json")
 
 # Создаем словарь узлов для быстрого доступа
 TALENTS: dict[str, TalentNode] = {
@@ -32,6 +31,7 @@ TALENTS: dict[str, TalentNode] = {
         x=node["x"],
         y=node["y"],
         max_rank=node["max_rank"],
+        effects=node.get("effects", []),
     )
     for node in _TREE_DATA["nodes"]
 }
@@ -75,13 +75,20 @@ def can_upgrade(talent_code: str, current_ranks: dict[str, int], available_point
 
 
 def get_total_bonus_percent(ranks_by_code: dict[str, int]) -> int:
-    """Считает суммарный бонус к XP (суммирует все +X% из описания)."""
+    """
+    Считает суммарный бонус к XP.
+    Ищет эффекты со stat="xp_percent" и суммирует кумулятивные значения.
+    """
     total = 0
     for code, rank in ranks_by_code.items():
         node = TALENTS.get(code)
-        if node and rank > 0:
-            desc = node.description.lower()
-            match = re.search(r"\+(\d+)%", desc)
-            if match:
-                total += int(match.group(1)) * rank
+        if not node or rank <= 0:
+            continue
+
+        for effect in node.effects:
+            if effect.get("stat") == "xp_percent":
+                values = effect.get("values", [])
+                # Берем значения до текущего ранга включительно и суммируем
+                # Например, если rank=2, а values=[2,3,4], берем [2,3] -> сумма 5
+                total += sum(values[:rank])
     return total

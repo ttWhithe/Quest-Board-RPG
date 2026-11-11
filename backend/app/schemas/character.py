@@ -67,3 +67,28 @@ class CharacterUpdate(BaseModel):
         except (ZoneInfoNotFoundError, ValueError) as exc:
             raise PydanticCustomError("INVALID_TIMEZONE", f"Unknown timezone: {value!r}") from exc
         return value
+
+
+class CharacterStatsResponse(BaseModel):
+    """Ответ GET /character/stats."""
+
+    stats: dict[str, float]
+
+
+class InventoryItem(BaseModel):
+    """Модель предмета в инвентаре."""
+
+    id: str
+    name: str
+    type: str
+    slot: str
+    rarity: str
+    icon_path: str
+    stats: dict[str, int]
+
+
+class InventoryResponse(BaseModel):
+    """Ответ GET /character/inventory."""
+
+    items: list[InventoryItem]
+    total: int

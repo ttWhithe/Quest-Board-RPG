@@ -1,0 +1,14 @@
+{
+  "achievements": [
+    { "id": "ach_first_quest", "name": "Первый шаг", "description": "Выполнить первый квест", "icon": "⚔️", "unlocked": true, "rarity": "common" },
+    { "id": "ach_10_quests", "name": "Новичок", "description": "Выполнить 10 квестов", "icon": "🛡️", "unlocked": true, "rarity": "uncommon" },
+    { "id": "ach_50_quests", "name": "Опытный", "description": "Выполнить 50 квестов", "icon": "🏹", "unlocked": false, "rarity": "rare" },
+    { "id": "ach_100_quests", "name": "Ветеран", "description": "Выполнить 100 квестов", "icon": "👑", "unlocked": false, "rarity": "epic" },
+    { "id": "ach_s_rank", "name": "Убийца драконов", "description": "Выполнить 5 квестов ранга S", "icon": "🐉", "unlocked": false, "rarity": "legendary" },
+    { "id": "ach_night_owl", "name": "Полуночник", "description": "Выполнить квест после полуночи", "icon": "🦉", "unlocked": true, "rarity": "uncommon" },
+    { "id": "ach_talent_1", "name": "Прозрение", "description": "Изучить первый талант", "icon": "🌟", "unlocked": true, "rarity": "rare" },
+    { "id": "ach_talent_10", "name": "Мастер пути", "description": "Изучить 10 талантов", "icon": "✨", "unlocked": false, "rarity": "epic" },
+    { "id": "ach_event_1", "name": "Организатор", "description": "Создать первое событие", "icon": "📅", "unlocked": true, "rarity": "common" },
+    { "id": "ach_no_fail", "name": "Безупречно", "description": "Выполнить 20 квестов без провалов", "icon": "💎", "unlocked": false, "rarity": "legendary" }
+  ]
+}

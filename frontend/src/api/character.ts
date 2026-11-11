@@ -58,3 +58,46 @@ export function useUpdateCharacter() {
     },
   });
 }
+
+// --- НОВЫЕ ХУКИ ДЛЯ ШАГА 3 ---
+
+export interface CharacterStatsResponse {
+  stats: Record<string, number>;
+}
+
+export interface InventoryItem {
+  id: string;
+  name: string;
+  type: string;
+  slot: string;
+  rarity: string;
+  icon_path: string;
+  stats: Record<string, number>;
+}
+
+export interface InventoryResponse {
+  items: InventoryItem[];
+  total: number;
+}
+
+export function useCharacterStats() {
+  return useQuery<CharacterStatsResponse>({
+    queryKey: [...characterKeys.all, 'stats'],
+    queryFn: async () => {
+      const { data } = await api.get<CharacterStatsResponse>('/character/stats');
+      return data;
+    },
+    staleTime: 30_000,
+  });
+}
+
+export function useCharacterInventory() {
+  return useQuery<InventoryResponse>({
+    queryKey: [...characterKeys.all, 'inventory'],
+    queryFn: async () => {
+      const { data } = await api.get<InventoryResponse>('/character/inventory');
+      return data;
+    },
+    staleTime: 30_000,
+  });
+}
