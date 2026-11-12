@@ -85,6 +85,19 @@ class InventoryItem(BaseModel):
     rarity: str
     icon_path: str
     stats: dict[str, int]
+    is_pinned: bool = False
+    equipped_slot: str | None = None
+    enhancement_level: int = 0
+
+
+class InventoryItemUpdate(BaseModel):
+    """Тело PATCH /character/inventory/{item_code}."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    is_pinned: bool | None = None
+    equipped_slot: str | None = None
+    enhancement_level: int | None = None
 
 
 class InventoryResponse(BaseModel):
