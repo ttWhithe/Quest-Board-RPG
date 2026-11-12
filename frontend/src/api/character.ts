@@ -3,7 +3,6 @@ import { api } from './client';
 import type { User } from '../types';
 import type { QuestRank } from './quests';
 
-// Ранги сложности уже определены в api/quests.ts — переиспользуем.
 export type CharacterRank = QuestRank;
 
 export interface CharacterStats {
@@ -21,7 +20,6 @@ export interface CharacterResponse {
   stats: CharacterStats;
 }
 
-// PATCH /character — whitelist (Spec §7.6)
 export interface CharacterUpdate {
   nickname?: string;
   emblem_seed?: string;
@@ -31,6 +29,7 @@ export interface CharacterUpdate {
 export const characterKeys = {
   all: ['character'] as const,
   detail: () => [...characterKeys.all, 'detail'] as const,
+  inventory: () => [...characterKeys.all, 'inventory'] as const,
 };
 
 export function useCharacter() {
@@ -53,13 +52,9 @@ export function useUpdateCharacter() {
     },
     onSuccess: (data) => {
       queryClient.setQueryData(characterKeys.detail(), data);
-      // Синхронизация user в AuthContext (nickname/emblem_seed/timezone) —
-      // в шаге 2 через updateUser(data.user) из useAuth().
     },
   });
 }
-
-// --- НОВЫЕ ХУКИ ДЛЯ ШАГА 3 ---
 
 export interface CharacterStatsResponse {
   stats: Record<string, number>;
@@ -73,6 +68,9 @@ export interface InventoryItem {
   rarity: string;
   icon_path: string;
   stats: Record<string, number>;
+  is_pinned: boolean;
+  equipped_slot: string | null;
+  enhancement_level: number;
 }
 
 export interface InventoryResponse {
@@ -93,11 +91,27 @@ export function useCharacterStats() {
 
 export function useCharacterInventory() {
   return useQuery<InventoryResponse>({
-    queryKey: [...characterKeys.all, 'inventory'],
+    queryKey: characterKeys.inventory(),
     queryFn: async () => {
       const { data } = await api.get<InventoryResponse>('/character/inventory');
       return data;
     },
     staleTime: 30_000,
+  });
+}
+
+export function useUpdateInventoryItem() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ itemId, payload }: { itemId: string; payload: { is_pinned?: boolean; equipped_slot?: string | null } }) => {
+      const { data } = await api.patch<InventoryItem>(`/character/inventory/${itemId}`, payload);
+      return data;
+    },
+    onSuccess: () => {
+      // Инвалидируем инвентарь
+      queryClient.invalidateQueries({ queryKey: characterKeys.inventory() });
+      // Инвалидируем статы (семиугольник), так как экипировка меняет их
+      queryClient.invalidateQueries({ queryKey: [...characterKeys.all, 'stats'] });
+    },
   });
 }

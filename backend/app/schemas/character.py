@@ -87,6 +87,7 @@ class InventoryItem(BaseModel):
     stats: dict[str, int]
     is_pinned: bool = False
     equipped_slot: str | None = None
+    enhancement_level: int = 0
 
 
 class InventoryItemUpdate(BaseModel):
@@ -96,6 +97,7 @@ class InventoryItemUpdate(BaseModel):
 
     is_pinned: bool | None = None
     equipped_slot: str | None = None
+    enhancement_level: int | None = None
 
 
 class InventoryResponse(BaseModel):

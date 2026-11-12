@@ -1,9 +1,10 @@
+import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useCharacter, useUpdateCharacter } from '../api/character';
+import type { CharacterRank, InventoryItem } from '../api/character';
 import { Emblem } from '../components/Emblem';
 import { XPBar } from '../components/XPBar';
 import { RANK_COLORS } from '../constants';
-import type { CharacterRank } from '../api/character';
 import { CharacterSkeleton } from '../components/Skeletons';
 import { SkillStats } from '../components/SkillStats';
 import { HexStatsChart } from '../components/HexStatsChart';
@@ -15,6 +16,9 @@ export function Character() {
   const { updateUser } = useAuth();
   const { data, isLoading, isError } = useCharacter();
   const { mutate: updateCharacter, isPending: isUpdating } = useUpdateCharacter();
+
+  const [draggedItem, setDraggedItem] = useState<InventoryItem | null>(null);
+  const [filterSlot, setFilterSlot] = useState<string | null>(null);
 
   const handleNicknameChange = () => {
     if (!data) return;
@@ -127,14 +131,24 @@ export function Character() {
         <div className="lg:col-span-2 parchment-card p-4 flex flex-col xl:flex-row gap-4 items-stretch">
 
           <div className="w-full xl:w-1/2 flex flex-col">
-            <Equipment noCard={true} />
+            <Equipment
+              noCard={true}
+              draggedItem={draggedItem}
+              onSlotClick={setFilterSlot}
+              activeFilter={filterSlot}
+            />
           </div>
 
           {/* Вертикальный разделитель */}
           <div className="hidden xl:block w-px bg-[#5c4033]/30 self-stretch my-2"></div>
 
           <div className="w-full xl:w-1/2 flex flex-col">
-            <Inventory noCard={true} />
+            <Inventory
+              noCard={true}
+              onDragStartItem={setDraggedItem}
+              filterSlot={filterSlot}
+              onResetFilter={() => setFilterSlot(null)}
+            />
           </div>
 
         </div>

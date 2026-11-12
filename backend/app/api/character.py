@@ -119,7 +119,7 @@ async def get_character_stats(
     current_user: Annotated[User, Depends(get_current_user)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> CharacterStatsResponse:
-    """Возвращает 7 базовых характеристик персонажа с учетом талантов."""
+    """Возвращает 7 базовых характеристик персонажа с учетом талантов и экипировки."""
     stats = {
         "strength": 5.0,
         "dexterity": 5.0,
@@ -130,6 +130,7 @@ async def get_character_stats(
         "luck": 5.0,
     }
 
+    # 1. Считаем бонусы от талантов
     result = await session.execute(select(UserTalent).where(UserTalent.user_id == current_user.id))
     user_talents = result.scalars().all()
     ranks_by_code = {ut.talent_code: ut.rank for ut in user_talents}
@@ -138,11 +139,9 @@ async def get_character_stats(
         node = TALENTS.get(code)
         if not node:
             continue
-
         for effect in node.effects:
             stat_name = effect.get("stat", "")
             values = effect.get("values", [])
-
             if stat_name.endswith("_percent") and stat_name != "all_stats_percent":
                 base_stat = stat_name.replace("_percent", "")
                 if base_stat in stats:
@@ -152,6 +151,23 @@ async def get_character_stats(
                 bonus_percent = sum(values[:rank])
                 for k in stats:
                     stats[k] += bonus_percent / 10.0
+
+    # 2. Считаем бонусы от экипировки
+    ui_stmt = select(UserItem).where(
+        UserItem.user_id == current_user.id, UserItem.equipped_slot.isnot(None)
+    )
+    equipped_items = (await session.scalars(ui_stmt)).all()
+
+    if equipped_items:
+        items_data = load_json("items.json").get("items", [])
+        items_dict = {i["id"]: i for i in items_data}
+
+        for ui in equipped_items:
+            item = items_dict.get(ui.item_code)
+            if item and "stats" in item:
+                for stat_name, val in item["stats"].items():
+                    if stat_name in stats:
+                        stats[stat_name] += float(val)
 
     return CharacterStatsResponse(stats=stats)
 
@@ -177,6 +193,7 @@ async def get_inventory(
                 **item_data,
                 is_pinned=ui.is_pinned if ui else False,
                 equipped_slot=ui.equipped_slot if ui else None,
+                enhancement_level=ui.enhancement_level if ui else 0,
             )
         )
 
@@ -191,17 +208,13 @@ async def update_inventory_item(
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> InventoryItem:
     """Обновляет состояние предмета (закрепление или экипировка)."""
-    # 1. Проверяем, существует ли предмет в JSON
     data = load_json("items.json")
     item_data = next((i for i in data.get("items", []) if i["id"] == item_code), None)
     if not item_data:
         raise HTTPException(
-            status_code=404,
-            detail="Item not found",
-            headers={"code": "ITEM_NOT_FOUND"},
+            status_code=404, detail="Item not found", headers={"code": "ITEM_NOT_FOUND"}
         )
 
-    # 2. Ищем или создаем запись в БД
     stmt = select(UserItem).where(
         UserItem.user_id == current_user.id, UserItem.item_code == item_code
     )
@@ -210,30 +223,45 @@ async def update_inventory_item(
         user_item = UserItem(user_id=current_user.id, item_code=item_code)
         session.add(user_item)
 
-    # 3. Обновляем пин
     if payload.is_pinned is not None:
         user_item.is_pinned = payload.is_pinned
 
-    # 4. Обновляем экипировку
+    if payload.enhancement_level is not None:
+        user_item.enhancement_level = min(payload.enhancement_level, 5)
+
     if "equipped_slot" in payload.model_fields_set:
         new_slot = payload.equipped_slot
-
         if new_slot is not None:
-            # Валидация слота
             if item_data["slot"] == "none":
                 raise HTTPException(
                     status_code=422,
                     detail="Item cannot be equipped",
                     headers={"code": "NOT_EQUIPPABLE"},
                 )
-            if new_slot != item_data["slot"]:
+
+            # Валидация слотов
+            if item_data["slot"] == "ring":
+                if new_slot not in ("ring1", "ring2"):
+                    raise HTTPException(
+                        status_code=422,
+                        detail="Ring must be equipped to ring1 or ring2",
+                        headers={"code": "INVALID_SLOT"},
+                    )
+            elif item_data["type"] == "weapon":
+                if new_slot not in ("main_hand", "off_hand"):
+                    raise HTTPException(
+                        status_code=422,
+                        detail="Weapon must be equipped to main_hand or off_hand",
+                        headers={"code": "INVALID_SLOT"},
+                    )
+            elif new_slot != item_data["slot"]:
                 raise HTTPException(
                     status_code=422,
                     detail=f"Item must be equipped to {item_data['slot']}",
                     headers={"code": "INVALID_SLOT"},
                 )
 
-            # Снимаем предмет с этого слота у других вещей (атомарно)
+            # Снимаем предмет с этого слота у других вещей
             await session.execute(
                 update(UserItem)
                 .where(
@@ -243,7 +271,6 @@ async def update_inventory_item(
                 )
                 .values(equipped_slot=None)
             )
-
         user_item.equipped_slot = new_slot
 
     await session.commit()
@@ -253,4 +280,5 @@ async def update_inventory_item(
         **item_data,
         is_pinned=user_item.is_pinned,
         equipped_slot=user_item.equipped_slot,
+        enhancement_level=user_item.enhancement_level,
     )
