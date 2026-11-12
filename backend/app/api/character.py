@@ -6,8 +6,8 @@ from datetime import UTC, datetime
 from typing import Annotated
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from fastapi import APIRouter, Depends
-from sqlalchemy import func, select
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.deps import get_current_user
@@ -18,12 +18,15 @@ from app.db import get_session
 from app.models.enums import QuestRank, QuestStatus
 from app.models.quest import Quest
 from app.models.user import User
+from app.models.user_item import UserItem
 from app.models.user_talent import UserTalent
 from app.schemas.character import (
     CharacterOut,
     CharacterStats,
     CharacterStatsResponse,
     CharacterUpdate,
+    InventoryItem,
+    InventoryItemUpdate,
     InventoryResponse,
 )
 from app.schemas.user import UserOut
@@ -156,10 +159,98 @@ async def get_character_stats(
 @router.get("/inventory", response_model=InventoryResponse)
 async def get_inventory(
     current_user: Annotated[User, Depends(get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
 ) -> InventoryResponse:
-    """Заглушка инвентаря. Читает из items.json."""
+    """Возвращает все предметы из items.json с наложенными состояниями из БД."""
     data = load_json("items.json")
-    items = data.get("items", [])
+    items_data = data.get("items", [])
 
-    # Отдаем ВСЕ предметы, чтобы работали фильтры в модалке
+    stmt = select(UserItem).where(UserItem.user_id == current_user.id)
+    user_items = (await session.scalars(stmt)).all()
+    overrides = {ui.item_code: ui for ui in user_items}
+
+    items = []
+    for item_data in items_data:
+        ui = overrides.get(item_data["id"])
+        items.append(
+            InventoryItem(
+                **item_data,
+                is_pinned=ui.is_pinned if ui else False,
+                equipped_slot=ui.equipped_slot if ui else None,
+            )
+        )
+
     return InventoryResponse(items=items, total=len(items))
+
+
+@router.patch("/inventory/{item_code}", response_model=InventoryItem)
+async def update_inventory_item(
+    item_code: str,
+    payload: InventoryItemUpdate,
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> InventoryItem:
+    """Обновляет состояние предмета (закрепление или экипировка)."""
+    # 1. Проверяем, существует ли предмет в JSON
+    data = load_json("items.json")
+    item_data = next((i for i in data.get("items", []) if i["id"] == item_code), None)
+    if not item_data:
+        raise HTTPException(
+            status_code=404,
+            detail="Item not found",
+            headers={"code": "ITEM_NOT_FOUND"},
+        )
+
+    # 2. Ищем или создаем запись в БД
+    stmt = select(UserItem).where(
+        UserItem.user_id == current_user.id, UserItem.item_code == item_code
+    )
+    user_item = await session.scalar(stmt)
+    if not user_item:
+        user_item = UserItem(user_id=current_user.id, item_code=item_code)
+        session.add(user_item)
+
+    # 3. Обновляем пин
+    if payload.is_pinned is not None:
+        user_item.is_pinned = payload.is_pinned
+
+    # 4. Обновляем экипировку
+    if "equipped_slot" in payload.model_fields_set:
+        new_slot = payload.equipped_slot
+
+        if new_slot is not None:
+            # Валидация слота
+            if item_data["slot"] == "none":
+                raise HTTPException(
+                    status_code=422,
+                    detail="Item cannot be equipped",
+                    headers={"code": "NOT_EQUIPPABLE"},
+                )
+            if new_slot != item_data["slot"]:
+                raise HTTPException(
+                    status_code=422,
+                    detail=f"Item must be equipped to {item_data['slot']}",
+                    headers={"code": "INVALID_SLOT"},
+                )
+
+            # Снимаем предмет с этого слота у других вещей (атомарно)
+            await session.execute(
+                update(UserItem)
+                .where(
+                    UserItem.user_id == current_user.id,
+                    UserItem.equipped_slot == new_slot,
+                    UserItem.item_code != item_code,
+                )
+                .values(equipped_slot=None)
+            )
+
+        user_item.equipped_slot = new_slot
+
+    await session.commit()
+    await session.refresh(user_item)
+
+    return InventoryItem(
+        **item_data,
+        is_pinned=user_item.is_pinned,
+        equipped_slot=user_item.equipped_slot,
+    )
