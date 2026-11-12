@@ -103,14 +103,12 @@ export function useCharacterInventory() {
 export function useUpdateInventoryItem() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ itemId, payload }: { itemId: string; payload: { is_pinned?: boolean; equipped_slot?: string | null } }) => {
+    mutationFn: async ({ itemId, payload }: { itemId: string; payload: { is_pinned?: boolean; equipped_slot?: string | null; enhancement_level?: number } }) => {
       const { data } = await api.patch<InventoryItem>(`/character/inventory/${itemId}`, payload);
       return data;
     },
     onSuccess: () => {
-      // Инвалидируем инвентарь
       queryClient.invalidateQueries({ queryKey: characterKeys.inventory() });
-      // Инвалидируем статы (семиугольник), так как экипировка меняет их
       queryClient.invalidateQueries({ queryKey: [...characterKeys.all, 'stats'] });
     },
   });
