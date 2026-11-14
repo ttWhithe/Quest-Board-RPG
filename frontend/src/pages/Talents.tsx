@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useTalents, useUpgradeTalent } from '../api/talents';
 import type { TalentNode } from '../api/talents';
+import { TalentsSkeleton } from '../components/Skeletons';
 
 const NODE_SIZE = 36;
 const PADDING = 300;
@@ -157,7 +158,7 @@ export function Talents() {
   };
 
   if (isLoading || !data) {
-    return <div className="p-8 text-center text-parchment-light">Загрузка древа...</div>;
+    return <TalentsSkeleton />;
   }
 
   const getNodeColor = (node: TalentNode) => {
