@@ -124,17 +124,6 @@ export function Inventory({ noCard = false, onDragStartItem, filterSlot, onReset
                 </span>
               )}
 
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  updateItem({ itemId: item.id, payload: { enhancement_level: item.enhancement_level + 1 } });
-                }}
-                className="absolute bottom-0 left-0 bg-black/60 text-white text-[10px] px-1 rounded-tr-md hover:bg-black z-20"
-                title="Заточить (тест)"
-              >
-                +
-              </button>
-
               {item.is_pinned && (
                 <span className="absolute top-0 left-1 text-white text-xs drop-shadow-md z-10">📌</span>
               )}

@@ -73,9 +73,8 @@ export function Equipment({ noCard = false, draggedItem, onSlotClick, activeFilt
 
   const handleSlotClick = (slotId: string) => {
     const targetBackendSlot = SLOT_MAP[slotId] || slotId;
-    if (!equippedItems[targetBackendSlot]) {
-      onSlotClick(activeFilter === targetBackendSlot ? null : targetBackendSlot);
-    }
+    // Убрали проверку на пустоту, теперь фильтр работает всегда
+    onSlotClick(activeFilter === targetBackendSlot ? null : targetBackendSlot);
   };
 
   const handleUnequip = (e: React.MouseEvent, slotId: string) => {
