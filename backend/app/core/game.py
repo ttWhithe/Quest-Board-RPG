@@ -206,3 +206,23 @@ def effective_status(
     if quest.deadline is not None and _as_aware(quest.deadline) < _as_aware(now):
         return "failed"
     return "active"
+
+
+# ---------------------------------------------------------------------------
+# Множители базовых характеристик в зависимости от редкости предмета
+# ---------------------------------------------------------------------------
+RARITY_MULTIPLIERS: dict[str, float] = {
+    "common": 1.0,
+    "uncommon": 1.1,
+    "rare": 1.5,
+    "epic": 2.0,
+    "legendary": 3.5,
+}
+
+ENHANCEMENT_COSTS: dict[str, int] = {
+    "D": 1,
+    "C": 2,
+    "B": 4,
+    "A": 8,
+    "S": 16,
+}

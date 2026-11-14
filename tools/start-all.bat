@@ -1,15 +1,8 @@
 @echo off
 setlocal EnableExtensions
+cd /d "%~dp0..\"
 
-rem ============================================================
-rem start-all.bat - DEV launcher (db + api в Docker, frontend локально)
-rem ============================================================
-
-for %%I in ("%~dp0..") do set "PROJECT_ROOT=%%~fI"
-cd /d "%PROJECT_ROOT%"
-echo [Root] %PROJECT_ROOT%
-
-rem --- 1. Ensure Docker Desktop is running ---
+rem === 1. Start Docker Desktop as administrator if not already running ===
 tasklist /FI "IMAGENAME eq Docker Desktop.exe" 2>NUL | find /I "Docker Desktop.exe" >NUL
 if not errorlevel 1 (
     echo [Docker] Docker Desktop is already running.
@@ -23,18 +16,10 @@ set "DOCKER_LNK="
 if exist "%LOCALAPPDATA%\Programs\DockerDesktop\Docker Desktop.exe" set "DOCKER_EXE=%LOCALAPPDATA%\Programs\DockerDesktop\Docker Desktop.exe"
 if not defined DOCKER_EXE if exist "%LOCALAPPDATA%\Docker\Docker Desktop.exe" set "DOCKER_EXE=%LOCALAPPDATA%\Docker\Docker Desktop.exe"
 if not defined DOCKER_EXE if exist "%ProgramFiles%\Docker\Docker\Docker Desktop.exe" set "DOCKER_EXE=%ProgramFiles%\Docker\Docker\Docker Desktop.exe"
-if not defined DOCKER_EXE if exist "%ProgramFiles(x86)%\Docker\Docker\Docker Desktop.exe" set "DOCKER_EXE=%ProgramFiles(x86)%\Docker\Docker\Docker Desktop.exe"
-
-if not defined DOCKER_EXE if exist "%USERPROFILE%\Desktop\Docker Desktop.lnk" set "DOCKER_LNK=%USERPROFILE%\Desktop\Docker Desktop.lnk"
-if not defined DOCKER_EXE if not defined DOCKER_LNK if exist "%USERPROFILE%\OneDrive\Desktop\Docker Desktop.lnk" set "DOCKER_LNK=%USERPROFILE%\OneDrive\Desktop\Docker Desktop.lnk"
-if not defined DOCKER_EXE if not defined DOCKER_LNK if exist "%PUBLIC%\Desktop\Docker Desktop.lnk" set "DOCKER_LNK=%PUBLIC%\Desktop\Docker Desktop.lnk"
 
 if defined DOCKER_EXE (
     echo [Docker] Found: "%DOCKER_EXE%"
     powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process -FilePath '%DOCKER_EXE%' -Verb RunAs"
-) else if defined DOCKER_LNK (
-    echo [Docker] Found shortcut: "%DOCKER_LNK%"
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process -FilePath '%DOCKER_LNK%' -Verb RunAs"
 ) else (
     echo [Docker] Docker Desktop.exe not found.
     echo [Docker] Start Docker Desktop manually, then press any key...
@@ -61,30 +46,8 @@ goto wait_docker_loop
 :docker_ready
 echo [Docker] Ready.
 
-rem --- 2. Backend + DB (без фронтенда, так как он в профиле prod) ---
-if not exist "%PROJECT_ROOT%\docker-compose.yml" (
-    echo [Compose] docker-compose.yml not found at project root. Aborting.
-    pause
-    endlocal
-    exit /b 1
-)
-start "Docker Compose (backend+db)" cmd /k "docker compose up"
-
-rem --- 3. Frontend (Vite, локальный) ---
-if not exist "%PROJECT_ROOT%\frontend\package.json" (
-    echo [Frontend] frontend\package.json not found - skipping.
-    goto after_frontend
-)
-if not exist "%PROJECT_ROOT%\frontend\node_modules" (
-    echo [Frontend] node_modules missing - running npm install first.
-    start "Frontend (install + dev)" cmd /k "cd frontend && npm install && npm run dev"
-) else (
-    start "Frontend Dev" cmd /k "cd frontend && npm run dev"
-)
-
-:after_frontend
-
-rem --- 4. Project console ---
+start "Docker Compose (Quest)" cmd /k "docker compose up"
+start "Frontend Dev (Quest)"  cmd /k "cd frontend && npm run dev"
 start "Project Console" cmd /k
 
 endlocal

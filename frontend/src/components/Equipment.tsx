@@ -73,9 +73,8 @@ export function Equipment({ noCard = false, draggedItem, onSlotClick, activeFilt
 
   const handleSlotClick = (slotId: string) => {
     const targetBackendSlot = SLOT_MAP[slotId] || slotId;
-    if (!equippedItems[targetBackendSlot]) {
-      onSlotClick(activeFilter === targetBackendSlot ? null : targetBackendSlot);
-    }
+    // Убрали проверку на пустоту, теперь фильтр работает всегда
+    onSlotClick(activeFilter === targetBackendSlot ? null : targetBackendSlot);
   };
 
   const handleUnequip = (e: React.MouseEvent, slotId: string) => {
@@ -111,7 +110,7 @@ export function Equipment({ noCard = false, draggedItem, onSlotClick, activeFilt
         onClick={() => handleSlotClick(slot.id)}
         onDoubleClick={(e) => handleUnequip(e, slot.id)}
         className={clsx(
-          "relative group flex flex-col items-center justify-center aspect-square border-2 rounded-lg transition-all cursor-pointer shadow-sm overflow-hidden",
+          "relative group flex flex-col items-center justify-center aspect-square border-4 rounded-lg transition-all cursor-pointer shadow-sm overflow-hidden",
           canDrop ? "border-green-500 bg-green-100/50 scale-110 z-10 shadow-[0_0_10px_rgba(34,197,94,0.5)]" :
           isFiltered ? "border-amber-500 bg-amber-100/50 scale-105" :
           item ? "border-solid bg-[#e8dac1]" : "border-dashed border-[#5c4033] bg-[#e8dac1]",

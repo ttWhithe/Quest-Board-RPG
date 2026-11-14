@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from typing import Literal
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from pydantic import BaseModel, ConfigDict, field_validator
@@ -85,6 +86,7 @@ class InventoryItem(BaseModel):
     rarity: str
     icon_path: str
     stats: dict[str, int]
+    enhancement_stats: dict[str, dict[str, int]] | None = None
     is_pinned: bool = False
     equipped_slot: str | None = None
     enhancement_level: int = 0
@@ -98,6 +100,7 @@ class InventoryItemUpdate(BaseModel):
     is_pinned: bool | None = None
     equipped_slot: str | None = None
     enhancement_level: int | None = None
+    rarity: Literal["common", "uncommon", "rare", "epic", "legendary"] | None = None
 
 
 class InventoryResponse(BaseModel):

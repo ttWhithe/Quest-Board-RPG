@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import Annotated
+from typing import Annotated, Any
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -11,7 +11,13 @@ from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.deps import get_current_user
-from app.core.game import effective_status, level_for_xp, xp_for_next_level, xp_into_level
+from app.core.game import (
+    RARITY_MULTIPLIERS,
+    effective_status,
+    level_for_xp,
+    xp_for_next_level,
+    xp_into_level,
+)
 from app.core.talents import TALENTS, get_total_bonus_percent
 from app.data import load_json
 from app.db import get_session
@@ -32,6 +38,7 @@ from app.schemas.character import (
 from app.schemas.user import UserOut
 
 router = APIRouter(prefix="/character", tags=["character"])
+ENHANCEMENT_LETTERS = ["", "D", "C", "B", "A", "S"]
 
 
 def _user_tz(user: User) -> ZoneInfo:
@@ -39,6 +46,21 @@ def _user_tz(user: User) -> ZoneInfo:
         return ZoneInfo(user.timezone)
     except (ZoneInfoNotFoundError, ValueError):
         return ZoneInfo("UTC")
+
+
+def _calculate_item_stats(item: dict[str, Any], level: int, rarity: str) -> dict[str, float]:
+    """Считает статы предмета с учётом заточки и множителя редкости."""
+    base_stats = item.get("stats", {})
+    letter = ENHANCEMENT_LETTERS[level] if level < len(ENHANCEMENT_LETTERS) else ""
+    enh_stats = item.get("enhancement_stats", {}).get(letter, {})
+
+    # Если есть заточка — она заменяет базовые статы (они уже прописаны в JSON)
+    has_enhancement = level > 0 and letter in item.get("enhancement_stats", {})
+    source_stats = enh_stats if has_enhancement else base_stats
+
+    multiplier = RARITY_MULTIPLIERS.get(rarity, 1.0)
+
+    return {stat_name: round(val * multiplier, 1) for stat_name, val in source_stats.items()}
 
 
 @router.get("", response_model=CharacterOut)
@@ -119,7 +141,7 @@ async def get_character_stats(
     current_user: Annotated[User, Depends(get_current_user)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> CharacterStatsResponse:
-    """Возвращает 7 базовых характеристик персонажа с учетом талантов и экипировки."""
+    """Возвращает 7 базовых характеристик персонажа с учетом талантов, экипировки и редкости."""
     stats = {
         "strength": 5.0,
         "dexterity": 5.0,
@@ -164,10 +186,22 @@ async def get_character_stats(
 
         for ui in equipped_items:
             item = items_dict.get(ui.item_code)
-            if item and "stats" in item:
-                for stat_name, val in item["stats"].items():
-                    if stat_name in stats:
-                        stats[stat_name] += float(val)
+            if not item:
+                continue
+
+            # Эффективная редкость (override или базовая)
+            effective_rarity = ui.rarity_override or item.get("rarity", "common")
+
+            # Считаем статы с учетом заточки и редкости
+            item_stats = _calculate_item_stats(item, ui.enhancement_level, effective_rarity)
+
+            # Применяем статы
+            for stat_name, val in item_stats.items():
+                if stat_name in stats:
+                    stats[stat_name] += val
+                    # Не даем статам упасть ниже 0
+                    if stats[stat_name] < 0:
+                        stats[stat_name] = 0.0
 
     return CharacterStatsResponse(stats=stats)
 
@@ -188,9 +222,16 @@ async def get_inventory(
     items = []
     for item_data in items_data:
         ui = overrides.get(item_data["id"])
+
+        if ui and ui.rarity_override:
+            effective_rarity = ui.rarity_override
+        else:
+            effective_rarity = item_data["rarity"]
+
+        item_dict = {**item_data, "rarity": effective_rarity}
         items.append(
             InventoryItem(
-                **item_data,
+                **item_dict,
                 is_pinned=ui.is_pinned if ui else False,
                 equipped_slot=ui.equipped_slot if ui else None,
                 enhancement_level=ui.enhancement_level if ui else 0,
@@ -207,7 +248,7 @@ async def update_inventory_item(
     current_user: Annotated[User, Depends(get_current_user)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> InventoryItem:
-    """Обновляет состояние предмета (закрепление или экипировка)."""
+    """Обновляет состояние предмета (закрепление, экипировка, заточка, редкость)."""
     data = load_json("items.json")
     item_data = next((i for i in data.get("items", []) if i["id"] == item_code), None)
     if not item_data:
@@ -228,6 +269,9 @@ async def update_inventory_item(
 
     if payload.enhancement_level is not None:
         user_item.enhancement_level = min(payload.enhancement_level, 5)
+
+    if payload.rarity is not None:
+        user_item.rarity_override = payload.rarity
 
     if "equipped_slot" in payload.model_fields_set:
         new_slot = payload.equipped_slot
@@ -276,8 +320,15 @@ async def update_inventory_item(
     await session.commit()
     await session.refresh(user_item)
 
+    if user_item.rarity_override:
+        effective_rarity = user_item.rarity_override
+    else:
+        effective_rarity = item_data["rarity"]
+
+    item_dict = {**item_data, "rarity": effective_rarity}
+
     return InventoryItem(
-        **item_data,
+        **item_dict,
         is_pinned=user_item.is_pinned,
         equipped_slot=user_item.equipped_slot,
         enhancement_level=user_item.enhancement_level,

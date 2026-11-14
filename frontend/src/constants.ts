@@ -8,6 +8,14 @@ export const RARITY_COLORS = {
 
 export type Rarity = keyof typeof RARITY_COLORS;
 
+export const RARITY_MULTIPLIERS: Record<string, number> = {
+  common: 1.0,
+  uncommon: 1.1,
+  rare: 1.5,
+  epic: 2.0,
+  legendary: 3.5,
+};
+
 export const RANK_COLORS = {
   S: '#EF4444',
   A: '#F97316',
@@ -54,4 +62,12 @@ export const rarityColor = (rarity: Rarity | string): string => {
  */
 export const rankColor = (rank: Rank | string): string => {
   return RANK_COLORS[rank as Rank] ?? RANK_COLORS.F;
+};
+
+export const ENHANCEMENT_COSTS: Record<string, number> = {
+  D: 1,
+  C: 2,
+  B: 4,
+  A: 8,
+  S: 16,
 };

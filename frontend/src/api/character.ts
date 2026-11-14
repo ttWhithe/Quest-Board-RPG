@@ -68,6 +68,7 @@ export interface InventoryItem {
   rarity: string;
   icon_path: string;
   stats: Record<string, number>;
+  enhancement_stats?: Record<string, Record<string, number>> | null; // Добавлено
   is_pinned: boolean;
   equipped_slot: string | null;
   enhancement_level: number;
@@ -103,7 +104,18 @@ export function useCharacterInventory() {
 export function useUpdateInventoryItem() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ itemId, payload }: { itemId: string; payload: { is_pinned?: boolean; equipped_slot?: string | null; enhancement_level?: number } }) => {
+    mutationFn: async ({
+      itemId,
+      payload,
+    }: {
+      itemId: string;
+      payload: {
+        is_pinned?: boolean;
+        equipped_slot?: string | null;
+        enhancement_level?: number;
+        rarity?: string | null; // Добавлено
+      };
+    }) => {
       const { data } = await api.patch<InventoryItem>(`/character/inventory/${itemId}`, payload);
       return data;
     },
