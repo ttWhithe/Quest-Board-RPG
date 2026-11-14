@@ -12,7 +12,7 @@ import { Equipment } from '../components/Equipment';
 import { Inventory } from '../components/Inventory';
 import { DailyRewardModal } from '../components/DailyRewardModal';
 import { QuestStats } from '../components/QuestStats';
-import { RANK_COLORS, getLevelTitle } from '../constants';
+import { getLevelTitle } from '../constants';
 
 export function Character() {
   const { updateUser } = useAuth();

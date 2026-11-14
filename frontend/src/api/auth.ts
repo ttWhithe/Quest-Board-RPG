@@ -42,7 +42,7 @@ export const authApi = {
     return response.data;
   },
 
-  claimDailyReward: async (): Promise<{ success: boolean; xp_awarded: number; next_day: number; new_total_xp: number }> => {
+  claimDailyReward: async (): Promise<{ success: boolean; xp_awarded: number; next_day: number; new_total_xp: number; login_streak: number }> => {
     const response = await api.post('/auth/daily-reward');
     return response.data;
   }

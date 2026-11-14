@@ -1,7 +1,7 @@
 """Authentication endpoints."""
 
 from datetime import UTC, datetime
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
@@ -121,7 +121,7 @@ async def demo_login(
 @router.get("/daily-reward")
 async def get_daily_reward_info(
     current_user: Annotated[User, Depends(get_current_user)],
-) -> dict:
+) -> dict[str, Any]:
     """Возвращает список наград и информацию о текущем дне."""
     config = load_json("daily_rewards.json")
     rewards = config.get("rewards", [])
@@ -145,7 +145,7 @@ async def get_daily_reward_info(
 async def claim_daily_reward(
     current_user: Annotated[User, Depends(get_current_user)],
     session: Annotated[AsyncSession, Depends(get_session)],
-) -> dict:
+) -> dict[str, Any]:
     """Забирает ежедневную награду и начисляет XP."""
     if not can_claim_daily_reward(current_user):
         raise HTTPException(
