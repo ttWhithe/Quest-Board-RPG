@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import Annotated
+from typing import Annotated, Any
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -48,7 +48,7 @@ def _user_tz(user: User) -> ZoneInfo:
         return ZoneInfo("UTC")
 
 
-def _calculate_item_stats(item: dict, level: int, rarity: str) -> dict[str, float]:
+def _calculate_item_stats(item: dict[str, Any], level: int, rarity: str) -> dict[str, float]:
     """Считает статы предмета с учётом заточки и множителя редкости."""
     base_stats = item.get("stats", {})
     letter = ENHANCEMENT_LETTERS[level] if level < len(ENHANCEMENT_LETTERS) else ""
