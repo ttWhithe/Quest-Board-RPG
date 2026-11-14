@@ -24,14 +24,17 @@ def update_login_streak(user: User) -> bool:
 
         delta = (today - last_local).days
         if delta == 1:
-            user.login_streak += 1
+            user.login_streak = (user.login_streak or 0) + 1
         else:
             user.login_streak = 1
     else:
         user.login_streak = 1
 
     user.last_login_at = now_utc
-    if user.login_streak > user.max_login_streak:
+
+    # Безопасное сравнение, если max_login_streak еще не инициализирован
+    current_max = user.max_login_streak or 0
+    if user.login_streak > current_max:
         user.max_login_streak = user.login_streak
 
     return True
