@@ -1,0 +1,11 @@
+{
+  "rewards": [
+    { "day": 1, "type": "xp", "amount": 50, "label": "50 XP" },
+    { "day": 2, "type": "xp", "amount": 100, "label": "100 XP" },
+    { "day": 3, "type": "item", "item_id": "item_021", "amount": 1, "label": "Зелье здоровья" },
+    { "day": 4, "type": "xp", "amount": 200, "label": "200 XP" },
+    { "day": 5, "type": "xp", "amount": 300, "label": "300 XP" },
+    { "day": 6, "type": "item", "item_id": "item_030", "amount": 1, "label": "Эликсир жизни" },
+    { "day": 7, "type": "xp", "amount": 1000, "label": "1000 XP (Джекпот!)" }
+  ]
+}

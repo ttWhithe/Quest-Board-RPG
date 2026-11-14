@@ -29,6 +29,16 @@ class User(Base):
     total_xp: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     is_demo: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
 
+    # Стрики и ежедневные награды
+    last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    login_streak: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    max_login_streak: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+
+    last_daily_reward_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    daily_reward_day: Mapped[int] = mapped_column(Integer, default=1, server_default="1")  # 1..7
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
