@@ -151,7 +151,7 @@ export function Character() {
                   <span className="text-4xl text-[#5c4033]/40 font-bold leading-none">•</span>
 
                   <span className="bg-amber-700 text-white px-3 py-1 rounded-md text-sm font-bold shadow-sm uppercase tracking-wider">
-                    {getRankTitle(level)}
+                    {getLevelTitle(level)}
                   </span>
 
                   {user.login_streak > 0 && (
