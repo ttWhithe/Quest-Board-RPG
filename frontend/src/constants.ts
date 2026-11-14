@@ -71,3 +71,21 @@ export const ENHANCEMENT_COSTS: Record<string, number> = {
   A: 8,
   S: 16,
 };
+
+export const LEVEL_TITLES: { minLevel: number; title: string }[] = [
+  { minLevel: 1, title: 'Новичок' },
+  { minLevel: 5, title: 'Авантюрист' },
+  { minLevel: 10, title: 'Ветеран' },
+  { minLevel: 20, title: 'Мастер' },
+  { minLevel: 35, title: 'Легенда гильдии' },
+];
+
+export function getLevelTitle(level: number): string {
+  let title = LEVEL_TITLES[0].title;
+  for (const t of LEVEL_TITLES) {
+    if (level >= t.minLevel) {
+      title = t.title;
+    }
+  }
+  return title;
+}

@@ -106,3 +106,9 @@ class UserOut(BaseModel):
     total_xp: int
     is_demo: bool
     created_at: datetime
+
+    # Добавленные поля
+    login_streak: int
+    max_login_streak: int
+    daily_reward_day: int
+    last_daily_reward_at: datetime | None
