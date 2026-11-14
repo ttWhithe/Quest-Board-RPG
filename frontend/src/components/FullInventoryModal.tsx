@@ -169,7 +169,7 @@ export function FullInventoryModal({ items, onClose }: Props) {
                     onMouseEnter={(e) => handleMouseEnter(e, item)}
                     onMouseLeave={handleMouseLeave}
                     onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
-                    className={`relative aspect-square border-2 rounded-sm bg-[#1a1512] flex items-center justify-center shadow-md group transition-transform ${
+                    className={`relative aspect-square border-4 rounded-sm bg-[#1a1512] flex items-center justify-center shadow-md group transition-transform ${
                       mode === 'blacksmith' ? 'cursor-pointer hover:scale-105' : 'cursor-default'
                     } ${isSelected ? 'scale-105 ring-2 ring-amber-400 z-10' : ''}`}
                     style={{ borderColor: rarityColor(item.rarity) }}
@@ -214,7 +214,7 @@ export function FullInventoryModal({ items, onClose }: Props) {
                   </div>
 
                   <div className="p-4 flex flex-col items-center border-b border-[#5c4033]/30">
-                    <div className="w-24 h-24 rounded border-2 bg-[#1a1512] flex items-center justify-center relative" style={{ borderColor: rarityColor(selectedItem.rarity) }}>
+                                        <div className="w-24 h-24 rounded border-[6px] bg-[#1a1512] flex items-center justify-center relative" style={{ borderColor: rarityColor(selectedItem.rarity) }}>
                       <img src={selectedItem.icon_path} alt={selectedItem.name} className="w-full h-full object-cover p-1" />
                       {selectedItem.enhancement_level > 0 && (
                         <span className="absolute inset-0 flex items-center justify-center font-bold text-7xl pointer-events-none select-none"

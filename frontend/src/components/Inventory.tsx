@@ -103,7 +103,7 @@ export function Inventory({ noCard = false, onDragStartItem, filterSlot, onReset
               onMouseLeave={handleMouseLeave}
               onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
               className={clsx(
-                "relative aspect-square border-2 rounded-sm bg-[#1a1512] flex items-center justify-center hover:scale-105 transition-transform cursor-grab active:cursor-grabbing",
+                "relative aspect-square border-4 rounded-sm bg-[#1a1512] flex items-center justify-center hover:scale-105 transition-transform cursor-grab active:cursor-grabbing",
                 item.equipped_slot && "opacity-50"
               )}
               style={{ borderColor: rarityColor(item.rarity) }}
