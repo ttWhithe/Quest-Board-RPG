@@ -11,7 +11,7 @@ from app.models.user import User
 
 
 @pytest.mark.asyncio
-async def test_update_login_streak_new_user(async_client: AsyncClient):
+async def test_update_login_streak_new_user(async_client: AsyncClient) -> None:
     """Проверяем, что у нового пользователя стрик становится 1."""
     email = f"test_streak_{uuid4()}@example.com"
     res = await async_client.post(
@@ -29,7 +29,7 @@ async def test_update_login_streak_new_user(async_client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_streak_logic_manually():
+async def test_streak_logic_manually() -> None:
     """Тестируем чистую логику функции update_login_streak."""
     user = User(
         id=uuid4(),
@@ -57,7 +57,7 @@ async def test_streak_logic_manually():
 
 
 @pytest.mark.asyncio
-async def test_daily_reward_flow(async_client: AsyncClient):
+async def test_daily_reward_flow(async_client: AsyncClient) -> None:
     """Полный цикл получения награды."""
     email = f"test_reward_{uuid4()}@example.com"
     res = await async_client.post(
@@ -92,7 +92,7 @@ async def test_daily_reward_flow(async_client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_rarity_multipliers_in_stats(async_client: AsyncClient):
+async def test_rarity_multipliers_in_stats(async_client: AsyncClient) -> None:
     """Проверяем, что редкость предмета умножает статы."""
     email = f"test_rarity_{uuid4()}@example.com"
     res = await async_client.post(
