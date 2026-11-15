@@ -75,7 +75,6 @@ export function FullInventoryModal({ items, onClose }: Props) {
     return items.filter((item) => item.type === filter);
   }, [items, filter]);
 
-  // Обновленный расчет статов с учетом множителя редкости
   const selectedStats = useMemo(() => {
     if (!selectedItem) {
       return { base: {} as Record<string, number>, current: {} as Record<string, number>, rawCurrent: {} as Record<string, number> };
@@ -84,10 +83,8 @@ export function FullInventoryModal({ items, onClose }: Props) {
     const letter = enhLetter(selectedItem.enhancement_level);
     const map = getEnhStatsMap(selectedItem);
 
-    // Сначала берем базовые или заточенные статы ДО умножения на редкость
     const rawCurrent = (selectedItem.enhancement_level > 0 && map?.[letter]) ? map[letter] : base;
 
-    // Применяем множитель редкости
     const mult = RARITY_MULTIPLIERS[selectedItem.rarity] || 1.0;
     const current: Record<string, number> = {};
     for (const [stat, val] of Object.entries(rawCurrent)) {
@@ -214,7 +211,7 @@ export function FullInventoryModal({ items, onClose }: Props) {
                   </div>
 
                   <div className="p-4 flex flex-col items-center border-b border-[#5c4033]/30">
-                                        <div className="w-24 h-24 rounded border-[6px] bg-[#1a1512] flex items-center justify-center relative" style={{ borderColor: rarityColor(selectedItem.rarity) }}>
+                    <div className="w-24 h-24 rounded border-[6px] bg-[#1a1512] flex items-center justify-center relative" style={{ borderColor: rarityColor(selectedItem.rarity) }}>
                       <img src={selectedItem.icon_path} alt={selectedItem.name} className="w-full h-full object-cover p-1" />
                       {selectedItem.enhancement_level > 0 && (
                         <span className="absolute inset-0 flex items-center justify-center font-bold text-7xl pointer-events-none select-none"
@@ -226,52 +223,56 @@ export function FullInventoryModal({ items, onClose }: Props) {
                     <div className="text-xs text-[#3b2f2f]/70 mt-2 capitalize">{selectedItem.type} · {selectedItem.slot === 'none' ? 'не экипируется' : selectedItem.slot}</div>
                   </div>
 
-                  <div className="p-4 border-b border-[#5c4033]/30">
-                    <h4 className="text-sm font-bold text-[#3b2f2f] mb-2 flex justify-between">
-                      <span>Редкость</span>
-                      <span className="text-xs font-normal text-[#3b2f2f]/60">Множитель: x{RARITY_MULTIPLIERS[selectedItem.rarity] || 1.0}</span>
-                    </h4>
-                    <div className="flex items-center justify-between bg-[#d4c3a0] rounded p-2">
-                      <button
-                        onClick={() => setRarity(selectedItem, RARITIES[rarityIndex - 1])}
-                        disabled={!canDowngradeRarity}
-                        className="w-8 h-8 rounded bg-[#5c4033] text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#7a5444] transition-colors"
-                      >−</button>
-                      <div className="flex flex-col items-center">
-                        <span className="text-sm font-bold capitalize" style={{ color: rarityColor(selectedItem.rarity) }}>
-                          {RARITY_NAMES[selectedItem.rarity] || selectedItem.rarity}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => setRarity(selectedItem, RARITIES[rarityIndex + 1])}
-                        disabled={!canUpgradeRarity}
-                        className="w-8 h-8 rounded bg-[#5c4033] text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#7a5444] transition-colors"
-                      >+</button>
-                    </div>
-                  </div>
-
                   {getEnhStatsMap(selectedItem) ? (
-                    <div className="p-4 border-b border-[#5c4033]/30">
-                      <h4 className="text-sm font-bold text-[#3b2f2f] mb-2">Заточка</h4>
-                      <div className="flex items-center justify-between bg-[#d4c3a0] rounded p-2">
-                        <button
-                          onClick={() => setEnhancementLevel(selectedItem, selectedItem.enhancement_level - 1)}
-                          disabled={selectedItem.enhancement_level === 0}
-                          className="w-8 h-8 rounded bg-[#5c4033] text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#7a5444] transition-colors"
-                        >−</button>
-                        <div className="flex flex-col items-center">
-                          <span className="text-3xl font-bold leading-none" style={{ color: selectedItem.enhancement_level > 0 ? rankColor(enhLetter(selectedItem.enhancement_level)) : '#8b7a6a', WebkitTextStroke: selectedItem.enhancement_level > 0 ? '1px black' : undefined }}>
-                            {selectedItem.enhancement_level > 0 ? enhLetter(selectedItem.enhancement_level) : '—'}
-                          </span>
-                          <span className="text-[10px] text-[#3b2f2f]/60 mt-1">ур. {selectedItem.enhancement_level}/{MAX_ENHANCEMENT}</span>
+                    <>
+                      {/* Блок Редкости (только для затачиваемых предметов) */}
+                      <div className="p-4 border-b border-[#5c4033]/30">
+                        <h4 className="text-sm font-bold text-[#3b2f2f] mb-2 flex justify-between">
+                          <span>Редкость</span>
+                          <span className="text-xs font-normal text-[#3b2f2f]/60">Множитель: x{RARITY_MULTIPLIERS[selectedItem.rarity] || 1.0}</span>
+                        </h4>
+                        <div className="flex items-center justify-between bg-[#d4c3a0] rounded p-2">
+                          <button
+                            onClick={() => setRarity(selectedItem, RARITIES[rarityIndex - 1])}
+                            disabled={!canDowngradeRarity}
+                            className="w-8 h-8 rounded bg-[#5c4033] text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#7a5444] transition-colors"
+                          >−</button>
+                          <div className="flex flex-col items-center">
+                            <span className="text-sm font-bold capitalize" style={{ color: rarityColor(selectedItem.rarity) }}>
+                              {RARITY_NAMES[selectedItem.rarity] || selectedItem.rarity}
+                            </span>
+                          </div>
+                          <button
+                            onClick={() => setRarity(selectedItem, RARITIES[rarityIndex + 1])}
+                            disabled={!canUpgradeRarity}
+                            className="w-8 h-8 rounded bg-[#5c4033] text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#7a5444] transition-colors"
+                          >+</button>
                         </div>
-                        <button
-                          onClick={() => setEnhancementLevel(selectedItem, selectedItem.enhancement_level + 1)}
-                          disabled={selectedItem.enhancement_level >= MAX_ENHANCEMENT}
-                          className="w-8 h-8 rounded bg-[#5c4033] text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#7a5444] transition-colors"
-                        >+</button>
                       </div>
-                    </div>
+
+                      {/* Блок Заточки */}
+                      <div className="p-4 border-b border-[#5c4033]/30">
+                        <h4 className="text-sm font-bold text-[#3b2f2f] mb-2">Заточка</h4>
+                        <div className="flex items-center justify-between bg-[#d4c3a0] rounded p-2">
+                          <button
+                            onClick={() => setEnhancementLevel(selectedItem, selectedItem.enhancement_level - 1)}
+                            disabled={selectedItem.enhancement_level === 0}
+                            className="w-8 h-8 rounded bg-[#5c4033] text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#7a5444] transition-colors"
+                          >−</button>
+                          <div className="flex flex-col items-center">
+                            <span className="text-3xl font-bold leading-none" style={{ color: selectedItem.enhancement_level > 0 ? rankColor(enhLetter(selectedItem.enhancement_level)) : '#8b7a6a', WebkitTextStroke: selectedItem.enhancement_level > 0 ? '1px black' : undefined }}>
+                              {selectedItem.enhancement_level > 0 ? enhLetter(selectedItem.enhancement_level) : '—'}
+                            </span>
+                            <span className="text-[10px] text-[#3b2f2f]/60 mt-1">ур. {selectedItem.enhancement_level}/{MAX_ENHANCEMENT}</span>
+                          </div>
+                          <button
+                            onClick={() => setEnhancementLevel(selectedItem, selectedItem.enhancement_level + 1)}
+                            disabled={selectedItem.enhancement_level >= MAX_ENHANCEMENT}
+                            className="w-8 h-8 rounded bg-[#5c4033] text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#7a5444] transition-colors"
+                          >+</button>
+                        </div>
+                      </div>
+                    </>
                   ) : (
                     <div className="p-4 border-b border-[#5c4033]/30 text-xs text-center text-[#3b2f2f]/60 italic">
                       Не подлежит заточке

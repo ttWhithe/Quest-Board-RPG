@@ -52,7 +52,7 @@ export function HexStatsChart() {
     if (!data) return { pointsString: '', vertexCoords: [] };
 
     const coords = STAT_LABELS.map((stat, i) => {
-      const val = data.stats[stat.key] || 5.0;
+      const val = data.stats[stat.key] || 1.0;
       const angle = (Math.PI * 2 * i) / STAT_LABELS.length - Math.PI / 2;
       const r = (val / maxVal) * RADIUS;
       return {

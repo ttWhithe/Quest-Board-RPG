@@ -1,25 +1,17 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { RARITY_COLORS } from '../constants';
-
-export interface Achievement {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  unlocked: boolean;
-  rarity: string;
-}
+import { ACHIEVEMENTS } from '../data/achievements';
+import type { Achievement } from '../data/achievements';
 
 interface Props {
-  achievements: Achievement[];
   onClose: () => void;
 }
 
-export function FullAchievementsModal({ achievements, onClose }: Props) {
+export function FullAchievementsModal({ onClose }: Props) {
   const [filter, setFilter] = useState<'all' | 'unlocked' | 'locked'>('all');
 
-  const filtered = achievements.filter((a) => {
+  const filtered = ACHIEVEMENTS.filter((a) => {
     if (filter === 'unlocked') return a.unlocked;
     if (filter === 'locked') return !a.unlocked;
     return true;
@@ -54,31 +46,66 @@ export function FullAchievementsModal({ achievements, onClose }: Props) {
 
         <div className="flex-1 overflow-y-auto p-6">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filtered.map((ach) => (
-              <motion.div
-                key={ach.id}
-                whileHover={{ scale: 1.02 }}
-                className={`relative p-4 rounded-lg border-2 flex flex-col items-center text-center transition-all bg-[#1a1512]
-                  ${ach.unlocked ? 'shadow-md' : 'opacity-50 grayscale'}`}
-                style={{ borderColor: ach.unlocked ? RARITY_COLORS[ach.rarity] : '#5c4033' }}
-              >
-                <div className="text-5xl mb-3 drop-shadow-md">{ach.icon}</div>
-                <h3 className="font-bold leading-tight mb-1" style={{ color: ach.unlocked ? RARITY_COLORS[ach.rarity] : '#a8a29e' }}>
-                  {ach.name}
-                </h3>
-                <p className="text-xs text-gray-400 leading-tight mb-3 flex-1">{ach.description}</p>
+            {filtered.map((ach) => {
+              const iconColor = ach.unlocked ? RARITY_COLORS[ach.rarity] : '#4b5563';
 
-                {ach.unlocked ? (
-                  <span className="mt-auto text-xs font-bold text-green-400 bg-green-900/30 px-2 py-0.5 rounded border border-green-800">
-                    Получено
-                  </span>
-                ) : (
-                  <span className="mt-auto text-xs font-bold text-gray-500 bg-gray-800/50 px-2 py-0.5 rounded border border-gray-700">
-                    Закрыто
-                  </span>
-                )}
-              </motion.div>
-            ))}
+              // Форматируем текст награды
+              const rewardText = ach.reward.type === 'xp'
+                ? `+${ach.reward.amount} XP`
+                : `Предмет (x${ach.reward.amount})`;
+
+              return (
+                <motion.div
+                  key={ach.id}
+                  whileHover={{ scale: 1.02 }}
+                  className={`relative p-4 rounded-lg border-2 flex flex-col items-center text-center transition-all bg-[#1a1512]
+                    ${ach.unlocked ? 'shadow-md' : 'opacity-50 grayscale'}`}
+                  style={{ borderColor: ach.unlocked ? RARITY_COLORS[ach.rarity] : '#5c4033' }}
+                >
+                  {/* Иконка через img с инверсией цвета и наложением цвета редкости */}
+                  <div className="w-16 h-16 mb-2 relative flex items-center justify-center">
+                    <img
+                      src={`/icons/${ach.icon}.svg`}
+                      alt={ach.name}
+                      className="w-full h-full object-contain absolute"
+                      style={{
+                        filter: ach.unlocked ? 'invert(1) sepia(1) saturate(5) hue-rotate(180deg)' : 'invert(1) opacity(0.3)',
+                        // Используем маску для точного цвета редкости
+                        WebkitMaskImage: `url(/icons/${ach.icon}.svg)`,
+                        maskImage: `url(/icons/${ach.icon}.svg)`,
+                        WebkitMaskSize: 'contain',
+                        maskSize: 'contain',
+                        WebkitMaskRepeat: 'no-repeat',
+                        maskRepeat: 'no-repeat',
+                        WebkitMaskPosition: 'center',
+                        maskPosition: 'center',
+                        backgroundColor: iconColor
+                      }}
+                    />
+                  </div>
+
+                  <h3 className="font-bold leading-tight mb-1 text-sm" style={{ color: ach.unlocked ? RARITY_COLORS[ach.rarity] : '#a8a29e' }}>
+                    {ach.name}
+                  </h3>
+                  <p className="text-xs text-gray-400 leading-tight mb-2 flex-1">{ach.description}</p>
+
+                  {/* Награда */}
+                  <div className={`text-[10px] font-bold px-2 py-0.5 rounded-full mb-2 ${ach.unlocked ? 'bg-amber-900/40 text-amber-500 border border-amber-700' : 'bg-gray-800 text-gray-400 border border-gray-700'}`}>
+                    🏆 {rewardText}
+                  </div>
+
+                  {ach.unlocked ? (
+                    <span className="mt-auto text-[10px] font-bold text-green-400 bg-green-900/30 px-2 py-0.5 rounded border border-green-800">
+                      Получено
+                    </span>
+                  ) : (
+                    <span className="mt-auto text-[10px] font-bold text-gray-500 bg-gray-800/50 px-2 py-0.5 rounded border border-gray-700">
+                      Закрыто
+                    </span>
+                  )}
+                </motion.div>
+              );
+            })}
           </div>
           {filtered.length === 0 && (
             <p className="text-center text-[#5c4033]/60 italic mt-10">Здесь пока пусто...</p>

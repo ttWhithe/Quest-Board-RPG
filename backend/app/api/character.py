@@ -142,14 +142,18 @@ async def get_character_stats(
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> CharacterStatsResponse:
     """Возвращает 7 базовых характеристик персонажа с учетом талантов, экипировки и редкости."""
+
+    # Гость получает 5.0 для теста, обычный игрок начинает с 1.0
+    base_val = 5.0 if current_user.is_demo else 1.0
+
     stats = {
-        "strength": 5.0,
-        "dexterity": 5.0,
-        "intellect": 5.0,
-        "spirit": 5.0,
-        "endurance": 5.0,
-        "perception": 5.0,
-        "luck": 5.0,
+        "strength": base_val,
+        "dexterity": base_val,
+        "intellect": base_val,
+        "spirit": base_val,
+        "endurance": base_val,
+        "perception": base_val,
+        "luck": base_val,
     }
 
     # 1. Считаем бонусы от талантов
@@ -211,7 +215,7 @@ async def get_inventory(
     current_user: Annotated[User, Depends(get_current_user)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> InventoryResponse:
-    """Возвращает все предметы из items.json с наложенными состояниями из БД."""
+    """Возвращает предметы из items.json. Для демо — все, для обычных — только имеющиеся."""
     data = load_json("items.json")
     items_data = data.get("items", [])
 
@@ -222,6 +226,10 @@ async def get_inventory(
     items = []
     for item_data in items_data:
         ui = overrides.get(item_data["id"])
+
+        # ЛОГИКА: Если пользователь не демо и предмета нет в БД -> пропускаем
+        if not current_user.is_demo and not ui:
+            continue
 
         if ui and ui.rarity_override:
             effective_rarity = ui.rarity_override
@@ -261,6 +269,13 @@ async def update_inventory_item(
     )
     user_item = await session.scalar(stmt)
     if not user_item:
+        # Запрещаем обычным игрокам изменять предметы, которых у них нет
+        if not current_user.is_demo:
+            raise HTTPException(
+                status_code=404,
+                detail="Item not found in inventory",
+                headers={"code": "ITEM_NOT_FOUND"},
+            )
         user_item = UserItem(user_id=current_user.id, item_code=item_code)
         session.add(user_item)
 

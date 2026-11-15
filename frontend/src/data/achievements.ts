@@ -1,0 +1,131 @@
+export interface Reward {
+  type: 'xp' | 'item';
+  amount?: number;
+  item_id?: string;
+}
+
+export interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  unlocked: boolean;
+  rarity: string;
+  reward: Reward;
+}
+
+export const ACHIEVEMENTS: Achievement[] = [
+  // --- ЧАСТЬ 1: КВЕСТЫ ---
+  { "id": "ach_q_1", "name": "Первый шаг", "description": "Выполнить 1 квест", "icon": "gladius", "rarity": "common", "unlocked": true, "reward": { "type": "xp", "amount": 50 } },
+  { "id": "ach_q_2", "name": "Разминка", "description": "Выполнить 5 квестов", "icon": "boots", "rarity": "common", "unlocked": true, "reward": { "type": "xp", "amount": 100 } },
+  { "id": "ach_q_3", "name": "Легкая добыча", "description": "Выполнить 10 квестов ранга F или E", "icon": "knapsack", "rarity": "common", "unlocked": true, "reward": { "type": "xp", "amount": 150 } },
+  { "id": "ach_q_4", "name": "Испытание", "description": "Выполнить первый квест ранга S", "icon": "heraldic-sun", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 300 } },
+  { "id": "ach_q_5", "name": "Новичок", "description": "Выполнить 10 квестов", "icon": "viking-shield", "rarity": "uncommon", "unlocked": true, "reward": { "type": "xp", "amount": 100 } },
+  { "id": "ach_q_6", "name": "Середнячок", "description": "Выполнить 10 квестов ранга D или C", "icon": "broad-dagger", "rarity": "uncommon", "unlocked": false, "reward": { "type": "xp", "amount": 200 } },
+  { "id": "ach_q_7", "name": "Опытный", "description": "Выполнить 50 квестов", "icon": "archery-target", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 500 } },
+  { "id": "ach_q_8", "name": "Профессионал", "description": "Выполнить 10 квестов ранга B", "icon": "spartan-helmet", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 400 } },
+  { "id": "ach_q_9", "name": "Элита", "description": "Выполнить 10 квестов ранга A", "icon": "crested-helmet", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 500 } },
+  { "id": "ach_q_10", "name": "Ветеран", "description": "Выполнить 100 квестов", "icon": "throne-king", "rarity": "epic", "unlocked": false, "reward": { "type": "xp", "amount": 1000 } },
+  { "id": "ach_q_11", "name": "Убийца драконов", "description": "Выполнить 5 квестов ранга S", "icon": "dragon-head", "rarity": "legendary", "unlocked": false, "reward": { "type": "item", "item_id": "item_030", "amount": 1 } },
+  { "id": "ach_q_12", "name": "Легенда гильдии", "description": "Выполнить 500 квестов", "icon": "trophy-cup", "rarity": "legendary", "unlocked": false, "reward": { "type": "item", "item_id": "item_041", "amount": 1 } },
+  { "id": "ach_q_13", "name": "Трудоголик", "description": "Выполнить 20 квестов подряд без провалов", "icon": "thor-hammer", "rarity": "epic", "unlocked": false, "reward": { "type": "xp", "amount": 800 } },
+  { "id": "ach_q_14", "name": "Пунктуальность", "description": "Выполнить 10 квестов до дедлайна", "icon": "clock-tower", "rarity": "uncommon", "unlocked": true, "reward": { "type": "xp", "amount": 200 } },
+  { "id": "ach_q_15", "name": "Ранняя пташка", "description": "Выполнить квест до 8 утра", "icon": "sunrise", "rarity": "uncommon", "unlocked": false, "reward": { "type": "xp", "amount": 200 } },
+  { "id": "ach_q_16", "name": "Полуночник", "description": "Выполнить квест после полуночи", "icon": "spectre", "rarity": "uncommon", "unlocked": true, "reward": { "type": "xp", "amount": 200 } },
+  { "id": "ach_q_17", "name": "Прокрастинатор", "description": "Выполнить просроченный квест", "icon": "imprisoned", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 300 } },
+  { "id": "ach_q_18", "name": "Ежедневный ритуал", "description": "Выполнить рекуррентный квест", "icon": "moebius-triangle", "rarity": "common", "unlocked": true, "reward": { "type": "xp", "amount": 100 } },
+  { "id": "ach_q_19", "name": "Мастер планов", "description": "Создать 10 квестов за 1 день", "icon": "diploma", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 300 } },
+  { "id": "ach_q_20", "name": "Перфекционист", "description": "Выполнить 20 квестов ранга S", "icon": "crowned-skull", "rarity": "legendary", "unlocked": false, "reward": { "type": "item", "item_id": "item_045", "amount": 1 } },
+  { "id": "ach_q_21", "name": "Охотник за головами", "description": "Выполнить по 1 квесту каждого ранга", "icon": "star-medal", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 400 } },
+  { "id": "ach_q_22", "name": "Разнообразие", "description": "Выполнить по 10 квестов каждого ранга", "icon": "stars-stack", "rarity": "epic", "unlocked": false, "reward": { "type": "xp", "amount": 800 } },
+  { "id": "ach_q_23", "name": "Провал - это опыт", "description": "Провалить 5 квестов", "icon": "cross-mark", "rarity": "uncommon", "unlocked": false, "reward": { "type": "xp", "amount": 100 } },
+  { "id": "ach_q_24", "name": "Кризис-менеджер", "description": "Выполнить 5 квестов с истекающим дедлайном", "icon": "stop-sign", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 300 } },
+  { "id": "ach_q_25", "name": "Спринтер", "description": "Выполнить 3 квеста за 1 час", "icon": "mounted-knight", "rarity": "uncommon", "unlocked": false, "reward": { "type": "xp", "amount": 200 } },
+
+  // --- ЧАСТЬ 2: ТАЛАНТЫ, СТРИКИ, ВРЕМЯ ---
+  { "id": "ach_t_1", "name": "Прозрение", "description": "Изучить первый талант", "icon": "all-seeing-eye", "rarity": "common", "unlocked": true, "reward": { "type": "xp", "amount": 100 } },
+  { "id": "ach_t_2", "name": "Ученик", "description": "Изучить 5 талантов", "icon": "graduate-cap", "rarity": "uncommon", "unlocked": false, "reward": { "type": "xp", "amount": 200 } },
+  { "id": "ach_t_3", "name": "Мастер пути", "description": "Изучить 10 талантов", "icon": "meditation", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 400 } },
+  { "id": "ach_t_4", "name": "Архимаг", "description": "Изучить 25 талантов", "icon": "fairy-wand", "rarity": "epic", "unlocked": false, "reward": { "type": "xp", "amount": 800 } },
+  { "id": "ach_t_5", "name": "Всеведущий", "description": "Изучить 50 талантов", "icon": "pentacle", "rarity": "legendary", "unlocked": false, "reward": { "type": "item", "item_id": "item_037", "amount": 1 } },
+  { "id": "ach_t_6", "name": "Значимая личность", "description": "Изучить первый Notable-талант", "icon": "gem-pendant", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 300 } },
+  { "id": "ach_t_7", "name": "Ветвь власти", "description": "Изучить все таланты в одной ветке", "icon": "checkbox-tree", "rarity": "epic", "unlocked": false, "reward": { "type": "xp", "amount": 1000 } },
+  { "id": "ach_t_8", "name": "Маг", "description": "Изучить 5 талантов в магических ветках", "icon": "transparent-tubes", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 400 } },
+  { "id": "ach_t_9", "name": "Воин", "description": "Изучить 5 талантов в боевых ветках", "icon": "crossed-sabres", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 400 } },
+  { "id": "ach_t_10", "name": "Плут", "description": "Изучить 5 талантов в воровских ветках", "icon": "cowled", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 400 } },
+
+  { "id": "ach_s_1", "name": "Постоянство", "description": "Зайти в игру 3 дня подряд", "icon": "camping-tent", "rarity": "common", "unlocked": true, "reward": { "type": "xp", "amount": 100 } },
+  { "id": "ach_s_2", "name": "Неделя в седле", "description": "Зайти в игру 7 дней подряд", "icon": "mounted-knight", "rarity": "uncommon", "unlocked": false, "reward": { "type": "xp", "amount": 250 } },
+  { "id": "ach_s_3", "name": "Две недели", "description": "Зайти в игру 14 дней подряд", "icon": "star-medal", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 500 } },
+  { "id": "ach_s_4", "name": "Месяц дисциплины", "description": "Зайти в игру 30 дней подряд", "icon": "laurels-trophy", "rarity": "epic", "unlocked": false, "reward": { "type": "xp", "amount": 1000 } },
+  { "id": "ach_s_5", "name": "Сотня", "description": "Зайти в игру 100 дней подряд", "icon": "trophy-cup", "rarity": "legendary", "unlocked": false, "reward": { "type": "item", "item_id": "item_030", "amount": 3 } },
+  { "id": "ach_s_6", "name": "Год верности", "description": "Зайти в игру 365 дней подряд", "icon": "trophy", "rarity": "legendary", "unlocked": false, "reward": { "type": "item", "item_id": "item_041", "amount": 1 } },
+  { "id": "ach_s_7", "name": "Ежедневный дар", "description": "Получить первую ежедневную награду", "icon": "open-treasure-chest", "rarity": "common", "unlocked": true, "reward": { "type": "xp", "amount": 50 } },
+  { "id": "ach_s_8", "name": "Счастливчик", "description": "Получить джекпот (7-й день награды)", "icon": "clubs", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 300 } },
+  { "id": "ach_s_9", "name": "Рекордсмен", "description": "Побить свой рекорд по самому длинному стрику", "icon": "star-formation", "rarity": "uncommon", "unlocked": false, "reward": { "type": "xp", "amount": 200 } },
+  { "id": "ach_s_10", "name": "Возвращение", "description": "Зайти в игру после пропуска более 7 дней", "icon": "help", "rarity": "common", "unlocked": false, "reward": { "type": "xp", "amount": 50 } },
+
+  { "id": "ach_time_1", "name": "Ночной страж", "description": "Выполнить квест с 00:00 до 04:00", "icon": "eclipse", "rarity": "uncommon", "unlocked": true, "reward": { "type": "xp", "amount": 150 } },
+  { "id": "ach_time_2", "name": "Рассвет", "description": "Выполнить квест с 04:00 до 07:00", "icon": "sunrise", "rarity": "uncommon", "unlocked": false, "reward": { "type": "xp", "amount": 150 } },
+  { "id": "ach_time_3", "name": "Обеденный перерыв", "description": "Выполнить квест с 12:00 до 14:00", "icon": "cook", "rarity": "common", "unlocked": false, "reward": { "type": "xp", "amount": 100 } },
+  { "id": "ach_time_4", "name": "Продуктивный вечер", "description": "Выполнить 3 квеста после 20:00", "icon": "ursa-major", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 300 } },
+  { "id": "ach_time_5", "name": "Новый год", "description": "Выполнить квест 1 января", "icon": "jester-hat", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 500 } },
+
+  // --- ЧАСТЬ 3: ИНВЕНТАРЬ И КУЗНИЦА ---
+  { "id": "ach_inv_1", "name": "Первая находка", "description": "Получить первый предмет в инвентарь", "icon": "knapsack", "rarity": "common", "unlocked": true, "reward": { "type": "xp", "amount": 50 } },
+  { "id": "ach_inv_2", "name": "Барахольщик", "description": "Собрать 20 предметов", "icon": "locked-chest", "rarity": "uncommon", "unlocked": true, "reward": { "type": "xp", "amount": 150 } },
+  { "id": "ach_inv_3", "name": "Коллекционер", "description": "Собрать 50 предметов", "icon": "treasure-map", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 400 } },
+  { "id": "ach_inv_4", "name": "Скрудж Макдак", "description": "Собрать все 100 предметов", "icon": "coins", "rarity": "legendary", "unlocked": false, "reward": { "type": "item", "item_id": "item_091", "amount": 5 } },
+  { "id": "ach_inv_5", "name": "Экипировка", "description": "Надеть первый предмет", "icon": "gloves", "rarity": "common", "unlocked": true, "reward": { "type": "xp", "amount": 50 } },
+  { "id": "ach_inv_6", "name": "Полный комплект", "description": "Надеть предметы во все доступные слоты", "icon": "spiked-shoulder-armor", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 500 } },
+  { "id": "ach_inv_7", "name": "Модник", "description": "Сменить экипировку 10 раз за один день", "icon": "vampire-cape", "rarity": "uncommon", "unlocked": false, "reward": { "type": "xp", "amount": 200 } },
+  { "id": "ach_inv_8", "name": "Двуручный хват", "description": "Надеть оружие в обе руки", "icon": "crossed-sabres", "rarity": "uncommon", "unlocked": false, "reward": { "type": "xp", "amount": 150 } },
+  { "id": "ach_inv_9", "name": "Ювелир", "description": "Надеть два кольца и амулет одновременно", "icon": "big-diamond-ring", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 300 } },
+  { "id": "ach_inv_10", "name": "Закрепление", "description": "Закрепить предмет в инвентаре", "icon": "position-marker", "rarity": "common", "unlocked": true, "reward": { "type": "xp", "amount": 50 } },
+
+  { "id": "ach_craft_1", "name": "Точильщик", "description": "Впервые заточить предмет", "icon": "stone-crafting", "rarity": "common", "unlocked": true, "reward": { "type": "xp", "amount": 100 } },
+  { "id": "ach_craft_2", "name": "Ранг D", "description": "Заточить предмет до ранга D", "icon": "clay-brick", "rarity": "common", "unlocked": true, "reward": { "type": "xp", "amount": 100 } },
+  { "id": "ach_craft_3", "name": "Ранг C", "description": "Заточить предмет до ранга C", "icon": "rupee", "rarity": "uncommon", "unlocked": true, "reward": { "type": "xp", "amount": 200 } },
+  { "id": "ach_craft_4", "name": "Ранг B", "description": "Заточить предмет до ранга B", "icon": "belt", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 350 } },
+  { "id": "ach_craft_5", "name": "Ранг A", "description": "Заточить предмет до ранга A", "icon": "breastplate", "rarity": "epic", "unlocked": false, "reward": { "type": "xp", "amount": 600 } },
+  { "id": "ach_craft_6", "name": "Ранг S", "description": "Заточить предмет до максимального ранга S", "icon": "diamond-hilt", "rarity": "legendary", "unlocked": false, "reward": { "type": "item", "item_id": "item_030", "amount": 1 } },
+  { "id": "ach_craft_7", "name": "Кузнечный мастер", "description": "Заточить 5 предметов до ранга S", "icon": "thor-hammer", "rarity": "legendary", "unlocked": false, "reward": { "type": "xp", "amount": 2000 } },
+  { "id": "ach_craft_8", "name": "Неудачная закалка", "description": "Понизить заточку предмета", "icon": "cross-mark", "rarity": "common", "unlocked": false, "reward": { "type": "xp", "amount": 50 } },
+  { "id": "ach_craft_9", "name": "Алхимик редкости", "description": "Повысить редкость предмета впервые", "icon": "transparent-tubes", "rarity": "uncommon", "unlocked": true, "reward": { "type": "xp", "amount": 150 } },
+  { "id": "ach_craft_10", "name": "Синий цвет", "description": "Сделать предмет редким (Rare)", "icon": "gem-pendant", "rarity": "rare", "unlocked": true, "reward": { "type": "xp", "amount": 250 } },
+  { "id": "ach_craft_11", "name": "Фиолетовый туман", "description": "Сделать предмет эпическим (Epic)", "icon": "fairy-wand", "rarity": "epic", "unlocked": false, "reward": { "type": "xp", "amount": 500 } },
+  { "id": "ach_craft_12", "name": "Золотой стандарт", "description": "Сделать предмет легендарным (Legendary)", "icon": "laurels-trophy", "rarity": "legendary", "unlocked": false, "reward": { "type": "item", "item_id": "item_037", "amount": 1 } },
+  { "id": "ach_craft_13", "name": "Легендарный арсенал", "description": "Сделать легендарными 5 предметов", "icon": "throne-king", "rarity": "legendary", "unlocked": false, "reward": { "type": "xp", "amount": 3000 } },
+  { "id": "ach_craft_14", "name": "Проклятый предмет", "description": "Заточить предмет с отрицательным статом", "icon": "plague-doctor-profile", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 300 } },
+  { "id": "ach_craft_15", "name": "Без сожалений", "description": "Снять экипировку через двойной клик", "icon": "skeleton-key", "rarity": "common", "unlocked": false, "reward": { "type": "xp", "amount": 50 } },
+
+  // --- ЧАСТЬ 4: СОБЫТИЯ, ПРОФИЛЬ, СЕКРЕТЫ ---
+  { "id": "ach_ev_1", "name": "Организатор", "description": "Создать первое событие", "icon": "diploma", "rarity": "common", "unlocked": true, "reward": { "type": "xp", "amount": 50 } },
+  { "id": "ach_ev_2", "name": "Праздничный комитет", "description": "Создать 5 событий", "icon": "jester-hat", "rarity": "uncommon", "unlocked": false, "reward": { "type": "xp", "amount": 200 } },
+  { "id": "ach_ev_3", "name": "Ивент-менеджер", "description": "Создать 10 событий", "icon": "maze", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 400 } },
+  { "id": "ach_ev_4", "name": "Долгожитель", "description": "Создать событие с повторением каждый год", "icon": "ankh", "rarity": "common", "unlocked": true, "reward": { "type": "xp", "amount": 100 } },
+  { "id": "ach_ev_5", "name": "Ностальгия", "description": "Создать событие с датой в прошлом", "icon": "moebius-triangle", "rarity": "uncommon", "unlocked": false, "reward": { "type": "xp", "amount": 150 } },
+  { "id": "ach_ev_6", "name": "Свиток времени", "description": "Впервые открыть страницу Календаря", "icon": "treasure-map", "rarity": "common", "unlocked": true, "reward": { "type": "xp", "amount": 50 } },
+  { "id": "ach_ev_7", "name": "Машина времени", "description": "Перелистнуть календарь на месяц вперед", "icon": "position-marker", "rarity": "uncommon", "unlocked": false, "reward": { "type": "xp", "amount": 100 } },
+
+  { "id": "ach_prof_1", "name": "Новое имя", "description": "Изменить свой никнейм", "icon": "fleur-de-lys", "rarity": "common", "unlocked": true, "reward": { "type": "xp", "amount": 50 } },
+  { "id": "ach_prof_2", "name": "Новый герб", "description": "Сменить свой герб", "icon": "viking-shield", "rarity": "common", "unlocked": true, "reward": { "type": "xp", "amount": 50 } },
+  { "id": "ach_prof_3", "name": "Модник", "description": "Сменить никнейм и герб за один день", "icon": "vampire-cape", "rarity": "uncommon", "unlocked": false, "reward": { "type": "xp", "amount": 150 } },
+  { "id": "ach_prof_4", "name": "Путешественник", "description": "Изменить часовой пояс", "icon": "island", "rarity": "uncommon", "unlocked": false, "reward": { "type": "xp", "amount": 150 } },
+  { "id": "ach_prof_5", "name": "Тщеславие", "description": "Сменить герб 10 раз", "icon": "big-diamond-ring", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 300 } },
+
+  { "id": "ach_glob_1", "name": "Уровень 10", "description": "Достичь 10 уровня", "icon": "black-knight-helm", "rarity": "uncommon", "unlocked": false, "reward": { "type": "xp", "amount": 200 } },
+  { "id": "ach_glob_2", "name": "Уровень 25", "description": "Достичь 25 уровня", "icon": "centurion-helmet", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 500 } },
+  { "id": "ach_glob_3", "name": "Уровень 50", "description": "Достичь 50 уровня", "icon": "overlord-helm", "rarity": "epic", "unlocked": false, "reward": { "type": "xp", "amount": 1500 } },
+  { "id": "ach_glob_4", "name": "Уровень 100", "description": "Достичь максимального 100 уровня", "icon": "throne-king", "rarity": "legendary", "unlocked": false, "reward": { "type": "item", "item_id": "item_041", "amount": 1 } },
+  { "id": "ach_glob_5", "name": "Богач", "description": "Накопить 10 000 XP", "icon": "cash", "rarity": "epic", "unlocked": false, "reward": { "type": "xp", "amount": 1000 } },
+  { "id": "ach_glob_6", "name": "Олигарх", "description": "Накопить 100 000 XP", "icon": "receive-money", "rarity": "legendary", "unlocked": false, "reward": { "type": "item", "item_id": "item_091", "amount": 10 } },
+
+  { "id": "ach_sec_1", "name": "Любопытство", "description": "Кликнуть 10 раз по гербу в профиле", "icon": "spy", "rarity": "common", "unlocked": true, "reward": { "type": "xp", "amount": 50 } },
+  { "id": "ach_sec_2", "name": "Одержимость", "description": "Кликнуть 100 раз по гербу в профиле", "icon": "surprised", "rarity": "uncommon", "unlocked": false, "reward": { "type": "xp", "amount": 200 } },
+  { "id": "ach_sec_3", "name": "Водяной знак", "description": "Найти и кликнуть по водяному знаку на удостоверении", "icon": "hydra", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 300 } },
+  { "id": "ach_sec_4", "name": "Кликер", "description": "Открыть полный инвентарь 50 раз", "icon": "mimic-chest", "rarity": "uncommon", "unlocked": false, "reward": { "type": "xp", "amount": 150 } },
+  { "id": "ach_sec_5", "name": "Соня", "description": "Не заходить в игру 30 дней (и вернуться)", "icon": "meditation", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 300 } },
+  { "id": "ach_sec_6", "name": "Таинственный странник", "description": "Войти в демо-режим", "icon": "cultist", "rarity": "common", "unlocked": false, "reward": { "type": "xp", "amount": 50 } },
+  { "id": "ach_sec_7", "name": "Король вечеринки", "description": "Выполнить 10 квестов за один день", "icon": "plastic-duck", "rarity": "rare", "unlocked": false, "reward": { "type": "xp", "amount": 400 } }
+];
