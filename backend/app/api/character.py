@@ -171,8 +171,7 @@ async def upload_avatar(
 
     try:
         # Конвертируем в WebP для экономии места (размер 256x256)
-        img = Image.open(BytesIO(contents))
-        img = img.convert("RGB")
+        img = Image.open(BytesIO(contents)).convert("RGB")
         img.thumbnail((256, 256))
         img.save(filepath, "WEBP", quality=85)
     except Exception as e:
