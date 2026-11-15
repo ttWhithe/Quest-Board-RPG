@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { RARITY_COLORS } from '../constants';
 import { useAchievements } from '../api/achievements';
+import { useUpdateCharacter, useCharacter } from '../api/character';
 
 interface Props {
   onClose: () => void;
@@ -10,12 +11,33 @@ interface Props {
 export function FullAchievementsModal({ onClose }: Props) {
   const [filter, setFilter] = useState<'all' | 'unlocked' | 'locked'>('all');
   const { data: achievements = [], isLoading } = useAchievements();
+  const { data: charData } = useCharacter(); // <-- Берем отсюда!
+  const { mutate: updateCharacter, isPending } = useUpdateCharacter();
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const pinnedIds = charData?.user.pinned_achievements || [];
 
   const filtered = achievements.filter((a) => {
     if (filter === 'unlocked') return a.unlocked;
     if (filter === 'locked') return !a.unlocked;
     return true;
   });
+
+  const handleTogglePin = (achId: string) => {
+    setErrorMsg(null);
+    if (!pinnedIds.includes(achId) && pinnedIds.length >= 5) {
+      setErrorMsg('Можно закрепить не более 5 достижений. Сначала открепите одно из текущих.');
+      return;
+    }
+
+    const newPinned = pinnedIds.includes(achId)
+      ? pinnedIds.filter((id) => id !== achId)
+      : [...pinnedIds, achId];
+
+    updateCharacter({ pinned_achievements: newPinned }, {
+      onError: (err: any) => setErrorMsg(err.response?.data?.detail?.detail || 'Ошибка сохранения'),
+    });
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
@@ -26,23 +48,34 @@ export function FullAchievementsModal({ onClose }: Props) {
           <button onClick={onClose} className="text-2xl text-[#5c4033] hover:text-red-700 font-bold transition-colors">✕</button>
         </div>
 
-        <div className="flex gap-2 p-3 bg-[#f4ebd8] border-b border-[#5c4033]/30 flex-wrap">
-          {[
-            { id: 'all', label: 'Все' },
-            { id: 'unlocked', label: 'Полученные' },
-            { id: 'locked', label: 'В процессе' }
-          ].map((f) => (
-            <button
-              key={f.id}
-              onClick={() => setFilter(f.id as any)}
-              className={`px-4 py-1 text-sm font-bold border rounded transition-colors ${
-                filter === f.id ? 'bg-amber-700 text-white border-amber-900' : 'bg-transparent text-[#3b2f2f] border-[#5c4033] hover:bg-[#e8dac1]'
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
+        <div className="flex gap-2 p-3 bg-[#f4ebd8] border-b border-[#5c4033]/30 flex-wrap items-center justify-between">
+          <div className="flex gap-2">
+            {[
+              { id: 'all', label: 'Все' },
+              { id: 'unlocked', label: 'Полученные' },
+              { id: 'locked', label: 'В процессе' }
+            ].map((f) => (
+              <button
+                key={f.id}
+                onClick={() => setFilter(f.id as any)}
+                className={`px-4 py-1 text-sm font-bold border rounded transition-colors ${
+                  filter === f.id ? 'bg-amber-700 text-white border-amber-900' : 'bg-transparent text-[#3b2f2f] border-[#5c4033] hover:bg-[#e8dac1]'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+          <div className="text-xs font-bold text-[#5c4033]">
+            Закреплено: {pinnedIds.length} / 5
+          </div>
         </div>
+
+        {errorMsg && (
+          <div className="mx-6 mt-2 p-2 bg-red-100 border border-red-400 text-red-700 text-sm font-bold rounded text-center">
+            {errorMsg}
+          </div>
+        )}
 
         <div className="flex-1 overflow-y-auto p-6 relative">
           {isLoading ? (
@@ -53,8 +86,8 @@ export function FullAchievementsModal({ onClose }: Props) {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {filtered.map((ach) => {
                 const iconColor = ach.unlocked ? RARITY_COLORS[ach.rarity] : '#4b5563';
+                const isPinned = pinnedIds.includes(ach.id);
 
-                // Безопасно достаем данные о награде (на случай если структура будет меняться)
                 const rewardType = ach.reward?.type || 'xp';
                 const rewardAmount = ach.reward?.amount || 0;
                 const rewardText = rewardType === 'xp' ? `+${rewardAmount} XP` : `Предмет (x${rewardAmount})`;
@@ -67,13 +100,26 @@ export function FullAchievementsModal({ onClose }: Props) {
                       ${ach.unlocked ? 'shadow-md' : 'opacity-50 grayscale'}`}
                     style={{ borderColor: ach.unlocked ? RARITY_COLORS[ach.rarity] : '#5c4033' }}
                   >
+                    {/* Кнопка закрепления (только для полученных) */}
+                    {ach.unlocked && (
+                      <button
+                        onClick={() => handleTogglePin(ach.id)}
+                        disabled={isPending}
+                        className={`absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full border text-sm transition-all z-10 shadow-lg ${
+                          isPinned
+                            ? 'bg-amber-600 border-amber-400 text-white scale-110'
+                            : 'bg-black/60 border-gray-400 text-gray-300 hover:text-white hover:border-white hover:bg-black/80'
+                        }`}
+                        title={isPinned ? 'Открепить' : 'Закрепить на карточке'}
+                      >
+                        {isPinned ? '📍' : '📌'}
+                      </button>
+                    )}
+
                     <div className="w-16 h-16 mb-2 relative flex items-center justify-center">
-                      <img
-                        src={`/icons/${ach.icon}.svg`}
-                        alt={ach.name}
-                        className="w-full h-full object-contain absolute"
+                      <div
+                        className="w-full h-full"
                         style={{
-                          filter: ach.unlocked ? 'invert(1) sepia(1) saturate(5) hue-rotate(180deg)' : 'invert(1) opacity(0.3)',
                           WebkitMaskImage: `url(/icons/${ach.icon}.svg)`,
                           maskImage: `url(/icons/${ach.icon}.svg)`,
                           WebkitMaskSize: 'contain',
@@ -82,7 +128,7 @@ export function FullAchievementsModal({ onClose }: Props) {
                           maskRepeat: 'no-repeat',
                           WebkitMaskPosition: 'center',
                           maskPosition: 'center',
-                          backgroundColor: iconColor
+                          backgroundColor: iconColor,
                         }}
                       />
                     </div>

@@ -27,7 +27,7 @@ class User(Base):
     nickname: Mapped[str] = mapped_column(String(32), nullable=False)
 
     # Кастомизация
-    emblem_seed: Mapped[str] = mapped_column(String(64), nullable=False)
+    emblem_seed: Mapped[str] = mapped_column(String(255), nullable=False)
     avatar_url: Mapped[str | None] = mapped_column(String, nullable=True)
     guild_symbol: Mapped[str | None] = mapped_column(
         String(64), nullable=True

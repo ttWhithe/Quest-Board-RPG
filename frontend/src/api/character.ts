@@ -70,7 +70,10 @@ export function useUploadAvatar() {
       return data;
     },
     onSuccess: (data) => {
+      // Обновляем кэш персонажа
       queryClient.setQueryData(characterKeys.detail(), data);
+      // На всякий случай инвалидируем, чтобы точно обновилось
+      queryClient.invalidateQueries({ queryKey: characterKeys.detail() });
     },
   });
 }

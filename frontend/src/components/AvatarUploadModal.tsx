@@ -122,7 +122,7 @@ export function AvatarUploadModal({ onClose }: Props) {
                 step={0.1}
                 aria-labelledby="Zoom"
                 onChange={(e) => setZoom(Number(e.target.value))}
-                className="w-full accent-amber-700"
+                className="w-full accent-amber-700 border-none outline-none focus:ring-0 bg-transparent cursor-pointer"
               />
             </div>
           )}
