@@ -1,13 +1,18 @@
 import { useState } from 'react';
 import { FullAchievementsModal } from './FullAchievementsModal';
-import { ACHIEVEMENTS } from '../data/achievements';
+import { useAchievements } from '../api/achievements';
 import { RARITY_COLORS } from '../constants';
 
 export function Achievements() {
   const [showModal, setShowModal] = useState(false);
+  const { data: achievements = [], isLoading } = useAchievements();
 
-  // Берем 6 достижений для отображения на главной
-  const displayedAchievements = ACHIEVEMENTS.slice(0, 6);
+  if (isLoading) {
+    return <div className="parchment-card p-5 text-center animate-pulse text-gray-500">Загрузка достижений...</div>;
+  }
+
+  // Берем 6 достижений для отображения на главной (можно брать закрепленные)
+  const displayedAchievements = achievements.slice(0, 6);
 
   return (
     <div className="parchment-card p-5">
@@ -17,7 +22,7 @@ export function Achievements() {
           onClick={() => setShowModal(true)}
           className="text-xs text-amber-700 hover:text-amber-900 font-bold underline transition-colors"
         >
-          Все {ACHIEVEMENTS.length} достижений
+          Все {achievements.length} достижений
         </button>
       </div>
 
