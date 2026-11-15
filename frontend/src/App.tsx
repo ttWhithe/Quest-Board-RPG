@@ -12,6 +12,7 @@ import { Character } from './pages/Character';
 import { Events } from './pages/Events';
 import { Calendar } from './pages/Calendar';
 import { Talents } from './pages/Talents';
+import { API_BASE_URL } from './api/client';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,6 +32,7 @@ function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -51,7 +53,7 @@ function Header() {
   return (
     // Сделали sticky top-0 и z-50, чтобы шапка всегда была сверху
     <header className="bg-tavern-wood text-parchment-light shadow-[0_4px_10px_rgba(0,0,0,0.6)] border-b-2 border-black sticky top-0 z-50">
-      <nav className="container mx-auto px-4 py-3 md:py-4 flex justify-between items-center relative">
+      <nav className="container mx-auto px-4 py-2 md:py-3 flex justify-between items-center relative">
         {/* Логотип */}
         <div
           className="font-bold text-xl cursor-pointer flex items-center gap-2 z-10"
@@ -84,20 +86,54 @@ function Header() {
 
         {/* Десктопный профиль */}
         {user && (
-          <div className="hidden md:flex items-center gap-4 ml-auto">
-            <div
-              className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={() => navigate('/character')}
-            >
-              <Emblem seed={user.emblem_seed} size={32} />
-              <span className="text-sm text-gray-300">{user.nickname}</span>
-            </div>
+          <div className="hidden md:flex items-center ml-auto relative">
             <button
-              onClick={handleLogout}
-              className="text-sm bg-red-600 hover:bg-red-700 px-3 py-1 rounded transition-colors"
+              onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity focus:outline-none"
             >
-              Выйти
+              <span
+                className="text-lg font-bold text-parchment-light truncate max-w-[150px]"
+                title={user.nickname}
+              >
+                {user.nickname}
+              </span>
+              {user.avatar_url ? (
+                <img
+                  src={`${API_BASE_URL}${user.avatar_url}`}
+                  alt="Avatar"
+                  className="w-10 h-10 rounded-full object-cover border-2 border-[#5c4033]"
+                />
+              ) : (
+                <Emblem seed={user.emblem_seed} guildSymbol={user.guild_symbol} size={40} />
+              )}
+              <svg className={`w-5 h-5 transition-transform duration-200 ${isProfileMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
             </button>
+
+            {/* Выпадающее меню */}
+            {isProfileMenuOpen && (
+              <>
+                {/* Невидимый фон для закрытия меню по клику вне его */}
+                <div className="fixed inset-0 z-40" onClick={() => setIsProfileMenuOpen(false)} />
+
+                <div className="absolute right-0 top-full mt-2 w-48 bg-[#1a1512] border-2 border-[#5c4033] rounded-md shadow-2xl z-50 overflow-hidden flex flex-col">
+                  <button onClick={() => { navigate('/character'); setIsProfileMenuOpen(false); }} className="text-left px-4 py-2.5 hover:bg-[#5c4033]/50 text-parchment-light text-sm font-bold transition-colors">
+                    <span className="mr-2">👤</span> Профиль
+                  </button>
+                  <button onClick={() => { alert('Настройки в разработке'); setIsProfileMenuOpen(false); }} className="text-left px-4 py-2.5 hover:bg-[#5c4033]/50 text-parchment-light text-sm font-bold transition-colors">
+                    <span className="mr-2">⚙️</span> Настройки
+                  </button>
+                  <button onClick={() => { alert('Поддержка в разработке'); setIsProfileMenuOpen(false); }} className="text-left px-4 py-2.5 hover:bg-[#5c4033]/50 text-parchment-light text-sm font-bold transition-colors">
+                    <span className="mr-2">🛡️</span> Поддержка
+                  </button>
+                  <div className="h-px bg-[#5c4033] w-full my-0.5"></div>
+                  <button onClick={handleLogout} className="text-left px-4 py-2.5 hover:bg-red-900/50 text-red-400 text-sm font-bold transition-colors">
+                    <span className="mr-2">🚪</span> Выйти
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         )}
 
@@ -117,8 +153,21 @@ function Header() {
         <div className="md:hidden bg-slate-800 border-t border-slate-700 absolute w-full left-0 shadow-lg">
           <div className="flex flex-col px-4 py-4 space-y-4">
             <div className="flex items-center gap-3 border-b border-slate-700 pb-3">
-              <Emblem seed={user.emblem_seed} size={40} />
-              <span className="font-semibold">{user.nickname}</span>
+              {user.avatar_url ? (
+                <img
+                  src={`${API_BASE_URL}${user.avatar_url}`}
+                  alt="Avatar"
+                  className="w-12 h-12 rounded-full object-cover border-2 border-[#5c4033]"
+                />
+              ) : (
+                <Emblem seed={user.emblem_seed} guildSymbol={user.guild_symbol} size={48} />
+              )}
+              <span
+                className="font-bold text-lg truncate max-w-[200px]"
+                title={user.nickname}
+              >
+                {user.nickname}
+              </span>
             </div>
             {navLinks.map((link) => (
               <NavLink

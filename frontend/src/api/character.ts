@@ -23,7 +23,9 @@ export interface CharacterResponse {
 export interface CharacterUpdate {
   nickname?: string;
   emblem_seed?: string;
+  guild_symbol?: string;
   timezone?: string;
+  pinned_achievements?: string[];
 }
 
 export const characterKeys = {
@@ -52,6 +54,26 @@ export function useUpdateCharacter() {
     },
     onSuccess: (data) => {
       queryClient.setQueryData(characterKeys.detail(), data);
+    },
+  });
+}
+
+export function useUploadAvatar() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      const { data } = await api.post<CharacterResponse>('/character/avatar', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return data;
+    },
+    onSuccess: (data) => {
+      // Обновляем кэш персонажа
+      queryClient.setQueryData(characterKeys.detail(), data);
+      // На всякий случай инвалидируем, чтобы точно обновилось
+      queryClient.invalidateQueries({ queryKey: characterKeys.detail() });
     },
   });
 }

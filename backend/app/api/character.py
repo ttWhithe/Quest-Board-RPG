@@ -2,11 +2,16 @@
 
 from __future__ import annotations
 
+import os
+import uuid
 from datetime import UTC, datetime
+from io import BytesIO
+from pathlib import Path
 from typing import Annotated, Any
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from PIL import Image
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -130,6 +135,65 @@ async def update_character(
     if payload.timezone is not None:
         current_user.timezone = payload.timezone
 
+    # Новые поля
+    if payload.guild_symbol is not None:
+        current_user.guild_symbol = payload.guild_symbol
+    if payload.pinned_achievements is not None:
+        current_user.pinned_achievements = payload.pinned_achievements
+
+    await session.commit()
+    await session.refresh(current_user)
+
+    return await get_character(current_user, session)
+
+
+@router.post("/avatar", response_model=CharacterOut)
+async def upload_avatar(
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+    file: UploadFile = File(...),
+) -> CharacterOut:
+    """Загружает и сжимает аватар пользователя в формат WebP."""
+    if file.content_type not in ["image/jpeg", "image/png", "image/webp"]:
+        raise HTTPException(
+            status_code=422,
+            detail={"detail": "Invalid image format", "code": "INVALID_IMAGE"},
+        )
+
+    # Читаем файл
+    contents = await file.read()
+    if len(contents) > 5 * 1024 * 1024:  # 5 MB max
+        raise HTTPException(
+            status_code=422,
+            detail={"detail": "File too large (max 5MB)", "code": "FILE_TOO_LARGE"},
+        )
+
+    filename = f"{current_user.id}_{uuid.uuid4().hex[:8]}.webp"
+    filepath = Path("app/static/avatars") / filename
+
+    try:
+        # Конвертируем в WebP для экономии места (размер 256x256)
+        img = Image.open(BytesIO(contents)).convert("RGB")
+        img.thumbnail((256, 256))
+        img.save(filepath, "WEBP", quality=85)
+    except Exception as e:
+        raise HTTPException(
+            status_code=422,
+            detail={"detail": "Could not process image", "code": "IMAGE_ERROR"},
+        ) from e
+
+    # Удаляем старый аватар, если он был
+    if current_user.avatar_url:
+        old_filename = current_user.avatar_url.split("/")[-1]
+        old_filepath = Path("app/static/avatars") / old_filename
+        if old_filepath.exists():
+            try:
+                os.remove(old_filepath)
+            except OSError:
+                pass
+
+    # Сохраняем новый URL
+    current_user.avatar_url = f"/static/avatars/{filename}"
     await session.commit()
     await session.refresh(current_user)
 
@@ -142,14 +206,18 @@ async def get_character_stats(
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> CharacterStatsResponse:
     """Возвращает 7 базовых характеристик персонажа с учетом талантов, экипировки и редкости."""
+
+    # Гость получает 5.0 для теста, обычный игрок начинает с 1.0
+    base_val = 5.0 if current_user.is_demo else 1.0
+
     stats = {
-        "strength": 5.0,
-        "dexterity": 5.0,
-        "intellect": 5.0,
-        "spirit": 5.0,
-        "endurance": 5.0,
-        "perception": 5.0,
-        "luck": 5.0,
+        "strength": base_val,
+        "dexterity": base_val,
+        "intellect": base_val,
+        "spirit": base_val,
+        "endurance": base_val,
+        "perception": base_val,
+        "luck": base_val,
     }
 
     # 1. Считаем бонусы от талантов
@@ -211,7 +279,7 @@ async def get_inventory(
     current_user: Annotated[User, Depends(get_current_user)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> InventoryResponse:
-    """Возвращает все предметы из items.json с наложенными состояниями из БД."""
+    """Возвращает предметы из items.json. Для демо — все, для обычных — только имеющиеся."""
     data = load_json("items.json")
     items_data = data.get("items", [])
 
@@ -222,6 +290,10 @@ async def get_inventory(
     items = []
     for item_data in items_data:
         ui = overrides.get(item_data["id"])
+
+        # ЛОГИКА: Если пользователь не демо и предмета нет в БД -> пропускаем
+        if not current_user.is_demo and not ui:
+            continue
 
         if ui and ui.rarity_override:
             effective_rarity = ui.rarity_override
@@ -261,9 +333,15 @@ async def update_inventory_item(
     )
     user_item = await session.scalar(stmt)
     if not user_item:
+        # Запрещаем обычным игрокам изменять предметы, которых у них нет
+        if not current_user.is_demo:
+            raise HTTPException(
+                status_code=404,
+                detail="Item not found in inventory",
+                headers={"code": "ITEM_NOT_FOUND"},
+            )
         user_item = UserItem(user_id=current_user.id, item_code=item_code)
         session.add(user_item)
-
     if payload.is_pinned is not None:
         user_item.is_pinned = payload.is_pinned
 

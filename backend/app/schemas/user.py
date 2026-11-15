@@ -112,3 +112,8 @@ class UserOut(BaseModel):
     max_login_streak: int
     daily_reward_day: int
     last_daily_reward_at: datetime | None
+
+    # Новые поля кастомизации
+    avatar_url: str | None = None
+    guild_symbol: str | None = None
+    pinned_achievements: list[str] = []

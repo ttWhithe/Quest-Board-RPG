@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, DateTime, Integer, String, func
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
@@ -13,6 +13,7 @@ from app.models.base import Base
 if TYPE_CHECKING:
     from app.models.event import Event
     from app.models.quest import Quest
+    from app.models.user_achievement import UserAchievement
     from app.models.user_item import UserItem
     from app.models.user_talent import UserTalent
 
@@ -24,7 +25,17 @@ class User(Base):
     email: Mapped[str | None] = mapped_column(String(254), unique=True, nullable=True)
     password_hash: Mapped[str | None] = mapped_column(String, nullable=True)
     nickname: Mapped[str] = mapped_column(String(32), nullable=False)
-    emblem_seed: Mapped[str] = mapped_column(String(64), nullable=False)
+
+    # Кастомизация
+    emblem_seed: Mapped[str] = mapped_column(String(255), nullable=False)
+    avatar_url: Mapped[str | None] = mapped_column(String, nullable=True)
+    guild_symbol: Mapped[str | None] = mapped_column(
+        String(64), nullable=True
+    )  # Название SVG из icons
+    pinned_achievements: Mapped[list[str]] = mapped_column(
+        ARRAY(String), default=list, server_default="{}"
+    )
+
     timezone: Mapped[str] = mapped_column(String(64), default="UTC", server_default="UTC")
     total_xp: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     is_demo: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
@@ -53,5 +64,8 @@ class User(Base):
         back_populates="user", cascade="all, delete-orphan"
     )
     items: Mapped[list[UserItem]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
+    achievements: Mapped[list[UserAchievement]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )

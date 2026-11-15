@@ -25,6 +25,7 @@ from app.db import get_session
 from app.models.enums import QuestRank, QuestRarity, QuestRecurrence, QuestStatus
 from app.models.quest import Quest
 from app.models.user import User
+from app.models.user_achievement import UserAchievement
 from app.models.user_talent import UserTalent
 from app.schemas.quest import (
     QuestCompleteQuest,
@@ -101,6 +102,41 @@ async def _get_owned_quest(
             detail={"detail": "Quest not found", "code": "NOT_FOUND"},
         )
     return quest
+
+
+async def _check_quest_achievements(session: AsyncSession, user: User) -> None:
+    """Проверяет и выдает базовые достижения за количество выполненных квестов."""
+    # Считаем общее число выполнений (сумма completion_count по всем квестам)
+    total_completed = (
+        await session.scalar(
+            select(func.sum(Quest.completion_count)).where(Quest.user_id == user.id)
+        )
+        or 0
+    )
+
+    to_unlock = []
+    if total_completed >= 1:
+        to_unlock.append("ach_q_1")  # Первый шаг
+    if total_completed >= 5:
+        to_unlock.append("ach_q_2")  # Разминка
+    if total_completed >= 10:
+        to_unlock.append("ach_q_5")  # Новичок
+
+    if not to_unlock:
+        return
+
+    # Проверяем, какие уже есть
+    existing = await session.scalars(
+        select(UserAchievement.achievement_code).where(
+            UserAchievement.user_id == user.id, UserAchievement.achievement_code.in_(to_unlock)
+        )
+    )
+    existing_codes = set(existing.all())
+
+    # Выдаем недостающие
+    for code in to_unlock:
+        if code not in existing_codes:
+            session.add(UserAchievement(user_id=user.id, achievement_code=code))
 
 
 # ---------------------------------------------------------------------------
@@ -388,6 +424,9 @@ async def complete_quest(
     await session.execute(
         update(User).where(User.id == current_user.id).values(total_xp=User.total_xp + xp)
     )
+
+    # 5.5. Проверка базовых достижений
+    await _check_quest_achievements(session, current_user)
 
     # 6. COMMIT + refresh: подтягиваем server-side `updated_at` и новый total_xp.
     await session.commit()
