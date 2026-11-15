@@ -227,6 +227,10 @@ async def get_inventory(
     for item_data in items_data:
         ui = overrides.get(item_data["id"])
 
+        # ЛОГИКА: Если пользователь не демо и предмета нет в БД -> пропускаем
+        if not current_user.is_demo and not ui:
+            continue
+
         if ui and ui.rarity_override:
             effective_rarity = ui.rarity_override
         else:
@@ -265,9 +269,15 @@ async def update_inventory_item(
     )
     user_item = await session.scalar(stmt)
     if not user_item:
+        # Запрещаем обычным игрокам изменять предметы, которых у них нет
+        if not current_user.is_demo:
+            raise HTTPException(
+                status_code=404,
+                detail="Item not found in inventory",
+                headers={"code": "ITEM_NOT_FOUND"},
+            )
         user_item = UserItem(user_id=current_user.id, item_code=item_code)
         session.add(user_item)
-
     if payload.is_pinned is not None:
         user_item.is_pinned = payload.is_pinned
 

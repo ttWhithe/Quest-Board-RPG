@@ -94,16 +94,8 @@ async def test_daily_reward_flow(async_client: AsyncClient) -> None:
 @pytest.mark.asyncio
 async def test_rarity_multipliers_in_stats(async_client: AsyncClient) -> None:
     """Проверяем, что редкость предмета умножает статы."""
-    email = f"test_rarity_{uuid4()}@example.com"
-    res = await async_client.post(
-        "/api/v1/auth/register",
-        json={
-            "email": email,
-            "password": "password123",
-            "nickname": "RarityTester",
-            "timezone": "UTC",
-        },
-    )
+    # Используем демо-юзера, чтобы он мог надеть предмет из инвентаря
+    res = await async_client.post("/api/v1/auth/demo")
     token = res.json()["access_token"]
     headers = {"Authorization": f"Bearer {token}"}
 
@@ -114,7 +106,7 @@ async def test_rarity_multipliers_in_stats(async_client: AsyncClient) -> None:
         headers=headers,
     )
 
-    # Проверяем базовые статы (Сила 5.0 + 1 от меча = 6.0)
+    # Проверяем базовые статы (У демо база 5.0 + 1 от меча = 6.0)
     stats_base = (await async_client.get("/api/v1/character/stats", headers=headers)).json()
     assert stats_base["stats"]["strength"] == 6.0
 

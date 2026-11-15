@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { RARITY_COLORS } from '../constants';
 import { ACHIEVEMENTS } from '../data/achievements';
-import type { Achievement } from '../data/achievements';
 
 interface Props {
   onClose: () => void;

@@ -2,24 +2,13 @@
 
 from __future__ import annotations
 
-import uuid
-
 import pytest
 from httpx import AsyncClient
 
 
 async def _get_auth_headers(async_client: AsyncClient) -> dict[str, str]:
-    """Хелпер: регистрация и получение токена (уникальный email на каждый тест)."""
-    email = f"inventory_{uuid.uuid4().hex}@test.com"
-    res = await async_client.post(
-        "/api/v1/auth/register",
-        json={
-            "email": email,
-            "password": "Password123!",
-            "nickname": "InventoryTester",
-            "timezone": "UTC",
-        },
-    )
+    """Хелпер: вход в демо-режим (у демо-пользователя есть все 100 предметов)."""
+    res = await async_client.post("/api/v1/auth/demo")
     token = res.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
 
