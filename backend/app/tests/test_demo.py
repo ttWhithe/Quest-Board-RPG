@@ -9,8 +9,11 @@ from httpx import AsyncClient
 @pytest.mark.asyncio
 async def test_demo_creates_user_with_quests_and_events(async_client: AsyncClient) -> None:
     """POST /auth/demo должен создавать юзера, 13 квестов, 4 события и total_xp=238."""
-    # Мокаем Redis: говорим, что лимит не превышен (incr возвращает 1)
-    with patch("app.core.rate_limit.redis_client.incr", new_callable=AsyncMock) as mock_incr:
+    # Мокаем Redis: incr возвращает 1, expire просто пропускаем
+    with (
+        patch("app.core.rate_limit.redis_client.incr", new_callable=AsyncMock) as mock_incr,
+        patch("app.core.rate_limit.redis_client.expire", new_callable=AsyncMock),
+    ):
         mock_incr.return_value = 1
 
         response = await async_client.post("/api/v1/auth/demo")
@@ -38,7 +41,7 @@ async def test_demo_creates_user_with_quests_and_events(async_client: AsyncClien
 @pytest.mark.asyncio
 async def test_demo_rate_limit(async_client: AsyncClient) -> None:
     """6-й запрос за час должен вернуть 429 RATE_LIMIT_EXCEEDED."""
-    # Мокаем Redis: говорим, что лимит превышен (incr возвращает 6)
+    # Мокаем Redis: incr возвращает 6 (лимит превышен), expire не должен вызываться
     with patch("app.core.rate_limit.redis_client.incr", new_callable=AsyncMock) as mock_incr:
         mock_incr.return_value = 6
 

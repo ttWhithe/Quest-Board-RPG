@@ -56,7 +56,8 @@ async def unlock_achievement(
     ach_data = next((a for a in data.get("achievements", []) if a["id"] == achievement_id), None)
     if not ach_data:
         raise HTTPException(
-            status_code=404, detail="Achievement not found", headers={"code": "NOT_FOUND"}
+            status_code=404,
+            detail={"detail": "Achievement not found", "code": "NOT_FOUND"},
         )
 
     stmt = select(UserAchievement).where(

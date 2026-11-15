@@ -52,7 +52,7 @@
     { "id": "ach_time_2", "name": "Рассвет", "description": "Выполнить квест с 04:00 до 07:00", "icon": "sunrise", "rarity": "uncommon", "reward": { "type": "xp", "amount": 150 } },
     { "id": "ach_time_3", "name": "Обеденный перерыв", "description": "Выполнить квест с 12:00 до 14:00", "icon": "cook", "rarity": "common", "reward": { "type": "xp", "amount": 100 } },
     { "id": "ach_time_4", "name": "Продуктивный вечер", "description": "Выполнить 3 квеста после 20:00", "icon": "ursa-major", "rarity": "rare", "reward": { "type": "xp", "amount": 300 } },
-    { "id": "ach_time_5", "name": "Новый год", "description": "Выполнить квест 1 января", "icon": "jester-hat", "rarity": "rare", "reward": { "type": "xp", "amount": 500 } }
+    { "id": "ach_time_5", "name": "Новый год", "description": "Выполнить квест 1 января", "icon": "jester-hat", "rarity": "rare", "reward": { "type": "xp", "amount": 500 } },
 
     { "id": "ach_inv_1", "name": "Первая находка", "description": "Получить первый предмет в инвентарь", "icon": "knapsack", "rarity": "common", "reward": { "type": "xp", "amount": 50 } },
     { "id": "ach_inv_2", "name": "Барахольщик", "description": "Собрать 20 предметов", "icon": "locked-chest", "rarity": "uncommon", "reward": { "type": "xp", "amount": 150 } },
@@ -79,7 +79,7 @@
     { "id": "ach_craft_12", "name": "Золотой стандарт", "description": "Сделать предмет легендарным (Legendary)", "icon": "laurels-trophy", "rarity": "legendary", "reward": { "type": "item", "item_id": "item_037", "amount": 1 } },
     { "id": "ach_craft_13", "name": "Легендарный арсенал", "description": "Сделать легендарными 5 предметов", "icon": "throne-king", "rarity": "legendary", "reward": { "type": "xp", "amount": 3000 } },
     { "id": "ach_craft_14", "name": "Проклятый предмет", "description": "Заточить предмет с отрицательным статом", "icon": "plague-doctor-profile", "rarity": "rare", "reward": { "type": "xp", "amount": 300 } },
-    { "id": "ach_craft_15", "name": "Без сожалений", "description": "Снять экипировку через двойной клик", "icon": "skeleton-key", "rarity": "common", "reward": { "type": "xp", "amount": 50 } }
+    { "id": "ach_craft_15", "name": "Без сожалений", "description": "Снять экипировку через двойной клик", "icon": "skeleton-key", "rarity": "common", "reward": { "type": "xp", "amount": 50 } },
 
     { "id": "ach_ev_1", "name": "Организатор", "description": "Создать первое событие", "icon": "diploma", "rarity": "common", "reward": { "type": "xp", "amount": 50 } },
     { "id": "ach_ev_2", "name": "Праздничный комитет", "description": "Создать 5 событий", "icon": "jester-hat", "rarity": "uncommon", "reward": { "type": "xp", "amount": 200 } },

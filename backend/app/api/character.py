@@ -156,14 +156,16 @@ async def upload_avatar(
     """Загружает и сжимает аватар пользователя в формат WebP."""
     if file.content_type not in ["image/jpeg", "image/png", "image/webp"]:
         raise HTTPException(
-            status_code=422, detail="Invalid image format", headers={"code": "INVALID_IMAGE"}
+            status_code=422,
+            detail={"detail": "Invalid image format", "code": "INVALID_IMAGE"},
         )
 
     # Читаем файл
     contents = await file.read()
     if len(contents) > 5 * 1024 * 1024:  # 5 MB max
         raise HTTPException(
-            status_code=422, detail="File too large (max 5MB)", headers={"code": "FILE_TOO_LARGE"}
+            status_code=422,
+            detail={"detail": "File too large (max 5MB)", "code": "FILE_TOO_LARGE"},
         )
 
     filename = f"{current_user.id}_{uuid.uuid4().hex[:8]}.webp"
@@ -176,7 +178,8 @@ async def upload_avatar(
         img.save(filepath, "WEBP", quality=85)
     except Exception as e:
         raise HTTPException(
-            status_code=422, detail="Could not process image", headers={"code": "IMAGE_ERROR"}
+            status_code=422,
+            detail={"detail": "Could not process image", "code": "IMAGE_ERROR"},
         ) from e
 
     # Удаляем старый аватар, если он был
