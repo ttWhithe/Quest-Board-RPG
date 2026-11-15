@@ -218,6 +218,7 @@ export function Character() {
                 <XPBar current={xp_into_level} max={xp_for_next_level} />
               </div>
             </div>
+
           </div>
         </div>
       </div>
