@@ -5,12 +5,19 @@ from __future__ import annotations
 import pytest
 from httpx import AsyncClient
 
+from app.core.rate_limit import check_demo_rate_limit
+from app.main import app
+
 
 async def _get_auth_headers(async_client: AsyncClient) -> dict[str, str]:
-    """Хелпер: вход в демо-режим (у демо-пользователя есть все 100 предметов)."""
-    res = await async_client.post("/api/v1/auth/demo")
-    token = res.json()["access_token"]
-    return {"Authorization": f"Bearer {token}"}
+    """Хелпер: вход в демо-режим (с отключенным rate limit)."""
+    app.dependency_overrides[check_demo_rate_limit] = lambda: None
+    try:
+        res = await async_client.post("/api/v1/auth/demo")
+        token = res.json()["access_token"]
+        return {"Authorization": f"Bearer {token}"}
+    finally:
+        app.dependency_overrides.pop(check_demo_rate_limit, None)
 
 
 @pytest.mark.asyncio

@@ -94,9 +94,16 @@ async def test_daily_reward_flow(async_client: AsyncClient) -> None:
 @pytest.mark.asyncio
 async def test_rarity_multipliers_in_stats(async_client: AsyncClient) -> None:
     """Проверяем, что редкость предмета умножает статы."""
-    # Используем демо-юзера, чтобы он мог надеть предмет из инвентаря
-    res = await async_client.post("/api/v1/auth/demo")
-    token = res.json()["access_token"]
+    from app.core.rate_limit import check_demo_rate_limit
+    from app.main import app
+
+    app.dependency_overrides[check_demo_rate_limit] = lambda: None
+    try:
+        res = await async_client.post("/api/v1/auth/demo")
+        token = res.json()["access_token"]
+    finally:
+        app.dependency_overrides.pop(check_demo_rate_limit, None)
+
     headers = {"Authorization": f"Bearer {token}"}
 
     # Надеваем меч
