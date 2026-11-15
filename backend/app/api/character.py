@@ -2,11 +2,16 @@
 
 from __future__ import annotations
 
+import os
+import uuid
 from datetime import UTC, datetime
+from io import BytesIO
+from pathlib import Path
 from typing import Annotated, Any
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from PIL import Image
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -130,6 +135,63 @@ async def update_character(
     if payload.timezone is not None:
         current_user.timezone = payload.timezone
 
+    # Новые поля
+    if payload.guild_symbol is not None:
+        current_user.guild_symbol = payload.guild_symbol
+    if payload.pinned_achievements is not None:
+        current_user.pinned_achievements = payload.pinned_achievements
+
+    await session.commit()
+    await session.refresh(current_user)
+
+    return await get_character(current_user, session)
+
+
+@router.post("/avatar", response_model=CharacterOut)
+async def upload_avatar(
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+    file: UploadFile = File(...),
+) -> CharacterOut:
+    """Загружает и сжимает аватар пользователя в формат WebP."""
+    if file.content_type not in ["image/jpeg", "image/png", "image/webp"]:
+        raise HTTPException(
+            status_code=422, detail="Invalid image format", headers={"code": "INVALID_IMAGE"}
+        )
+
+    # Читаем файл
+    contents = await file.read()
+    if len(contents) > 5 * 1024 * 1024:  # 5 MB max
+        raise HTTPException(
+            status_code=422, detail="File too large (max 5MB)", headers={"code": "FILE_TOO_LARGE"}
+        )
+
+    filename = f"{current_user.id}_{uuid.uuid4().hex[:8]}.webp"
+    filepath = Path("app/static/avatars") / filename
+
+    try:
+        # Конвертируем в WebP для экономии места (размер 256x256)
+        img = Image.open(BytesIO(contents))
+        img = img.convert("RGB")
+        img.thumbnail((256, 256))
+        img.save(filepath, "WEBP", quality=85)
+    except Exception as e:
+        raise HTTPException(
+            status_code=422, detail="Could not process image", headers={"code": "IMAGE_ERROR"}
+        ) from e
+
+    # Удаляем старый аватар, если он был
+    if current_user.avatar_url:
+        old_filename = current_user.avatar_url.split("/")[-1]
+        old_filepath = Path("app/static/avatars") / old_filename
+        if old_filepath.exists():
+            try:
+                os.remove(old_filepath)
+            except OSError:
+                pass
+
+    # Сохраняем новый URL
+    current_user.avatar_url = f"/static/avatars/{filename}"
     await session.commit()
     await session.refresh(current_user)
 

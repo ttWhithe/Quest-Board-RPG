@@ -1,10 +1,13 @@
+import os
+
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from app.api import events
+from app.api import achievements, events
 from app.api.auth import router as auth_router
 from app.api.character import router as character_router
 from app.api.quests import router as quests_router
@@ -16,6 +19,11 @@ settings = get_settings()
 setup_logging(settings.log_level)
 
 app = FastAPI(title="Quest Board RPG API")
+
+
+# Создаем папку для статики, если ее нет
+os.makedirs("app/static/avatars", exist_ok=True)
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 # --- Exception Handlers ---
 
@@ -79,6 +87,7 @@ app.include_router(quests_router, prefix="/api/v1")
 app.include_router(character_router, prefix="/api/v1")
 app.include_router(events.router, prefix="/api/v1")
 app.include_router(talents_router, prefix="/api/v1")
+app.include_router(achievements.router, prefix="/api/v1")
 
 
 @app.get("/health")

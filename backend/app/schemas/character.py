@@ -35,13 +35,17 @@ class CharacterOut(BaseModel):
 
 
 class CharacterUpdate(BaseModel):
-    """Тело PATCH /character. Whitelist: nickname, emblem_seed, timezone."""
+    """Тело PATCH /character.
+    Whitelist: nickname, emblem_seed, guild_symbol, timezone, pinned_achievements.
+    """
 
     model_config = ConfigDict(extra="forbid")
 
     nickname: str | None = None
     emblem_seed: str | None = None
+    guild_symbol: str | None = None
     timezone: str | None = None
+    pinned_achievements: list[str] | None = None
 
     @field_validator("nickname")
     @classmethod
@@ -67,6 +71,16 @@ class CharacterUpdate(BaseModel):
             ZoneInfo(value)
         except (ZoneInfoNotFoundError, ValueError) as exc:
             raise PydanticCustomError("INVALID_TIMEZONE", f"Unknown timezone: {value!r}") from exc
+        return value
+
+    @field_validator("pinned_achievements")
+    @classmethod
+    def _validate_pinned(cls, value: list[str] | None) -> list[str] | None:
+        if value is not None and len(value) > 5:
+            raise PydanticCustomError(
+                "TOO_MANY_PINNED",
+                "You can pin at most 5 achievements",
+            )
         return value
 
 

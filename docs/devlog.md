@@ -555,6 +555,14 @@
   - Тесты `test_inventory.py` и `test_streaks_and_rewards.py` переведены на `/auth/demo`.
 - **Дальше:** Шаг 2 — API для загрузки аватара и синхронизации достижений.
 
+## [2026-11-15 14:30] — Day 15, шаг 2: API аватарок и достижений
+- **Сделано:**
+  - Созданы эндпоинты `GET /achievements` (объединяет JSON и БД) и `POST /achievements/{id}/unlock`.
+  - Добавлен эндпоинт `POST /character/avatar` с валидацией формата и сжатием в WebP через `Pillow`.
+  - Настроена раздача статики в `main.py` (`/static/avatars/`).
+  - Обновлены схемы `UserOut` и `CharacterUpdate` (добавлены `guild_symbol`, `pinned_achievements`).
+- **Дальше:** Шаг 3 — Frontend (интеграция аватара и выпадающего меню).
+
 ## Шаблон для следующих дней
 
 ```markdown
