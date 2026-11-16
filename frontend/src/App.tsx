@@ -1,18 +1,19 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { Emblem } from './components/Emblem';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
-import { Login } from './pages/Login';
-import { Register } from './pages/Register';
-import { Board } from './pages/Board';
-import { Character } from './pages/Character';
-import { Events } from './pages/Events';
-import { Calendar } from './pages/Calendar';
-import { Talents } from './pages/Talents';
 import { API_BASE_URL } from './api/client';
+
+const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
+const Register = lazy(() => import('./pages/Register').then(m => ({ default: m.Register })));
+const Board = lazy(() => import('./pages/Board').then(m => ({ default: m.Board })));
+const Character = lazy(() => import('./pages/Character').then(m => ({ default: m.Character })));
+const Events = lazy(() => import('./pages/Events').then(m => ({ default: m.Events })));
+const Calendar = lazy(() => import('./pages/Calendar').then(m => ({ default: m.Calendar })));
+const Talents = lazy(() => import('./pages/Talents').then(m => ({ default: m.Talents })));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -92,7 +93,7 @@ function Header() {
               className="flex items-center gap-3 hover:opacity-80 transition-opacity focus:outline-none"
             >
               <span
-                className="text-lg font-bold text-parchment-light truncate max-w-[150px]"
+                className="text-lg font-bold text-parchment-light truncate max-w-[110px]"
                 title={user.nickname}
               >
                 {user.nickname}
@@ -204,24 +205,30 @@ function App() {
             <Header />
 
             <main className="flex-1 w-full flex flex-col relative">
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+              <Suspense fallback={
+                <div className="flex h-full min-h-[50vh] items-center justify-center text-amber-700 font-fantasy text-2xl animate-pulse">
+                  Загрузка хроник...
+                </div>
+              }>
+                <Routes>
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
 
-                <Route element={<ProtectedRoute />}>
-                  <Route path="/" element={<Navigate to="/board" replace />} />
-                  <Route path="/board" element={<Board />} />
-                  <Route path="/character" element={<Character />} />
-                  <Route path="/talents" element={<Talents />} />
-                  <Route path="/events" element={<Events />} />
-                  <Route path="/calendar" element={<Calendar />} />
-                </Route>
+                  <Route element={<ProtectedRoute />}>
+                    <Route path="/" element={<Navigate to="/board" replace />} />
+                    <Route path="/board" element={<Board />} />
+                    <Route path="/character" element={<Character />} />
+                    <Route path="/talents" element={<Talents />} />
+                    <Route path="/events" element={<Events />} />
+                    <Route path="/calendar" element={<Calendar />} />
+                  </Route>
 
-                <Route
-                  path="*"
-                  element={<div className="p-8 text-red-500 text-center">404 - Страница не найдена</div>}
-                />
-              </Routes>
+                  <Route
+                    path="*"
+                    element={<div className="p-8 text-red-500 text-center">404 - Страница не найдена</div>}
+                  />
+                </Routes>
+              </Suspense>
             </main>
           </div>
         </BrowserRouter>

@@ -4,11 +4,17 @@ import { motion } from 'framer-motion';
 import { authApi } from '../api/auth';
 import { useAuth } from '../contexts/AuthContext';
 
-export function DailyRewardModal() {
+interface Props {
+  forceOpen?: boolean;
+  onClose?: () => void;
+}
+
+export function DailyRewardModal({ forceOpen, onClose }: Props) {
   const { updateUser } = useAuth();
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [claimedXp, setClaimedXp] = useState<number | null>(null);
+  const [timeLeft, setTimeLeft] = useState<string>('00:00:00');
 
   const { data: rewardInfo } = useQuery({
     queryKey: ['daily-reward'],
@@ -17,18 +23,43 @@ export function DailyRewardModal() {
     refetchOnWindowFocus: true,
   });
 
-  // Исправлено: используем useEffect для открытия модалки
   useEffect(() => {
-    if (rewardInfo?.can_claim && claimedXp === null) {
+    if (forceOpen) {
+      setIsOpen(true);
+    } else if (rewardInfo?.can_claim && claimedXp === null) {
       setIsOpen(true);
     }
-  }, [rewardInfo, claimedXp]);
+  }, [rewardInfo, claimedXp, forceOpen]);
+
+  // Таймер до следующей награды (до полуночи)
+  useEffect(() => {
+    if (!isOpen || rewardInfo?.can_claim || claimedXp !== null) return;
+
+    const updateTimer = () => {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+
+      const diff = tomorrow.getTime() - now.getTime();
+      const h = Math.floor(diff / (1000 * 60 * 60));
+      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+      setTimeLeft(
+        `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+      );
+    };
+
+    updateTimer(); // Первый вызов сразу
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [isOpen, rewardInfo?.can_claim, claimedXp]);
 
   const claimMutation = useMutation({
     mutationFn: authApi.claimDailyReward,
     onSuccess: (data) => {
       setClaimedXp(data.xp_awarded);
-      // Обновляем AuthContext, чтобы огонек появился мгновенно
       updateUser({
         total_xp: data.new_total_xp,
         daily_reward_day: data.next_day,
@@ -38,6 +69,11 @@ export function DailyRewardModal() {
       queryClient.invalidateQueries({ queryKey: ['character'] });
     },
   });
+
+  const handleClose = () => {
+    setIsOpen(false);
+    if (onClose) onClose();
+  };
 
   if (!isOpen || !rewardInfo) return null;
 
@@ -50,7 +86,18 @@ export function DailyRewardModal() {
       >
         <div className="absolute inset-0 bg-[url('/images/parchment-texture.png')] opacity-20 pointer-events-none mix-blend-multiply" />
 
-        <h2 className="text-3xl font-bold text-center text-[#3b2f2f] font-fantasy mb-2 relative z-10">
+        {/* Кнопка закрытия */}
+        <button
+          onClick={handleClose}
+          className="absolute top-4 right-4 z-20 text-[#5c4033] hover:text-red-700 transition-colors"
+          title="Закрыть"
+        >
+          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <h2 className="text-3xl font-bold text-center text-[#3b2f2f] font-fantasy mb-2 relative z-10 mt-2">
           Ежедневный дар
         </h2>
         <p className="text-center text-[#5c4033] mb-6 relative z-10">
@@ -70,15 +117,8 @@ export function DailyRewardModal() {
                     isPast ? 'border-[#5c4033]/30 bg-black/5 opacity-50' : 'border-[#5c4033]/50 bg-[#e8dac1]'}`}
               >
                 <span className="text-xs font-bold text-[#5c4033] w-full text-center">День {reward.day}</span>
-
-                <div className="text-3xl">
-                  {reward.type === 'xp' ? '✨' : '🎁'}
-                </div>
-
-                <span className="text-[10px] font-bold text-center leading-tight text-[#3b2f2f] w-full">
-                  {reward.label}
-                </span>
-
+                <div className="text-3xl">{reward.type === 'xp' ? '✨' : '🎁'}</div>
+                <span className="text-[10px] font-bold text-center leading-tight text-[#3b2f2f] w-full">{reward.label}</span>
                 {isPast && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-lg">
                     <span className="text-3xl text-green-700 drop-shadow-md">✓</span>
@@ -95,20 +135,25 @@ export function DailyRewardModal() {
               <p className="text-xl font-bold text-green-700 mb-4 animate-bounce">
                 Получено +{claimedXp} XP!
               </p>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="btn-wood px-8"
-              >
+              <button onClick={handleClose} className="btn-wood px-8">
                 Продолжить
               </button>
             </div>
-          ) : (
+          ) : rewardInfo.can_claim ? (
             <button
               onClick={() => claimMutation.mutate()}
               disabled={claimMutation.isPending}
               className="btn-wood px-12 py-3 text-lg font-bold animate-pulse hover:animate-none"
             >
               {claimMutation.isPending ? 'Получение...' : 'Забрать награду'}
+            </button>
+          ) : (
+            <button
+              disabled
+              className="btn-wood px-12 py-3 text-lg font-bold opacity-60 cursor-not-allowed flex items-center gap-2"
+            >
+              <span>Доступно через:</span>
+              <span className="font-mono bg-black/20 px-2 py-1 rounded">{timeLeft}</span>
             </button>
           )}
         </div>
