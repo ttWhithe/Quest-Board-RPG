@@ -6,6 +6,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { API_BASE_URL } from './api/client';
+import { LevelUpModal } from './components/LevelUpModal';
+import { useLevelUp } from './hooks/useLevelUp';
+import { levelFromXp } from './utils/levelUp';
 
 const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
 const Register = lazy(() => import('./pages/Register').then(m => ({ default: m.Register })));
@@ -52,10 +55,8 @@ function Header() {
   const currentTitle = PAGE_TITLES[location.pathname] || '';
 
   return (
-    // Сделали sticky top-0 и z-50, чтобы шапка всегда была сверху
     <header className="bg-tavern-wood text-parchment-light shadow-[0_4px_10px_rgba(0,0,0,0.6)] border-b-2 border-black sticky top-0 z-50">
       <nav className="container mx-auto px-4 py-2 md:py-3 flex justify-between items-center relative">
-        {/* Логотип */}
         <div
           className="font-bold text-xl cursor-pointer flex items-center gap-2 z-10"
           onClick={() => navigate('/board')}
@@ -63,12 +64,10 @@ function Header() {
           <span>⚔</span> <span className="hidden sm:inline">QuestBoard</span>
         </div>
 
-        {/* Название текущей страницы (только мобилки) */}
         <div className="absolute left-1/2 -translate-x-1/2 md:hidden font-semibold text-amber-400">
           {user ? currentTitle : ''}
         </div>
 
-        {/* Десктопная навигация */}
         {user && (
           <div className="hidden md:flex gap-6 items-center ml-6">
             {navLinks.map((link) => (
@@ -85,7 +84,6 @@ function Header() {
           </div>
         )}
 
-        {/* Десктопный профиль */}
         {user && (
           <div className="hidden md:flex items-center ml-auto relative">
             <button
@@ -112,10 +110,8 @@ function Header() {
               </svg>
             </button>
 
-            {/* Выпадающее меню */}
             {isProfileMenuOpen && (
               <>
-                {/* Невидимый фон для закрытия меню по клику вне его */}
                 <div className="fixed inset-0 z-40" onClick={() => setIsProfileMenuOpen(false)} />
 
                 <div className="absolute right-0 top-full mt-2 w-48 bg-[#1a1512] border-2 border-[#5c4033] rounded-md shadow-2xl z-50 overflow-hidden flex flex-col">
@@ -138,7 +134,6 @@ function Header() {
           </div>
         )}
 
-        {/* Мобильная кнопка бургера */}
         {user && (
           <button
             className="md:hidden text-2xl focus:outline-none z-10 p-1"
@@ -149,7 +144,6 @@ function Header() {
         )}
       </nav>
 
-      {/* Мобильное выпадающее меню */}
       {user && isMobileMenuOpen && (
         <div className="md:hidden bg-slate-800 border-t border-slate-700 absolute w-full left-0 shadow-lg">
           <div className="flex flex-col px-4 py-4 space-y-4">
@@ -195,12 +189,21 @@ function Header() {
   );
 }
 
+// Глобальный наблюдатель за повышением уровня
+function GlobalLevelUpWatcher() {
+  const { user } = useAuth();
+  const currentLevel = user ? levelFromXp(user.total_xp) : undefined;
+  const { showLevelUp, dismiss } = useLevelUp(currentLevel);
+
+  if (!showLevelUp || !currentLevel) return null;
+  return <LevelUpModal level={currentLevel} onClose={dismiss} />;
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
-          {/* Убрали overflow-x-hidden отсюда, он переехал в index.css (body) */}
           <div className="min-h-screen flex flex-col w-full relative z-0">
             <Header />
 
@@ -230,6 +233,9 @@ function App() {
                 </Routes>
               </Suspense>
             </main>
+
+            {/* Глобальный уровень */}
+            <GlobalLevelUpWatcher />
           </div>
         </BrowserRouter>
       </AuthProvider>

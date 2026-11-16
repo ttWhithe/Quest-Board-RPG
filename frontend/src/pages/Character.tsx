@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useCharacter, useUpdateCharacter } from '../api/character';
 import type { InventoryItem } from '../api/character';
 import { CharacterSkeleton } from '../components/Skeletons';
@@ -15,7 +15,6 @@ import { NicknameModal } from '../components/NicknameModal';
 import { TitlesModal } from '../components/TitlesModal';
 import { AdventurerLicense } from '../components/AdventurerLicense';
 import { useAchievements } from '../api/achievements';
-import { LevelUpModal } from '../components/LevelUpModal';
 
 export function Character() {
   const { data, isLoading, isError } = useCharacter();
@@ -29,22 +28,10 @@ export function Character() {
   const [isNicknameModalOpen, setIsNicknameModalOpen] = useState(false);
   const [isTitlesModalOpen, setIsTitlesModalOpen] = useState(false);
   const [isDailyRewardOpen, setIsDailyRewardOpen] = useState(false);
-  const [isLevelUpOpen, setIsLevelUpOpen] = useState(false);
-  const prevLevelRef = useRef<number | null>(null);
 
-  // Отслеживаем повышение уровня
-  useEffect(() => {
-    if (data?.level) {
-      if (prevLevelRef.current !== null && data.level > prevLevelRef.current) {
-        setIsLevelUpOpen(true);
-      }
-      prevLevelRef.current = data.level;
-    }
-  }, [data?.level]);
-
-  const pinnedAchievements = allAchievements.filter((a) =>
-    data?.user.pinned_achievements?.includes(a.id)
-  ).slice(0, 5);
+  const pinnedAchievements = allAchievements
+    .filter((a) => data?.user.pinned_achievements?.includes(a.id))
+    .slice(0, 5);
 
   if (isLoading) {
     return (
@@ -64,7 +51,6 @@ export function Character() {
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
       <DailyRewardModal forceOpen={isDailyRewardOpen} onClose={() => setIsDailyRewardOpen(false)} />
-      {isLevelUpOpen && data && <LevelUpModal level={data.level} onClose={() => setIsLevelUpOpen(false)} />}
       {isAvatarModalOpen && <AvatarUploadModal onClose={() => setIsAvatarModalOpen(false)} />}
       {isEmblemModalOpen && <EmblemModal currentSeed={user.emblem_seed} onClose={() => setIsEmblemModalOpen(false)} />}
       {isNicknameModalOpen && <NicknameModal currentNickname={user.nickname} onClose={() => setIsNicknameModalOpen(false)} />}

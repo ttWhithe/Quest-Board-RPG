@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from './client';
+import { useAuth } from '../contexts/AuthContext'; // <-- ДОБАВЛЕНО
 
 // ============================================================
 // Types
@@ -132,14 +133,18 @@ export function useCreateQuest() {
 
 export function useCompleteQuest() {
   const queryClient = useQueryClient();
+  const { updateUser } = useAuth(); // <-- ДОБАВЛЕНО
+
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await api.post<CompleteQuestResponse>(`/quests/${id}/complete`);
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       // Обновляем список квестов
       queryClient.invalidateQueries({ queryKey: questKeys.lists() });
+      // Обновляем глобальный total_xp, чтобы сработал GlobalLevelUpWatcher
+      updateUser({ total_xp: data.user_after.total_xp }); // <-- ДОБАВЛЕНО
     },
   });
 }
