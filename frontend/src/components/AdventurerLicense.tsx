@@ -3,7 +3,7 @@ import type { Achievement } from '../api/achievements';
 import { Emblem } from './Emblem';
 import { XPBar } from './XPBar';
 import { API_BASE_URL } from '../api/client';
-import { getLevelTitle } from '../constants';
+import { getLevelTitle, RARITY_COLORS } from '../constants';
 
 interface Props {
   user: User;
@@ -155,26 +155,39 @@ export function AdventurerLicense({
             {/* Закрепленные достижения */}
             {pinnedAchievements.length > 0 && (
               <div className="flex gap-2 flex-wrap pt-1">
-                {pinnedAchievements.map((ach) => (
-                  <div key={ach.id} className="w-8 h-8 rounded-full border border-[#5c4033] bg-[#e8dac1] flex items-center justify-center shadow-sm" title={ach.name}>
-                    <img
-                      src={`/icons/${ach.icon}.svg`}
-                      alt={ach.name}
-                      className="w-5 h-5"
-                      style={{
-                        WebkitMaskImage: `url(/icons/${ach.icon}.svg)`,
-                        maskImage: `url(/icons/${ach.icon}.svg)`,
-                        WebkitMaskSize: 'contain',
-                        maskSize: 'contain',
-                        WebkitMaskRepeat: 'no-repeat',
-                        maskRepeat: 'no-repeat',
-                        WebkitMaskPosition: 'center',
-                        maskPosition: 'center',
-                        backgroundColor: '#5c4033',
-                      }}
-                    />
-                  </div>
-                ))}
+                {pinnedAchievements.map((ach) => {
+                  const color = RARITY_COLORS[ach.rarity] ?? '#5c4033';
+                  return (
+                    <div
+                      key={ach.id}
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-tavern-wood border-[3px] shadow-md hover:scale-105 transition-transform cursor-default"
+                      style={{ borderColor: color, boxShadow: `0 0 12px ${color}50` }}
+                      title={`${ach.name} — ${ach.description}${ach.unlocked_at ? `\nПолучено: ${new Date(ach.unlocked_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}` : ''}`}
+                    >
+                      <div
+                        className="w-4 h-4 shrink-0"
+                        style={{
+                          WebkitMaskImage: `url(/icons/${ach.icon}.svg)`,
+                          maskImage: `url(/icons/${ach.icon}.svg)`,
+                          WebkitMaskSize: 'contain',
+                          maskSize: 'contain',
+                          WebkitMaskRepeat: 'no-repeat',
+                          maskRepeat: 'no-repeat',
+                          WebkitMaskPosition: 'center',
+                          maskPosition: 'center',
+                          backgroundColor: color,
+                          filter: `drop-shadow(0 0 3px ${color}80)`,
+                        }}
+                      />
+                      <span
+                        className="text-[10px] font-bold uppercase tracking-wider truncate max-w-[120px]"
+                        style={{ color: color }} // Красим текст в цвет редкости
+                      >
+                        {ach.name}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             )}
 

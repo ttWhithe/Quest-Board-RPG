@@ -110,6 +110,7 @@ export function FullAchievementsModal({ onClose }: Props) {
                   <motion.div
                     key={ach.id}
                     whileHover={{ scale: 1.02 }}
+                    title={`${ach.name} — ${ach.description}${isUnlocked && ach.unlocked_at ? `\nПолучено: ${new Date(ach.unlocked_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}` : ''}`}
                     className={`relative p-4 rounded-lg flex flex-col items-center text-center transition-all bg-[#1a1512]
                       ${isUnlocked ? 'border-[5px] shadow-lg' : 'border-2 border-dashed opacity-90'}`}
                     style={{
