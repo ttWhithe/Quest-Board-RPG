@@ -54,6 +54,8 @@ export function useUpdateCharacter() {
     },
     onSuccess: (data) => {
       queryClient.setQueryData(characterKeys.detail(), data);
+      // Принудительно просим React Query обновить данные на странице персонажа
+      queryClient.invalidateQueries({ queryKey: characterKeys.detail() });
     },
   });
 }

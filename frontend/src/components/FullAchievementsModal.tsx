@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { RARITY_COLORS } from '../constants';
-import { useAchievements } from '../api/achievements';
+import { useAchievements, useUnlockAchievement } from '../api/achievements';
 import { useUpdateCharacter, useCharacter } from '../api/character';
 
 interface Props {
@@ -11,8 +11,9 @@ interface Props {
 export function FullAchievementsModal({ onClose }: Props) {
   const [filter, setFilter] = useState<'all' | 'unlocked' | 'locked'>('all');
   const { data: achievements = [], isLoading } = useAchievements();
-  const { data: charData } = useCharacter(); // <-- Берем отсюда!
+  const { data: charData } = useCharacter();
   const { mutate: updateCharacter, isPending } = useUpdateCharacter();
+  const { mutate: unlockAchievement, isPending: isUnlocking } = useUnlockAchievement();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const pinnedIds = charData?.user.pinned_achievements || [];
@@ -34,18 +35,26 @@ export function FullAchievementsModal({ onClose }: Props) {
       ? pinnedIds.filter((id) => id !== achId)
       : [...pinnedIds, achId];
 
-    updateCharacter({ pinned_achievements: newPinned }, {
-      onError: (err: any) => setErrorMsg(err.response?.data?.detail?.detail || 'Ошибка сохранения'),
-    });
+    updateCharacter(
+      { pinned_achievements: newPinned },
+      {
+        onError: (err: any) =>
+          setErrorMsg(err.response?.data?.detail?.detail || 'Ошибка сохранения'),
+      }
+    );
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
       <div className="bg-[#f4ebd8] border-4 border-[#5c4033] rounded-lg shadow-2xl w-full max-w-5xl h-[80vh] flex flex-col overflow-hidden">
-
         <div className="flex justify-between items-center p-4 border-b-2 border-[#5c4033] bg-[#e8dac1]">
           <h2 className="text-2xl font-bold font-fantasy text-[#3b2f2f]">Книга деяний</h2>
-          <button onClick={onClose} className="text-2xl text-[#5c4033] hover:text-red-700 font-bold transition-colors">✕</button>
+          <button
+            onClick={onClose}
+            className="text-2xl text-[#5c4033] hover:text-red-700 font-bold transition-colors"
+          >
+            ✕
+          </button>
         </div>
 
         <div className="flex gap-2 p-3 bg-[#f4ebd8] border-b border-[#5c4033]/30 flex-wrap items-center justify-between">
@@ -53,13 +62,15 @@ export function FullAchievementsModal({ onClose }: Props) {
             {[
               { id: 'all', label: 'Все' },
               { id: 'unlocked', label: 'Полученные' },
-              { id: 'locked', label: 'В процессе' }
+              { id: 'locked', label: 'В процессе' },
             ].map((f) => (
               <button
                 key={f.id}
                 onClick={() => setFilter(f.id as any)}
                 className={`px-4 py-1 text-sm font-bold border rounded transition-colors ${
-                  filter === f.id ? 'bg-amber-700 text-white border-amber-900' : 'bg-transparent text-[#3b2f2f] border-[#5c4033] hover:bg-[#e8dac1]'
+                  filter === f.id
+                    ? 'bg-amber-700 text-white border-amber-900'
+                    : 'bg-transparent text-[#3b2f2f] border-[#5c4033] hover:bg-[#e8dac1]'
                 }`}
               >
                 {f.label}
@@ -80,28 +91,36 @@ export function FullAchievementsModal({ onClose }: Props) {
         <div className="flex-1 overflow-y-auto p-6 relative">
           {isLoading ? (
             <div className="flex justify-center items-center h-full">
-              <span className="text-[#5c4033] font-bold text-lg animate-pulse">Загрузка книги деяний...</span>
+              <span className="text-[#5c4033] font-bold text-lg animate-pulse">
+                Загрузка книги деяний...
+              </span>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {filtered.map((ach) => {
-                const iconColor = ach.unlocked ? RARITY_COLORS[ach.rarity] : '#4b5563';
+                const isUnlocked = ach.unlocked;
                 const isPinned = pinnedIds.includes(ach.id);
+                const rarityColor = RARITY_COLORS[ach.rarity] ?? '#5c4033';
 
                 const rewardType = ach.reward?.type || 'xp';
                 const rewardAmount = ach.reward?.amount || 0;
-                const rewardText = rewardType === 'xp' ? `+${rewardAmount} XP` : `Предмет (x${rewardAmount})`;
+                const rewardText =
+                  rewardType === 'xp' ? `+${rewardAmount} XP` : `Предмет (x${rewardAmount})`;
 
                 return (
                   <motion.div
                     key={ach.id}
                     whileHover={{ scale: 1.02 }}
-                    className={`relative p-4 rounded-lg border-2 flex flex-col items-center text-center transition-all bg-[#1a1512]
-                      ${ach.unlocked ? 'shadow-md' : 'opacity-50 grayscale'}`}
-                    style={{ borderColor: ach.unlocked ? RARITY_COLORS[ach.rarity] : '#5c4033' }}
+                    title={`${ach.name} — ${ach.description}${isUnlocked && ach.unlocked_at ? `\nПолучено: ${new Date(ach.unlocked_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}` : ''}`}
+                    className={`relative p-4 rounded-lg flex flex-col items-center text-center transition-all bg-[#1a1512]
+                      ${isUnlocked ? 'border-[5px] shadow-lg' : 'border-2 border-dashed opacity-90'}`}
+                    style={{
+                      borderColor: isUnlocked ? rarityColor : '#5c4033',
+                      boxShadow: isUnlocked ? `0 0 12px ${rarityColor}40` : 'none',
+                    }}
                   >
                     {/* Кнопка закрепления (только для полученных) */}
-                    {ach.unlocked && (
+                    {isUnlocked && (
                       <button
                         onClick={() => handleTogglePin(ach.id)}
                         disabled={isPending}
@@ -128,28 +147,48 @@ export function FullAchievementsModal({ onClose }: Props) {
                           maskRepeat: 'no-repeat',
                           WebkitMaskPosition: 'center',
                           maskPosition: 'center',
-                          backgroundColor: iconColor,
+                          backgroundColor: isUnlocked ? rarityColor : '#5c4033',
+                          opacity: isUnlocked ? 1 : 0.35, // Стильный силуэт для закрытых
+                          filter: isUnlocked
+                            ? `drop-shadow(0 0 6px ${rarityColor}80)`
+                            : 'none',
                         }}
                       />
                     </div>
 
-                    <h3 className="font-bold leading-tight mb-1 text-sm" style={{ color: ach.unlocked ? RARITY_COLORS[ach.rarity] : '#a8a29e' }}>
+                    <h3
+                      className="font-bold leading-tight mb-1 text-sm"
+                      style={{ color: isUnlocked ? rarityColor : '#a8a29e' }}
+                    >
                       {ach.name}
                     </h3>
-                    <p className="text-xs text-gray-400 leading-tight mb-2 flex-1">{ach.description}</p>
 
-                    <div className={`text-[10px] font-bold px-2 py-0.5 rounded-full mb-2 ${ach.unlocked ? 'bg-amber-900/40 text-amber-500 border border-amber-700' : 'bg-gray-800 text-gray-400 border border-gray-700'}`}>
+                    <p className={`text-xs leading-tight mb-2 flex-1 ${isUnlocked ? 'text-gray-400' : 'text-gray-500/70'}`}>
+                      {ach.description}
+                    </p>
+
+                    <div
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full mb-2 ${
+                        isUnlocked
+                          ? 'bg-amber-900/40 text-amber-500 border border-amber-700'
+                          : 'bg-gray-800/60 text-gray-400 border border-gray-700/60'
+                      }`}
+                    >
                       🏆 {rewardText}
                     </div>
 
-                    {ach.unlocked ? (
+                    {isUnlocked ? (
                       <span className="mt-auto text-[10px] font-bold text-green-400 bg-green-900/30 px-2 py-0.5 rounded border border-green-800">
                         Получено
                       </span>
                     ) : (
-                      <span className="mt-auto text-[10px] font-bold text-gray-500 bg-gray-800/50 px-2 py-0.5 rounded border border-gray-700">
-                        Закрыто
-                      </span>
+                      <button
+                        onClick={() => unlockAchievement(ach.id)}
+                        disabled={isUnlocking}
+                        className="mt-auto text-[10px] font-bold text-amber-500 bg-amber-900/20 hover:bg-amber-900/40 px-2 py-0.5 rounded border border-amber-700/50 transition-colors cursor-pointer"
+                      >
+                        {isUnlocking ? 'Получение...' : 'Разблокировать'}
+                      </button>
                     )}
                   </motion.div>
                 );
