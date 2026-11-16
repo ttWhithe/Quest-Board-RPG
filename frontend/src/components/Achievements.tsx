@@ -63,7 +63,7 @@ export function Achievements() {
                 onClick={() => setShowModal(true)}
                 className={`relative aspect-square flex flex-col items-center justify-center p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.04] ${
                   isUnlocked
-                    ? 'bg-gradient-to-br from-[#1f1a16] to-[#0f0d0b] border-[8px]' // Увеличили рамку до 8px
+                    ? 'bg-gradient-to-br from-[#1f1a16] to-[#0f0d0b] border-[5px]' // Увеличили рамку до 8px
                     : 'bg-[#1a1512]/40 border-2 border-dashed border-[#5c4033]/40'
                 }`}
                 style={
