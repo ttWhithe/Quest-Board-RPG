@@ -84,7 +84,6 @@ export function DailyRewardModal({ forceOpen, onClose }: Props) {
         animate={{ scale: 1, opacity: 1 }}
         className="parchment-card w-full max-w-2xl p-6 md:p-8 relative overflow-hidden"
       >
-        <div className="absolute inset-0 bg-[url('/images/parchment-texture.png')] opacity-20 pointer-events-none mix-blend-multiply" />
 
         {/* Кнопка закрытия */}
         <button

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { RARITY_COLORS } from '../constants';
-import { useAchievements } from '../api/achievements';
+import { useAchievements, useUnlockAchievement } from '../api/achievements';
 import { useUpdateCharacter, useCharacter } from '../api/character';
 
 interface Props {
@@ -13,6 +13,7 @@ export function FullAchievementsModal({ onClose }: Props) {
   const { data: achievements = [], isLoading } = useAchievements();
   const { data: charData } = useCharacter();
   const { mutate: updateCharacter, isPending } = useUpdateCharacter();
+  const { mutate: unlockAchievement, isPending: isUnlocking } = useUnlockAchievement();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const pinnedIds = charData?.user.pinned_achievements || [];
@@ -181,9 +182,13 @@ export function FullAchievementsModal({ onClose }: Props) {
                         Получено
                       </span>
                     ) : (
-                      <span className="mt-auto text-[10px] font-bold text-gray-500 bg-gray-800/50 px-2 py-0.5 rounded border border-gray-700">
-                        Закрыто
-                      </span>
+                      <button
+                        onClick={() => unlockAchievement(ach.id)}
+                        disabled={isUnlocking}
+                        className="mt-auto text-[10px] font-bold text-amber-500 bg-amber-900/20 hover:bg-amber-900/40 px-2 py-0.5 rounded border border-amber-700/50 transition-colors cursor-pointer"
+                      >
+                        {isUnlocking ? 'Получение...' : 'Разблокировать'}
+                      </button>
                     )}
                   </motion.div>
                 );

@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from './client';
 import { characterKeys } from './character';
+import { useToast } from '../contexts/ToastContext';
+import { RARITY_COLORS } from '../constants';
 
 export interface Achievement {
   id: string;
@@ -30,14 +32,24 @@ export function useAchievements() {
 
 export function useUnlockAchievement() {
   const queryClient = useQueryClient();
+  const { addToast } = useToast();
+
   return useMutation({
     mutationFn: async (id: string) => {
       const { data } = await api.post<Achievement>(`/achievements/${id}/unlock`);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: achievementKeys.all });
       queryClient.invalidateQueries({ queryKey: characterKeys.detail() });
+
+      // Показываем красивый тост
+      addToast({
+        title: 'Новое достижение!',
+        description: data.name,
+        icon: data.icon,
+        color: RARITY_COLORS[data.rarity] || '#F59E0B',
+      });
     },
   });
 }

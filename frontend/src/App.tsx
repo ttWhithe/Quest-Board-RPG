@@ -4,6 +4,8 @@ import { Emblem } from './components/Emblem';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ToastProvider } from './contexts/ToastContext';
+import { ToastContainer } from './components/ToastContainer';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { API_BASE_URL } from './api/client';
 import { LevelUpModal } from './components/LevelUpModal';
@@ -203,8 +205,9 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <BrowserRouter>
-          <div className="min-h-screen flex flex-col w-full relative z-0">
+        <ToastProvider>
+          <BrowserRouter>
+            <div className="min-h-screen flex flex-col w-full relative z-0">
             <Header />
 
             <main className="flex-1 w-full flex flex-col relative">
@@ -236,8 +239,10 @@ function App() {
 
             {/* Глобальный уровень */}
             <GlobalLevelUpWatcher />
+            <ToastContainer />
           </div>
         </BrowserRouter>
+      </ToastProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
