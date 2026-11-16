@@ -35,9 +35,6 @@ export function Achievements() {
 
   return (
     <div className="parchment-card p-5 relative overflow-hidden">
-      {/* Текстура пергамента как в DailyRewardModal */}
-      <div className="absolute inset-0 bg-[url('/images/parchment-texture.png')] opacity-10 mix-blend-multiply pointer-events-none" />
-
       <div className="relative z-10">
         <div className="flex justify-between items-baseline mb-2">
           <h3 className="text-xl font-bold text-gray-800 font-fantasy">Достижения</h3>
@@ -66,18 +63,18 @@ export function Achievements() {
                 onClick={() => setShowModal(true)}
                 className={`relative aspect-square flex flex-col items-center justify-center p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.04] ${
                   isUnlocked
-                    ? 'bg-gradient-to-br from-[#1f1a16] to-[#0f0d0b] border-2'
-                    : 'bg-[#1a1512]/40 border border-dashed border-[#5c4033]/40'
+                    ? 'bg-gradient-to-br from-[#1f1a16] to-[#0f0d0b] border-[8px]' // Увеличили рамку до 8px
+                    : 'bg-[#1a1512]/40 border-2 border-dashed border-[#5c4033]/40'
                 }`}
                 style={
                   isUnlocked
                     ? {
                         borderColor: color,
-                        boxShadow: `0 0 12px ${color}40, inset 0 0 8px ${color}20`,
+                        boxShadow: `0 0 16px ${color}60, inset 0 0 8px ${color}40`,
                       }
                     : undefined
                 }
-                title={isUnlocked ? ach.description : 'Скрытое достижение'}
+                title={ach.description} // Всегда показываем описание при наведении
               >
                 {isPinned && (
                   <span className="absolute top-1 right-1 text-[10px] text-amber-400 drop-shadow">
@@ -98,8 +95,8 @@ export function Achievements() {
                       WebkitMaskPosition: 'center',
                       maskPosition: 'center',
                       backgroundColor: isUnlocked ? color : '#3b2f2f',
-                      opacity: isUnlocked ? 1 : 0.25,
-                      filter: isUnlocked ? `drop-shadow(0 0 4px ${color}80)` : 'none',
+                      opacity: isUnlocked ? 1 : 0.4,
+                      filter: isUnlocked ? `drop-shadow(0 0 6px ${color}80)` : 'none',
                     }}
                   />
                 </div>
@@ -108,10 +105,10 @@ export function Achievements() {
                   className={`text-[10px] text-center font-bold leading-tight line-clamp-2 ${
                     isUnlocked
                       ? 'text-parchment-light'
-                      : 'text-[#5c4033]/40 italic'
+                      : 'text-[#5c4033]/70' // Темно-коричневый для читаемости
                   }`}
                 >
-                  {isUnlocked ? ach.name : '???'}
+                  {ach.name} {/* Название теперь видно всегда */}
                 </span>
               </div>
             );
