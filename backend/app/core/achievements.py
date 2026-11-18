@@ -22,6 +22,7 @@ import logging
 from collections.abc import Awaitable, Callable
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum
+from functools import lru_cache
 from typing import Any
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -305,7 +306,19 @@ async def _handle_talents_branch_complete(
     params: dict[str, Any],
     context: dict[str, Any] | None,
 ) -> HandlerResult:
-    # TODO(Day 18): нет поля `branch` в TalentNode. Нужно доработать talent_tree.json.
+    stmt = select(UserTalent).where(UserTalent.user_id == user.id)
+    user_talents = (await session.scalars(stmt)).all()
+    ranks_by_code = {ut.talent_code: ut.rank for ut in user_talents}
+
+    for branch in ["magic", "war", "stealth"]:
+        # Берем все узлы этой ветки, исключая рут (если он есть, но у нас нет)
+        nodes_in_branch = [n for n in TALENTS.values() if n.branch == branch]
+        if not nodes_in_branch:
+            continue
+        # Проверяем, что каждый узел в ветке прокачан хотя бы на 1
+        if all(ranks_by_code.get(n.id, 0) > 0 for n in nodes_in_branch):
+            return True, None, None
+
     return False, None, None
 
 
@@ -315,8 +328,19 @@ async def _handle_talents_branch_count(
     params: dict[str, Any],
     context: dict[str, Any] | None,
 ) -> HandlerResult:
-    # TODO(Day 18): нет поля `branch` в TalentNode. Нужно доработать talent_tree.json.
-    return False, None, None
+    branch = params.get("branch", "")
+    min_count = int(params.get("min_count", 1))
+
+    stmt = select(UserTalent).where(UserTalent.user_id == user.id)
+    user_talents = (await session.scalars(stmt)).all()
+
+    current = 0
+    for ut in user_talents:
+        node = TALENTS.get(ut.talent_code)
+        if node and node.branch == branch:
+            current += 1
+
+    return current >= min_count, current, min_count
 
 
 async def _handle_login_streak(
@@ -578,15 +602,22 @@ def _reset_cache_for_tests() -> None:
 # ---------------------------------------------------------------------------
 
 
+@lru_cache(maxsize=1)
+def _load_items() -> dict[str, Any]:
+    """Кэшируем items.json, чтобы не читать его на каждый запрос."""
+    return {i["id"]: i for i in load_json("items.json").get("items", [])}
+
+
 async def check_and_unlock_achievements(
     session: AsyncSession,
     user: User,
     event: AchievementEvent,
     context: dict[str, Any] | None = None,
 ) -> list[NewAchievementEvent]:
-    """Проверяет условия для событий `event`, выдаёт новые ачивки и XP.
+    """Проверяет условия, выдаёт ачивки, предметы и XP.
 
-    Не коммитит сессию — caller обязан сам вызвать `commit()`.
+    Использует цикл `while True`, чтобы если ачивка дала XP и это
+    спровоцировало левелап, мы сразу проверили уровневые ачивки (ach_glob_*).
     """
     eligible_types = _EVENT_CONDITION_MAP.get(event, set())
     if not eligible_types:
@@ -603,61 +634,87 @@ async def check_and_unlock_achievements(
     unlocked_codes: set[str] = set((await session.scalars(existing_stmt)).all())
 
     newly_unlocked: list[NewAchievementEvent] = []
-    total_reward_xp = 0
+    processed_in_this_call: set[str] = set()
 
-    for ach in eligible:
-        if ach.id in unlocked_codes:
-            continue
-        handler = _HANDLERS.get(ach.condition.type)
-        if handler is None:
-            continue
-        try:
-            satisfied, _current, _target = await handler(
-                session, user, ach.condition.params, context
-            )
-        except Exception:
-            logger.exception(
-                "achievement_handler_failed",
-                extra={
-                    "achievement_code": ach.id,
-                    "condition_type": ach.condition.type,
-                },
-            )
-            continue
-        if not satisfied:
-            continue
+    while True:
+        unlocked_this_loop = 0
+        xp_gained_this_loop = 0
 
-        session.add(UserAchievement(user_id=user.id, achievement_code=ach.id))
-        unlocked_codes.add(ach.id)
-        newly_unlocked.append(
-            NewAchievementEvent(
-                code=ach.id,
-                name=ach.name,
-                description=ach.description,
-                icon=ach.icon,
-                rarity=ach.rarity,
-                reward=ach.reward,
-            )
-        )
-        if ach.reward.get("type") == "xp":
-            total_reward_xp += int(ach.reward.get("amount", 0))
-        elif ach.reward.get("type") == "item":
-            # TODO(Day 18): создавать UserItem и начислять предмет.
-            # Пока — только логируем и возвращаем в new_achievements.
-            logger.info(
-                "achievement_item_reward_deferred",
-                extra={
-                    "achievement_code": ach.id,
-                    "item_id": ach.reward.get("item_id"),
-                },
+        for ach in eligible:
+            if ach.id in unlocked_codes or ach.id in processed_in_this_call:
+                continue
+
+            handler = _HANDLERS.get(ach.condition.type)
+            if handler is None:
+                continue
+
+            try:
+                satisfied, _current, _target = await handler(
+                    session, user, ach.condition.params, context
+                )
+            except Exception:
+                logger.exception(
+                    "achievement_handler_failed",
+                    extra={
+                        "achievement_code": ach.id,
+                        "condition_type": ach.condition.type,
+                    },
+                )
+                continue
+
+            if not satisfied:
+                continue
+
+            # Выдаем ачивку
+            session.add(UserAchievement(user_id=user.id, achievement_code=ach.id))
+            unlocked_codes.add(ach.id)
+            processed_in_this_call.add(ach.id)
+            unlocked_this_loop += 1
+
+            newly_unlocked.append(
+                NewAchievementEvent(
+                    code=ach.id,
+                    name=ach.name,
+                    description=ach.description,
+                    icon=ach.icon,
+                    rarity=ach.rarity,
+                    reward=ach.reward,
+                )
             )
 
-    if total_reward_xp > 0:
-        await session.execute(
-            update(User).where(User.id == user.id).values(total_xp=User.total_xp + total_reward_xp)
-        )
-        await session.flush()
-        await session.refresh(user)
+            # Начисляем награды
+            reward_type = ach.reward.get("type")
+            if reward_type == "xp":
+                xp_gained_this_loop += int(ach.reward.get("amount", 0))
+            elif reward_type == "item":
+                item_id = ach.reward.get("item_id")
+                amount = int(ach.reward.get("amount", 1))
+                items_dict = _load_items()
+
+                # Проверяем, существует ли предмет в JSON, чтобы не выдать битый
+                if item_id in items_dict:
+                    for _ in range(amount):
+                        session.add(UserItem(user_id=user.id, item_code=item_id))
+                else:
+                    logger.warning(
+                        "achievement_item_not_found",
+                        extra={"achievement_code": ach.id, "item_id": item_id},
+                    )
+
+        # Если в этом цикле ничего не разблокировали — выходим
+        if unlocked_this_loop == 0:
+            break
+
+        # Применяем XP и обновляем юзера, чтобы в следующем цикле
+        # ачивки на уровень (ach_glob_*) увидели новый total_xp
+        if xp_gained_this_loop > 0:
+            await session.execute(
+                update(User)
+                .where(User.id == user.id)
+                .values(total_xp=User.total_xp + xp_gained_this_loop)
+            )
+            await session.flush()
+            await session.refresh(user)
 
     return newly_unlocked
 

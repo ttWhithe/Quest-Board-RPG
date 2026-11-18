@@ -711,17 +711,35 @@
 - **Дальше:** шаг 6 — рефакторинг `Character.tsx` (`AdventurerLicense`, `AvatarBlock`), фронтовые тосты для `new_achievements`.
 
 ## [2026-11-17] — Day 17, шаг 2: Фронтенд (тосты достижений)
-- `frontend/src/api/quests.ts`: в `CompleteQuestResponse` добавлен тип `NewAchievementEvent` и поле `new_achievements`.
-- `frontend/src/components/QuestCard.tsx`: при выполнении квеста новые достижения выводятся через `ToastContext` с задержкой (500мс между тостами).
-- **Рефакторинг:** задача по выносу `AdventurerLicense` из `Character.tsx` уже была выполнена ранее (файл сокращен до ~90 строк), `AvatarBlock` решено оставить внутри `AdventurerLicense` без изоляции.
+- **Сделано:**
+  - `frontend/src/api/quests.ts`: в `CompleteQuestResponse` добавлен тип `NewAchievementEvent` и поле `new_achievements`.
+  - `frontend/src/components/QuestCard.tsx`: при выполнении квеста новые достижения выводятся через `ToastContext` с задержкой (500мс между тостами).
+  - **Рефакторинг:** задача по выносу `AdventurerLicense` из `Character.tsx` уже была выполнена ранее (файл сокращен до ~90 строк), `AvatarBlock` решено оставить внутри `AdventurerLicense` без изоляции.
+- **Застрял / потратил время на:** Ошибки типов TS при попытке удалить `useUnlockAchievement` и добавить `progress`.
+- **Решение:** Переписал `FullAchievementsModal` целиком без остатков старого кода, добавил `progress` в интерфейс `Achievement`.
+- **Дальше:** PR Day 17, переход на Day 18.
 
-## [2026-11-18 20:00] — Day 18, шаг 1: Фикс багов UI и синхронизация достижений
+## [2026-11-18] — Day 18, шаг 1: Фикс багов UI и синхронизация достижений
+- **Сделано:**
+  - **Backend:** `PATCH /character/inventory/{item_code}`, `PATCH /character`, `POST /character/avatar` и `POST /auth/daily-reward` теперь возвращают `new_achievements` для показа тостов на фронте. Обновлен `test_inventory.py` под новый контракт.
+  - **Frontend (Кэш):** Добавлена инвалидация `queryKey: ['character']` при завершении квеста. Теперь XP на доске обновляется мгновенно.
+  - **Frontend (Уведомления):** Тосты за новые достижения добавлены в `useUpgradeTalent` (таланты) и `useUpdateInventoryItem` (экипировка).
+  - **Frontend (Модалка):** В `FullAchievementsModal` добавлена сортировка (закрепленные в начало, затем полученные) и прогресс-бары для залоченных достижений. Удален устаревший `useUnlockAchievement`.
+  - **Frontend (UI):** В `QuestCard` SVG-крестик вынесен за пределы карточки, увеличен, получил наклон и темно-бордовый цвет с прозрачностью.
+- **Застрял / потратил время на:** Ошибки типов TS (потерянные импорты, несовпадение типов ответов) и падение Vite (HMR) из-за кэша.
+- **Решение:** Очистка `.vite`, полная перезапись `FullAchievementsModal` и `achievements.ts`, исправление типов в API-хуках.
+- **Дальше:** Issue #42 (Доработка движка).
 
-- **Backend:** `PATCH /character/inventory/{item_code}`, `PATCH /character`, `POST /character/avatar` и `POST /auth/daily-reward` теперь возвращают `new_achievements` для показа тостов на фронте. Обновлен `test_inventory.py` под новый контракт.
-- **Frontend (Кэш):** Добавлена инвалидация `queryKey: ['character']` при завершении квеста. Теперь XP на доске обновляется мгновенно.
-- **Frontend (Уведомления):** Тосты за новые достижения добавлены в `useUpgradeTalent` (таланты) и `useUpdateInventoryItem` (экипировка).
-- **Frontend (Модалка):** В `FullAchievementsModal` добавлена сортировка (закрепленные в начало, затем полученные) и прогресс-бары для залоченных достижений. Удален устаревший `useUnlockAchievement`.
-- **Frontend (UI):** В `QuestCard` SVG-крестик вынесен за пределы карточки, увеличен, получил наклон и темно-бордовый цвет с прозрачностью.
+## [2026-11-18] — Day 18, шаг 2: Item-награды, уровневый каскад и ветки талантов
+- **Сделано:**
+  - **Backend:** В `check_and_unlock_achievements` добавлен цикл `while True` — теперь если ачивка дает XP и это вызывает левелап, уровневые достижения (`ach_glob_*`) выдаются моментально.
+  - **Backend:** Награды-предметы (`reward.type == "item"`) теперь физически создаются в `UserItem` и попадают в инвентарь.
+  - **Backend:** В `TalentNode` добавлено свойство `branch` (magic/war/stealth), вычисляемое по ID. Включены ачивки за количество талантов в ветке (`ach_t_8/9/10`).
+  - **Testing:** Добавлен интеграционный тест `test_talent_branch_achievements`.
+  - **Infra:** `load_json("items.json")` обернут в `@lru_cache` для оптимизации.
+- **Застрял / потратил время на:** Ошибки Ruff (E501 — длинные строки) и неправильный запуск mypy/pytest из Windows вместо Docker.
+- **Решение:** Разбил длинные кортежи на многострочные, запустил тесты через `docker compose exec api`.
+- **Дальше:** Финальный тест дня, обновление документации, PR.
 
 
 

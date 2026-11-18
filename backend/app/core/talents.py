@@ -17,6 +17,36 @@ class TalentNode:
     rank: int = 0
     can_upgrade: bool = False
 
+    @property
+    def branch(self) -> str | None:
+        """Определяет ветку таланта по префиксу ID для ачивок."""
+        magic = (
+            "illusion",
+            "conjuration",
+            "destruction",
+            "restoration",
+            "alteration",
+            "enchanting",
+        )
+        war = ("smithing", "heavy_armor", "block", "two_handed", "one_handed")
+        stealth = (
+            "archery",
+            "light_armor",
+            "sneak",
+            "lockpicking",
+            "pickpocket",
+            "speech",
+            "alchemy",
+        )
+
+        if self.id.startswith(magic):
+            return "magic"
+        if self.id.startswith(war):
+            return "war"
+        if self.id.startswith(stealth):
+            return "stealth"
+        return None
+
 
 # Загружаем JSON при старте
 _TREE_DATA = load_json("talent_tree.json")
