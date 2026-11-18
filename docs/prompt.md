@@ -11,23 +11,15 @@
 
 > ⚠️ **ПЕРЕД НАЧАЛОМ РАБОТЫ ОБЯЗАТЕЛЬНО ПРОЧИТАЙ `PROMPT-rules.md`**.
 
-## Текущее состояние (Day 17 завершен)
-- **Backend:** Движок достижений на `condition`-схеме. 100 достижений (84 auto + 16 manual-TODO). Все триггеры подключены (quests, talents, character, events, auth). Ручной `/unlock` удалён.
-- **Frontend:** Тосты за новые ачивки в `QuestCard`. `Character.tsx` (~90 строк, `AdventurerLicense` вынесен).
+## Текущее состояние (Day 18 завершен)
+- **Backend:** Движок достижений полностью работает (84 auto + 16 manual-TODO). Выдаются предметы, работают уровневые каскады и ветки талантов.
+- **Frontend:** Тосты показываются на все события. XP синхронизируется мгновенно. «Книга деяний» имеет прогресс-бары и сортировку.
 - **Infra:** Docker, CI (зеленый).
 
-## Что делаем сейчас — Day 18 (Achievements Engine — доработка)
-1. **Backend (TODO Day 17):**
-   - Юнит-тесты на каждый `condition.type`.
-   - Интеграционный тест `equip item → ach_inv_5`.
-   - `talents_branch_*` (ach_t_7/8/9/10) — добавить поле `branch` в `talent_tree.json`.
-   - `talents_notable` (ach_t_6) — проверить наличие `type: "notable"` в `talent_tree.json`.
-   - Item-награды — создавать `UserItem` при `reward.type == "item"`.
-   - Level-up от achievement XP — триггерить `level_reached` на следующем событии (сейчас возможен пропуск).
-   - `GET /achievements` — батч-преагрегация (сейчас ~84 SELECT'а).
-   - `load_json("items.json")` в `_handle_equipped_slots` — добавить `lru_cache`.
-2. **Frontend:**
-   - Показ прогресса залоченных ачивок (progress-bar) — если ещё не реализовано.
-   - Тосты для ачивок, полученных вне `QuestCard` (login, daily-reward, profile change) — добавить `new_achievements` в `/auth/me` или polling.
-3. **Docs/Infra:**
-   - Завершить PR Day 17 (squash-merge).
+## Что делаем сейчас — Day 19 (Optimization & Manual Achievements)
+1. **Backend (Optimization):**
+   - Батч-преагрегация для `GET /achievements` (сейчас ~84 SELECT'а).
+2. **Backend (Manual Achievements):**
+   - Перенос 16 manual-ачивок на серверные триггеры (добавление счетчиков в БД: клики, просмотры, изменения экипировки).
+3. **Frontend:**
+   - Добавление `new_achievements` в `/auth/me` или polling для показа тостов при фоновых событиях (например, стрики).
