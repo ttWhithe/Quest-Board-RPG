@@ -710,6 +710,11 @@
 - Из индекса удалён ранее закоммиченный `5c3b5881-..._edf4fcbc.webp` (на диске остаётся).
 - **Дальше:** шаг 6 — рефакторинг `Character.tsx` (`AdventurerLicense`, `AvatarBlock`), фронтовые тосты для `new_achievements`.
 
+## [2026-11-17] — Day 17, шаг 2: Фронтенд (тосты достижений)
+- `frontend/src/api/quests.ts`: в `CompleteQuestResponse` добавлен тип `NewAchievementEvent` и поле `new_achievements`.
+- `frontend/src/components/QuestCard.tsx`: при выполнении квеста новые достижения выводятся через `ToastContext` с задержкой (500мс между тостами).
+- **Рефакторинг:** задача по выносу `AdventurerLicense` из `Character.tsx` уже была выполнена ранее (файл сокращен до ~90 строк), `AvatarBlock` решено оставить внутри `AdventurerLicense` без изоляции.
+
 ## Шаблон для следующих дней
 
 ```markdown
