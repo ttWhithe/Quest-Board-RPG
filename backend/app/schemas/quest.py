@@ -14,6 +14,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from app.schemas.achievement import NewAchievementEvent
+
 # ---------------------------------------------------------------------------
 # Псевдонимы типов (совпадают с enum-значениями моделей)
 # ---------------------------------------------------------------------------
@@ -184,3 +186,4 @@ class QuestCompleteResponse(BaseModel):
     quest: QuestCompleteQuest
     xp_awarded: int
     user_after: UserAfterComplete
+    new_achievements: list[NewAchievementEvent] = Field(default_factory=list)

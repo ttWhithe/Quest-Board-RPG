@@ -15,6 +15,7 @@ from PIL import Image
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.achievements import AchievementEvent, check_and_unlock_achievements
 from app.core.deps import get_current_user
 from app.core.game import (
     RARITY_MULTIPLIERS,
@@ -44,6 +45,7 @@ from app.schemas.user import UserOut
 
 router = APIRouter(prefix="/character", tags=["character"])
 ENHANCEMENT_LETTERS = ["", "D", "C", "B", "A", "S"]
+RARITY_ORDER = ["common", "uncommon", "rare", "epic", "legendary"]
 
 
 def _user_tz(user: User) -> ZoneInfo:
@@ -128,18 +130,37 @@ async def update_character(
     current_user: Annotated[User, Depends(get_current_user)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> CharacterOut:
+    changed_fields: list[str] = []
+
     if payload.nickname is not None:
+        if current_user.nickname != payload.nickname:
+            changed_fields.append("nickname")
         current_user.nickname = payload.nickname
     if payload.emblem_seed is not None:
+        if current_user.emblem_seed != payload.emblem_seed:
+            changed_fields.append("emblem_seed")
         current_user.emblem_seed = payload.emblem_seed
     if payload.timezone is not None:
+        if current_user.timezone != payload.timezone:
+            changed_fields.append("timezone")
         current_user.timezone = payload.timezone
 
-    # Новые поля
+    # Новые поля (без ачивок)
     if payload.guild_symbol is not None:
         current_user.guild_symbol = payload.guild_symbol
     if payload.pinned_achievements is not None:
         current_user.pinned_achievements = payload.pinned_achievements
+
+    if changed_fields:
+        await session.flush()
+        now = datetime.now(UTC)
+        for field in changed_fields:
+            await check_and_unlock_achievements(
+                session,
+                current_user,
+                AchievementEvent.PROFILE_CHANGED,
+                {"now": now, "profile_field": field},
+            )
 
     await session.commit()
     await session.refresh(current_user)
@@ -342,6 +363,13 @@ async def update_inventory_item(
             )
         user_item = UserItem(user_id=current_user.id, item_code=item_code)
         session.add(user_item)
+    # Сохраняем состояние ДО изменений — для детекции downgrade/upgrade.
+    # `or 0` — потому что у только что созданного `UserItem` поле
+    # `enhancement_level` = None до flush (SQLAlchemy применяет default=0
+    # только на INSERT).
+    prev_enhancement = user_item.enhancement_level or 0
+    prev_effective_rarity = user_item.rarity_override or item_data["rarity"]
+
     if payload.is_pinned is not None:
         user_item.is_pinned = payload.is_pinned
 
@@ -394,6 +422,31 @@ async def update_inventory_item(
                 .values(equipped_slot=None)
             )
         user_item.equipped_slot = new_slot
+
+    # Контекст для движка достижений (флаги изменений).
+    ctx: dict[str, Any] = {"now": datetime.now(UTC)}
+    new_enhancement = user_item.enhancement_level or 0
+    new_effective_rarity = user_item.rarity_override or item_data["rarity"]
+
+    if new_enhancement < prev_enhancement:
+        ctx["enhancement_downgraded"] = True
+    if new_effective_rarity != prev_effective_rarity:
+        try:
+            if RARITY_ORDER.index(new_effective_rarity) > RARITY_ORDER.index(prev_effective_rarity):
+                ctx["rarity_upgraded"] = True
+        except ValueError:
+            pass
+    if new_enhancement > prev_enhancement:
+        if any(v < 0 for v in item_data.get("stats", {}).values()):
+            ctx["enhanced_negative_item"] = True
+
+    await session.flush()
+    await check_and_unlock_achievements(
+        session,
+        current_user,
+        AchievementEvent.ITEM_CHANGED,
+        ctx,
+    )
 
     await session.commit()
     await session.refresh(user_item)

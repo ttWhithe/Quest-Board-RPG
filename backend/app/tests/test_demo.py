@@ -21,7 +21,9 @@ async def test_demo_creates_user_with_quests_and_events(async_client: AsyncClien
 
         data = response.json()
         assert data["user"]["nickname"] == "Странник"
-        assert data["user"]["total_xp"] == 238
+        # Demo seed: 238 XP + 50 от ach_sec_6 («Таинственный странник»,
+        # триггер DEMO_LOGIN при создании demo-пользователя) = 288.
+        assert data["user"]["total_xp"] == 288
         assert data["user"]["is_demo"] is True
 
         token = data["access_token"]
