@@ -42,7 +42,7 @@ async def test_inventory_pin_item(async_client: AsyncClient) -> None:
         json={"is_pinned": True},
     )
     assert res.status_code == 200
-    assert res.json()["is_pinned"] is True
+    assert res.json()["item"]["is_pinned"] is True
 
     # Проверяем, что состояние сохранилось при следующем GET
     res_get = await async_client.get("/api/v1/character/inventory", headers=headers)
@@ -60,7 +60,7 @@ async def test_inventory_equip_item(async_client: AsyncClient) -> None:
         json={"equipped_slot": "head"},
     )
     assert res.status_code == 200
-    assert res.json()["equipped_slot"] == "head"
+    assert res.json()["item"]["equipped_slot"] == "head"
 
 
 @pytest.mark.asyncio

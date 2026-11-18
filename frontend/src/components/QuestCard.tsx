@@ -78,7 +78,7 @@ export function QuestCard({ quest }: { quest: Quest }) {
       <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 shadow-md border border-gray-600 z-20"></div>
 
       <div
-        className="torn-paper p-4 flex flex-col relative transition-transform group-hover:-translate-y-1"
+        className="torn-paper p-4 flex flex-col relative transition-transform group-hover:-translate-y-1 h-full"
       >
         <AnimatePresence>
           {showXp && (
@@ -114,14 +114,6 @@ export function QuestCard({ quest }: { quest: Quest }) {
           {quest.title}
         </h3>
 
-        {isCompleted && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden">
-            <span className="text-red-600 font-black opacity-90 text-[15rem] leading-none rotate-[-15deg] select-none">
-              ✕
-            </span>
-          </div>
-        )}
-
         <div className="mt-auto pt-4 flex flex-col gap-3 relative z-10">
           <div className="flex justify-between items-center text-sm border-t-2 border-dashed border-[#8b7355] pt-3 font-bold text-[#5c4033]">
             <span className="flex items-center gap-1">
@@ -144,6 +136,22 @@ export function QuestCard({ quest }: { quest: Quest }) {
           )}
         </div>
       </div>
+
+      {/* Крестик выполненного квеста — ВЫНЕСЕН ИЗ torn-paper, чтобы не обрезался */}
+      {isCompleted && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 512 512"
+            className="w-[140%] h-[140%] opacity-80 rotate-[-8deg] drop-shadow-2xl"
+          >
+            <path
+              d="M105.367 18.328c23.14 15.444 46.098 31.27 68.55 47.572-45.055-20.895-94.51-35.918-149.37-44.246 46.697 26.72 91.596 55.58 135.705 85.524-37.203-18.033-77.48-32.22-121.602-41.37 58.218 34.322 109.368 72.465 154.71 114.206C136.02 227.227 86.295 284.717 45.79 354.18c27.11-24.29 54.91-47.545 82.868-70.68C81.942 339.36 45.05 405.01 20.2 482.135c20.36-24.62 40.988-48.203 61.905-70.817 44.7-67.485 89.567-147.11 148.856-170.418-29.61 30.708-63.36 75.164-98.25 118.145 40.99-40.437 83.09-77.46 126.415-111.512 61.598 70.49 110.757 149.38 152.145 235.873-6.738-44.794-16.796-87.384-30.03-127.666l46.444 65.53s-26.037-72.69-43.66-101.987c40.76 55.91 78.208 114.428 112.328 175.205-18.674-89.454-50.512-169.772-98.893-238.224a1783.223 1783.223 0 0 1 100.93 109.045C465.048 288.827 423.58 221.82 372.214 167c40.224-25.887 81.48-49.73 123.863-71.783a757.16 757.16 0 0 0-92.006 21.934c21.836-16.173 44.41-32.124 67.024-47.523-37.987 11.91-74.633 25.775-109.067 41.433 42.668-27.673 86.32-53.668 131.004-78.602h-.003c-67.47 18.055-130.83 42.19-188.998 73.548-56.294-41.79-122.01-71.787-198.663-87.68z"
+              fill="#c30000" /* Темно-бордовый (кровь) */
+            />
+          </svg>
+        </div>
+      )}
     </div>
   );
 }

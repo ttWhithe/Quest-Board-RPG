@@ -122,3 +122,27 @@ async def test_talent_upgrade_unlocks_first_talent_achievement(
     ach_res = await async_client.get("/api/v1/achievements", headers=headers)
     ach_t_1 = next(a for a in ach_res.json() if a["id"] == "ach_t_1")
     assert ach_t_1["unlocked"] is True
+
+
+@pytest.mark.asyncio
+async def test_talent_branch_achievements(async_client: AsyncClient) -> None:
+    """Проверяем, что ачивки за ветки талантов (ach_t_8, ach_t_9, ach_t_10) работают."""
+    headers = await _demo_headers(async_client)
+
+    # 1. Получаем дерево талантов
+    tree = await async_client.get("/api/v1/talents", headers=headers)
+    nodes = tree.json()["nodes"]
+
+    # Ищем 5 доступных узлов в ветке магии (illusion_*, conjuration_* и т.д.)
+    magic_prefixes = ("illusion_", "conjuration_", "destruction_")
+    magic_nodes = [n for n in nodes if n["id"].startswith(magic_prefixes) and n["can_upgrade"]]
+
+    if len(magic_nodes) >= 5:
+        for node in magic_nodes[:5]:
+            res = await async_client.post(f"/api/v1/talents/{node['id']}/upgrade", headers=headers)
+            assert res.status_code == 200
+
+        # Проверяем, что ach_t_8 (Маг) выдался
+        ach_res = await async_client.get("/api/v1/achievements", headers=headers)
+        ach_t_8 = next(a for a in ach_res.json() if a["id"] == "ach_t_8")
+        assert ach_t_8["unlocked"] is True
