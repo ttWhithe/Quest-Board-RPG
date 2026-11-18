@@ -1,3 +1,4 @@
+from datetime import UTC, datetime
 from typing import Annotated
 from uuid import UUID
 
@@ -5,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.achievements import AchievementEvent, check_and_unlock_achievements
 from app.core.deps import get_current_user
 from app.core.game import level_for_xp
 from app.core.talents import _EDGES, TALENTS, available_talent_points, can_upgrade
@@ -86,6 +88,13 @@ async def upgrade_talent(
         existing = UserTalent(user_id=user.id, talent_code=code, rank=1)
         session.add(existing)
 
+    await session.flush()
+    await check_and_unlock_achievements(
+        session,
+        user,
+        AchievementEvent.TALENT_UPGRADED,
+        {"now": datetime.now(UTC)},
+    )
     await session.commit()
     await session.refresh(existing)
 

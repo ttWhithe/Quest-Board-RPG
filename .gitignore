@@ -34,3 +34,6 @@ frontend/.env.*
 .vscode/
 .idea/
 .DS_Store
+
+# User-generated avatars (runtime, not source)
+backend/app/static/avatars/

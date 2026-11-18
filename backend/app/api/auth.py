@@ -8,6 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.achievements import AchievementEvent, check_and_unlock_achievements
 from app.core.demo import create_demo_user
 from app.core.deps import get_current_user
 from app.core.rate_limit import check_demo_rate_limit
@@ -78,7 +79,16 @@ async def login(
         )
 
     # Обновляем стрик при входе
+    prev_login_at = user.last_login_at
     update_login_streak(user)
+
+    now = datetime.now(UTC)
+    ctx: dict[str, Any] = {"now": now}
+    if prev_login_at is not None:
+        ctx["days_since_previous_login"] = (now - prev_login_at).days
+
+    await session.flush()
+    await check_and_unlock_achievements(session, user, AchievementEvent.LOGIN, ctx)
     await session.commit()
     await session.refresh(user)
 
@@ -95,6 +105,13 @@ async def read_current_user(
     # Проверяем стрик при каждой загрузке приложения
     updated = update_login_streak(current_user)
     if updated:
+        await session.flush()
+        await check_and_unlock_achievements(
+            session,
+            current_user,
+            AchievementEvent.LOGIN,
+            {"now": datetime.now(UTC)},
+        )
         await session.commit()
         await session.refresh(current_user)
     return current_user
@@ -111,6 +128,13 @@ async def demo_login(
     """Create a demo user with seeded data and return JWT (Spec §7.8)."""
     demo_user = await create_demo_user(session)
     update_login_streak(demo_user)
+    await session.flush()
+    await check_and_unlock_achievements(
+        session,
+        demo_user,
+        AchievementEvent.DEMO_LOGIN,
+        {"now": datetime.now(UTC)},
+    )
     await session.commit()
     await session.refresh(demo_user)
 
@@ -172,7 +196,15 @@ async def claim_daily_reward(
     current_user.last_daily_reward_at = datetime.now(UTC)
     current_user.daily_reward_day = current_day + 1
 
+    await session.flush()
+    await check_and_unlock_achievements(
+        session,
+        current_user,
+        AchievementEvent.DAILY_REWARD,
+        {"now": datetime.now(UTC)},
+    )
     await session.commit()
+    await session.refresh(current_user)
 
     return {
         "success": True,

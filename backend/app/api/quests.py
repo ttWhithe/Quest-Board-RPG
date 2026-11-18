@@ -11,6 +11,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy import ColumnElement, Date, case, cast, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.achievements import AchievementEvent, check_and_unlock_achievements
 from app.core.deps import get_current_user
 from app.core.game import (
     calc_xp,
@@ -25,7 +26,6 @@ from app.db import get_session
 from app.models.enums import QuestRank, QuestRarity, QuestRecurrence, QuestStatus
 from app.models.quest import Quest
 from app.models.user import User
-from app.models.user_achievement import UserAchievement
 from app.models.user_talent import UserTalent
 from app.schemas.quest import (
     QuestCompleteQuest,
@@ -102,41 +102,6 @@ async def _get_owned_quest(
             detail={"detail": "Quest not found", "code": "NOT_FOUND"},
         )
     return quest
-
-
-async def _check_quest_achievements(session: AsyncSession, user: User) -> None:
-    """Проверяет и выдает базовые достижения за количество выполненных квестов."""
-    # Считаем общее число выполнений (сумма completion_count по всем квестам)
-    total_completed = (
-        await session.scalar(
-            select(func.sum(Quest.completion_count)).where(Quest.user_id == user.id)
-        )
-        or 0
-    )
-
-    to_unlock = []
-    if total_completed >= 1:
-        to_unlock.append("ach_q_1")  # Первый шаг
-    if total_completed >= 5:
-        to_unlock.append("ach_q_2")  # Разминка
-    if total_completed >= 10:
-        to_unlock.append("ach_q_5")  # Новичок
-
-    if not to_unlock:
-        return
-
-    # Проверяем, какие уже есть
-    existing = await session.scalars(
-        select(UserAchievement.achievement_code).where(
-            UserAchievement.user_id == user.id, UserAchievement.achievement_code.in_(to_unlock)
-        )
-    )
-    existing_codes = set(existing.all())
-
-    # Выдаем недостающие
-    for code in to_unlock:
-        if code not in existing_codes:
-            session.add(UserAchievement(user_id=user.id, achievement_code=code))
 
 
 # ---------------------------------------------------------------------------
@@ -263,10 +228,19 @@ async def create_quest(
         status=QuestStatus.active,
     )
     session.add(quest)
+    await session.flush()
+
+    now = datetime.now(UTC)
+    await check_and_unlock_achievements(
+        session,
+        current_user,
+        AchievementEvent.QUEST_CREATED,
+        {"now": now},
+    )
     await session.commit()
     await session.refresh(quest)
 
-    return _quest_to_read(quest, datetime.now(UTC), _user_tz(current_user))
+    return _quest_to_read(quest, now, _user_tz(current_user))
 
 
 @router.get("/{quest_id}", response_model=QuestRead)
@@ -425,10 +399,21 @@ async def complete_quest(
         update(User).where(User.id == current_user.id).values(total_xp=User.total_xp + xp)
     )
 
-    # 5.5. Проверка базовых достижений
-    await _check_quest_achievements(session, current_user)
+    # 5.5. Достижения. Перед вызовом движка:
+    #   * `flush` — чтобы SUM(completion_count) в handler'ах увидел новые данные;
+    #   * `refresh(current_user)` — чтобы handlers читали свежий total_xp
+    #     (SQL-инкремент выше не меняет Python-объект).
+    await session.flush()
+    await session.refresh(current_user)
+    new_achievements = await check_and_unlock_achievements(
+        session,
+        current_user,
+        AchievementEvent.QUEST_COMPLETED,
+        {"now": now, "quest": quest},
+    )
 
-    # 6. COMMIT + refresh: подтягиваем server-side `updated_at` и новый total_xp.
+    # 6. COMMIT + refresh: подтягиваем server-side `updated_at` и total_xp
+    #    с учётом XP за ачивки.
     await session.commit()
     await session.refresh(quest)
     await session.refresh(current_user)
@@ -450,6 +435,7 @@ async def complete_quest(
             xp_into_level=xp_into_level(current_user.total_xp),
             xp_for_next_level=xp_for_next_level(level),
         ),
+        new_achievements=new_achievements,
     )
 
 

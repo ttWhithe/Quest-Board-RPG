@@ -62,6 +62,19 @@ export interface QuestCreateInput {
   recurrence?: QuestRecurrence;
 }
 
+export interface NewAchievementEvent {
+  code: string;
+  name: string;
+  description: string;
+  icon: string;
+  rarity: QuestRarity;
+  reward: {
+    type: 'xp' | 'item';
+    amount?: number;
+    item_id?: string;
+  };
+}
+
 // Ответ от POST /quests/{id}/complete (Spec §7.7)
 export interface CompleteQuestResponse {
   quest: Quest;
@@ -72,6 +85,7 @@ export interface CompleteQuestResponse {
     xp_into_level: number;
     xp_for_next_level: number;
   };
+  new_achievements: NewAchievementEvent[];
 }
 
 // ============================================================

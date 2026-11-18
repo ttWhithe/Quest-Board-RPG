@@ -1,6 +1,6 @@
 # Quest Board RPG — Техническое задание (ТЗ)
 
-> **Версия:** 1.16 · **Дата:** 2026-11-16
+> **Версия:** 1.17 · **Дата:** 2026-11-17
 > Веб-приложение: RPG-трекер задач в стилистике доски квестов средневековой магической гильдии.
 > Пет-проект для портфолио. Один разработчик. Цель — работающий MVP с честным инженерным процессом.
 > Дневник разработки — в `devlog.md`, быстрый старт — в `README.md`.
@@ -963,6 +963,15 @@ VITE_API_URL=http://localhost:8000/api/v1
 
 
 ## 16. Changelog
+
+- **v1.17 (2026-11-17):**
+  - **Backend (Achievements Engine):** `achievements.json` переведён на схему `condition` (100 достижений: 84 auto + 16 manual-TODO). Новый модуль `app/core/achievements.py` — `check_and_unlock_achievements` + реестр handler'ов (22 типа условий) + `_EVENT_CONDITION_MAP` (9 триггеров). Начисление `reward.xp` атомарным UPDATE `users.total_xp`. `POST /achievements/{id}/unlock` **удалён** (читерская лазейка).
+  - **Backend (Triggers):** движок подключён к 10 точкам вызова: complete/create quest, talent upgrade, character PATCH, inventory PATCH, create event, login, /me, demo, daily-reward.
+  - **API:** `POST /quests/{id}/complete` возвращает `new_achievements: list[NewAchievementEvent]`. `GET /achievements` возвращает `progress: {current, target}` для залоченных достижений.
+  - **Frontend:** `QuestCard` показывает тосты за новые достижения через `ToastContext`. `CompleteQuestResponse` расширен полем `new_achievements`.
+  - **Refactoring:** `Character.tsx` уже разбит ранее (`AdventurerLicense` вынесен). `AvatarBlock` оставлен внутри `AdventurerLicense` (отклонение от плана, зафиксировано в devlog).
+
+  - **Testing:** `test_achievements.py` (5 тестов, включая Sad Path: повторный complete не выдаёт повторно, 404 на удалённый `/unlock`), `test_demo.py` (`238 → 288` из-за `ach_sec_6` при demo login). Покрытие **71.18%**.
 
 - **v1.16 (2026-11-16):**
   - **Frontend:** Глобальный редизайн достижений (блок на `/character`, «Книга деяний», закрепленные бейджи на «Удостоверении искателя»). Внедрена система всплывающих уведомлений (`ToastContext`) при получении ачивок. Модалка повышения уровня вынесена глобально в `App.tsx`.

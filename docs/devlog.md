@@ -655,6 +655,66 @@
 - **Решение:** Перенесли логику в `App.tsx`, обошлись без jsdom.
 - **Дальше:** Движок достижений (Backend) и рефакторинг `Character.tsx` перенесены на Day 17.
 
+## [2026-11-17] — Day 17: Движок достижений на condition-схеме + wiring
+- **Сделано (Backend — движок):**
+  - `app/data/achievements.json` переведён на схему `condition`. Итого 100 достижений: **84 auto** (проверяются движком) + **16 manual** (TODO Day 18+: клиентские счётчики, ветки талантов). Поле `version: 2` — маркер новой схемы.
+  - `app/schemas/achievement.py` — расширены схемы: `AchievementDef` (внутренняя, с `condition`), `AchievementOut` (публичная, с `progress`), `AchievementProgress`, `NewAchievementEvent`.
+  - **Новый модуль `app/core/achievements.py`:**
+    - `check_and_unlock_achievements(session, user, event, context)` — единая точка проверки (не коммитит — caller коммитит).
+    - Реестр handler'ов `_HANDLERS: dict[str, Handler]` — по `condition.type` (22 типа).
+    - `_EVENT_CONDITION_MAP` — какие типы проверяются на каких триггерах (9 событий).
+    - `get_all_achievements_with_progress` — для `GET /achievements`.
+    - Кэш JSON (`_ACHIEVEMENTS_CACHE`) + `_reset_cache_for_tests()`.
+  - Начисление `reward.xp` — атомарный `UPDATE users SET total_xp = total_xp + :sum` после сбора новых ачивок. `reward.type == "item"` — **только логируется** (TODO Day 18+), фронт покажет «Предмет (скоро)».
+- **Сделано (Backend — точки вызова, 10 мест в 5 файлах):**
+  - `POST /quests/{id}/complete` — `QUEST_COMPLETED` (перед вызовом движка: `flush` + `refresh(user)`, чтобы handlers видели свежий `total_xp`/`completion_count`).
+  - `POST /quests` — `QUEST_CREATED`.
+  - `POST /talents/{code}/upgrade` — `TALENT_UPGRADED`.
+  - `PATCH /character` — `PROFILE_CHANGED` (по каждому изменённому полю: `nickname`/`emblem_seed`/`timezone`).
+  - `PATCH /character/inventory/{item_code}` — `ITEM_CHANGED` (контекст: `enhancement_downgraded`, `rarity_upgraded`, `enhanced_negative_item`).
+  - `POST /events` — `EVENT_CREATED`.
+  - `POST /auth/login` — `LOGIN` (+ `days_since_previous_login` в контекст).
+  - `GET /auth/me` — `LOGIN` (если `update_login_streak` вернул `True`).
+  - `POST /auth/demo` — `DEMO_LOGIN`.
+  - `POST /auth/daily-reward` — `DAILY_REWARD`.
+- **Сделано (Backend — контракт и удаления):**
+  - `QuestCompleteResponse.new_achievements: list[NewAchievementEvent]` — фронт покажет тосты.
+  - Удалён `_check_quest_achievements` из `api/quests.py` (заменён движком).
+  - **Удалён `POST /achievements/{id}/unlock`** (читерская лазейка). `GET /achievements` переведён на `get_all_achievements_with_progress` — возвращает `progress: {current, target}` для залоченных.
+- **Сделано (Tests):**
+  - `app/tests/test_achievements.py` — полная замена. 5 тестов: полный список (100 шт) + прогресс, complete→unlock `ach_q_1`, **Sad Path: повторный complete не выдаёт повторно**, **Sad Path: `/unlock` → 404**, talent upgrade→unlock `ach_t_1`.
+  - `app/tests/test_demo.py` — ассерт `total_xp`: `238 → 288` (DEMO_LOGIN выдаёт `ach_sec_6` +50 XP при создании demo).
+  - Покрытие: **71.18%** (порог 70% взят).
+- **Застрял / потратил время на:**
+  - Ruff `N806` — переменная `_RARITY_ORDER` внутри функции. Вынес в module-level `RARITY_ORDER` (без underscore).
+  - Ruff `F821` / mypy `name-defined` — ошибочно убрал `func` из импортов в `api/quests.py` (использовался в `cast(func.timezone(...))`). Вернул.
+  - `TypeError: '<' not supported between NoneType and int` в `update_inventory_item` — у только что созданного `UserItem` `enhancement_level = None` до `flush` (default=0 применяется на INSERT). Фикс: `or 0` при чтении `prev_enhancement`/`new_enhancement`.
+  - Ruff `I001` — автофикс через `ruff check . --fix` (порядок импортов в `schemas/achievement.py`).
+- **Решение по процессу:**
+  - `spec.md` — Changelog **v1.17** (промежуточная запись; если в шаге 6 — рефакторинг `Character.tsx` — появятся новые детали, дополню).
+  - `prompt.md` — оставляю без изменений до финального PR дня.
+- **Known issues (TODO Day 18+, записать в prompt.md перед финальным PR):**
+  1. **`talents_branch_*`** (`ach_t_7/8/9/10`) — `manual`: в `talent_tree.json` **нет поля `branch`**. Нужна доработка JSON.
+  2. **`talents_notable`** (`ach_t_6`) — работает только если в `talent_tree.json` есть `type == "notable"`. Проверить локально: `python -c "from app.core.talents import TALENTS; print({n.type for n in TALENTS.values()})"`.
+  3. **Item-награды** — лог-нотис, `UserItem` не создаётся. Схема «готова», фронт покажет «Предмет (скоро)».
+  4. **Level-up от achievement XP** не триггерит `level_reached` — сработает на следующем событии.
+  5. **`talents.py available_points`** может стухнуть на +1, если achievement XP дал уровень. Следующий upgrade исправит.
+  6. **`GET /achievements`** = ~84 SELECT'а (по одному на залоченную ачивку). MVP ок, Day 18+: батч-преагрегация.
+  7. **`load_json("items.json")`** в `_handle_equipped_slots` вызывается до 3 раз за `ITEM_CHANGED` — Day 18+ добавить `lru_cache`.
+  8. **Демо-юзер** не получает `ach_q_1/2/5` задним числом (только `ach_sec_6` через `DEMO_LOGIN`). Следующий `complete` их доберёт.
+  9. **`read_current_user`** может выдать ачивку в фоне (смена дня) — фронт не увидит тост (нет поля в `UserOut`). Day 18+: добавить в `/auth/me` или polling.
+- `QuestForm.tsx`: показ потенциального базового XP на основе выбранных ранга и редкости (`RANK_BASE × RARITY_MULT`). Использует `useCharacter().xp_bonus_percent` для учёта бонуса талантов.
+- Автор правки — пользователь (не ИИ), в рамках Day 17.
+- `backend/app/static/avatars/` — добавлен в `.gitignore` (user-generated runtime-контент).
+- `.gitkeep` сохраняет папку в репо (`upload_avatar` использует `Path("app/static/avatars")`).
+- Из индекса удалён ранее закоммиченный `5c3b5881-..._edf4fcbc.webp` (на диске остаётся).
+- **Дальше:** шаг 6 — рефакторинг `Character.tsx` (`AdventurerLicense`, `AvatarBlock`), фронтовые тосты для `new_achievements`.
+
+## [2026-11-17] — Day 17, шаг 2: Фронтенд (тосты достижений)
+- `frontend/src/api/quests.ts`: в `CompleteQuestResponse` добавлен тип `NewAchievementEvent` и поле `new_achievements`.
+- `frontend/src/components/QuestCard.tsx`: при выполнении квеста новые достижения выводятся через `ToastContext` с задержкой (500мс между тостами).
+- **Рефакторинг:** задача по выносу `AdventurerLicense` из `Character.tsx` уже была выполнена ранее (файл сокращен до ~90 строк), `AvatarBlock` решено оставить внутри `AdventurerLicense` без изоляции.
+
 ## Шаблон для следующих дней
 
 ```markdown

@@ -5,9 +5,11 @@ import { useCompleteQuest } from '../api/quests';
 import { RARITY_COLORS, RANK_BASE, RARITY_MULT } from '../constants';
 import { formatDeadline } from '../utils/date';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 
 export function QuestCard({ quest }: { quest: Quest }) {
   const { updateUser } = useAuth();
+  const { addToast } = useToast();
   const { mutate: completeQuest, isPending } = useCompleteQuest();
   const [showXp, setShowXp] = useState(false);
   const [earnedXp, setEarnedXp] = useState(0);
@@ -45,6 +47,20 @@ export function QuestCard({ quest }: { quest: Quest }) {
         setEarnedXp(data.xp_awarded);
         setShowXp(true);
         setTimeout(() => setShowXp(false), 2000);
+
+        // Показываем тосты за полученные достижения
+        if (data.new_achievements && data.new_achievements.length > 0) {
+          data.new_achievements.forEach((ach, index) => {
+            setTimeout(() => {
+              addToast({
+                title: `Достижение: ${ach.name}`,
+                description: ach.description,
+                icon: `/icons/${ach.icon}.svg`,
+                color: RARITY_COLORS[ach.rarity] || '#5c4033',
+              });
+            }, index * 500); // Небольшая задержка между тостами
+          });
+        }
       },
       onError: (err: any) => {
         const code = err.response?.data?.code;

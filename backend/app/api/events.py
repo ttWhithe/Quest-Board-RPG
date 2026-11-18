@@ -1,9 +1,11 @@
+from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.achievements import AchievementEvent, check_and_unlock_achievements
 from app.core.deps import get_current_user
 from app.db import get_session
 from app.models.enums import EventKind
@@ -61,6 +63,13 @@ async def create_event(
         repeats_yearly=repeats_yearly,
     )
     db.add(event)
+    await db.flush()
+    await check_and_unlock_achievements(
+        db,
+        user,
+        AchievementEvent.EVENT_CREATED,
+        {"now": datetime.now(UTC)},
+    )
     await db.commit()
     await db.refresh(event)
     return event
