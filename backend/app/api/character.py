@@ -39,6 +39,7 @@ from app.schemas.character import (
     CharacterUpdate,
     InventoryItem,
     InventoryItemUpdate,
+    InventoryItemUpdateResponse,
     InventoryResponse,
 )
 from app.schemas.user import UserOut
@@ -151,21 +152,25 @@ async def update_character(
     if payload.pinned_achievements is not None:
         current_user.pinned_achievements = payload.pinned_achievements
 
+    new_achievements = []
     if changed_fields:
         await session.flush()
         now = datetime.now(UTC)
         for field in changed_fields:
-            await check_and_unlock_achievements(
+            unlocked = await check_and_unlock_achievements(
                 session,
                 current_user,
                 AchievementEvent.PROFILE_CHANGED,
                 {"now": now, "profile_field": field},
             )
+            new_achievements.extend(unlocked)
 
     await session.commit()
     await session.refresh(current_user)
 
-    return await get_character(current_user, session)
+    res = await get_character(current_user, session)
+    res.new_achievements = new_achievements
+    return res
 
 
 @router.post("/avatar", response_model=CharacterOut)
@@ -334,13 +339,13 @@ async def get_inventory(
     return InventoryResponse(items=items, total=len(items))
 
 
-@router.patch("/inventory/{item_code}", response_model=InventoryItem)
+@router.patch("/inventory/{item_code}", response_model=InventoryItemUpdateResponse)
 async def update_inventory_item(
     item_code: str,
     payload: InventoryItemUpdate,
     current_user: Annotated[User, Depends(get_current_user)],
     session: Annotated[AsyncSession, Depends(get_session)],
-) -> InventoryItem:
+) -> InventoryItemUpdateResponse:
     """Обновляет состояние предмета (закрепление, экипировка, заточка, редкость)."""
     data = load_json("items.json")
     item_data = next((i for i in data.get("items", []) if i["id"] == item_code), None)
@@ -441,7 +446,7 @@ async def update_inventory_item(
             ctx["enhanced_negative_item"] = True
 
     await session.flush()
-    await check_and_unlock_achievements(
+    new_achievements = await check_and_unlock_achievements(
         session,
         current_user,
         AchievementEvent.ITEM_CHANGED,
@@ -458,9 +463,11 @@ async def update_inventory_item(
 
     item_dict = {**item_data, "rarity": effective_rarity}
 
-    return InventoryItem(
+    item_out = InventoryItem(
         **item_dict,
         is_pinned=user_item.is_pinned,
         equipped_slot=user_item.equipped_slot,
         enhancement_level=user_item.enhancement_level,
     )
+
+    return InventoryItemUpdateResponse(item=item_out, new_achievements=new_achievements)

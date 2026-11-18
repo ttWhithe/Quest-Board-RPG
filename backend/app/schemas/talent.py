@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+from app.schemas.achievement import NewAchievementEvent
+
 
 class TalentOut(BaseModel):
     id: str
@@ -23,3 +25,4 @@ class TalentTreeOut(BaseModel):
 class TalentUpgradeResponse(BaseModel):
     available_points: int
     node: TalentOut
+    new_achievements: list[NewAchievementEvent] = []

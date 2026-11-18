@@ -1,6 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from './client';
 import { characterKeys } from './character';
+import { useToast } from '../contexts/ToastContext';
+import { RARITY_COLORS } from '../constants';
+import type { NewAchievementEvent } from './quests';
 
 export interface TalentNode {
   id: string;
@@ -24,6 +27,7 @@ export interface TalentTreeResponse {
 export interface TalentUpgradeResponse {
   available_points: number;
   node: TalentNode;
+  new_achievements?: NewAchievementEvent[];
 }
 
 export const talentKeys = {
@@ -43,14 +47,28 @@ export function useTalents() {
 
 export function useUpgradeTalent() {
   const queryClient = useQueryClient();
+  const { addToast } = useToast();
+
   return useMutation({
     mutationFn: async (code: string) => {
       const { data } = await api.post<TalentUpgradeResponse>(`/talents/${code}/upgrade`);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: talentKeys.all });
       queryClient.invalidateQueries({ queryKey: characterKeys.detail() });
+
+      // Тосты
+      data.new_achievements?.forEach((ach, index) => {
+        setTimeout(() => {
+          addToast({
+            title: `Достижение: ${ach.name}`,
+            description: ach.description,
+            icon: `/icons/${ach.icon}.svg`,
+            color: RARITY_COLORS[ach.rarity] || '#5c4033',
+          });
+        }, index * 500);
+      });
     },
   });
 }

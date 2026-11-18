@@ -155,10 +155,10 @@ export function useCompleteQuest() {
       return response.data;
     },
     onSuccess: (data) => {
-      // Обновляем список квестов
       queryClient.invalidateQueries({ queryKey: questKeys.lists() });
-      // Обновляем глобальный total_xp, чтобы сработал GlobalLevelUpWatcher
-      updateUser({ total_xp: data.user_after.total_xp }); // <-- ДОБАВЛЕНО
+      // ФИКС: Инвалидируем кэш персонажа, чтобы на доске обновился XP
+      queryClient.invalidateQueries({ queryKey: ['character'] });
+      updateUser({ total_xp: data.user_after.total_xp });
     },
   });
 }

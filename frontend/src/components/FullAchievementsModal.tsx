@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { RARITY_COLORS } from '../constants';
-import { useAchievements, useUnlockAchievement } from '../api/achievements';
+import { useAchievements } from '../api/achievements';
 import { useUpdateCharacter, useCharacter } from '../api/character';
 
 interface Props {
@@ -13,7 +13,6 @@ export function FullAchievementsModal({ onClose }: Props) {
   const { data: achievements = [], isLoading } = useAchievements();
   const { data: charData } = useCharacter();
   const { mutate: updateCharacter, isPending } = useUpdateCharacter();
-  const { mutate: unlockAchievement, isPending: isUnlocking } = useUnlockAchievement();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const pinnedIds = charData?.user.pinned_achievements || [];
@@ -22,6 +21,15 @@ export function FullAchievementsModal({ onClose }: Props) {
     if (filter === 'unlocked') return a.unlocked;
     if (filter === 'locked') return !a.unlocked;
     return true;
+  }).sort((a, b) => {
+    // 1. Закрепленные в начало
+    const aPinned = pinnedIds.includes(a.id) ? 1 : 0;
+    const bPinned = pinnedIds.includes(b.id) ? 1 : 0;
+    if (aPinned !== bPinned) return bPinned - aPinned;
+    // 2. Полученные раньше заблокированных
+    const aUnlocked = a.unlocked ? 1 : 0;
+    const bUnlocked = b.unlocked ? 1 : 0;
+    return bUnlocked - aUnlocked;
   });
 
   const handleTogglePin = (achId: string) => {
@@ -181,14 +189,23 @@ export function FullAchievementsModal({ onClose }: Props) {
                       <span className="mt-auto text-[10px] font-bold text-green-400 bg-green-900/30 px-2 py-0.5 rounded border border-green-800">
                         Получено
                       </span>
+                    ) : ach.progress ? (
+                      <div className="w-full mt-auto pt-2 px-1">
+                        <div className="flex justify-between text-[9px] font-bold text-gray-400 mb-1">
+                          <span>Прогресс</span>
+                          <span>{ach.progress.current} / {ach.progress.target}</span>
+                        </div>
+                        <div className="w-full bg-gray-800 rounded-full h-1.5 overflow-hidden">
+                          <div
+                            className="bg-amber-500 h-full rounded-full transition-all duration-500"
+                            style={{ width: `${Math.min(100, (ach.progress.current / ach.progress.target) * 100)}%` }}
+                          />
+                        </div>
+                      </div>
                     ) : (
-                      <button
-                        onClick={() => unlockAchievement(ach.id)}
-                        disabled={isUnlocking}
-                        className="mt-auto text-[10px] font-bold text-amber-500 bg-amber-900/20 hover:bg-amber-900/40 px-2 py-0.5 rounded border border-amber-700/50 transition-colors cursor-pointer"
-                      >
-                        {isUnlocking ? 'Получение...' : 'Разблокировать'}
-                      </button>
+                      <span className="mt-auto text-[10px] font-bold text-gray-500 bg-gray-800/50 px-2 py-0.5 rounded border border-gray-700">
+                        Заблокировано
+                      </span>
                     )}
                   </motion.div>
                 );

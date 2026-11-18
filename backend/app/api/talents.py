@@ -89,7 +89,7 @@ async def upgrade_talent(
         session.add(existing)
 
     await session.flush()
-    await check_and_unlock_achievements(
+    new_achievements = await check_and_unlock_achievements(
         session,
         user,
         AchievementEvent.TALENT_UPGRADED,
@@ -114,5 +114,6 @@ async def upgrade_talent(
             max_rank=talent_def.max_rank,
             rank=existing.rank,
             can_upgrade=can_upgrade(code, ranks_by_code, new_available_points),
+            new_achievements=new_achievements,
         ),
     )

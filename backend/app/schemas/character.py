@@ -9,6 +9,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from pydantic import BaseModel, ConfigDict, field_validator
 from pydantic_core import PydanticCustomError
 
+from app.schemas.achievement import NewAchievementEvent
 from app.schemas.user import UserOut
 
 # Те же правила для ника, что и при регистрации (§7.1)
@@ -32,6 +33,12 @@ class CharacterOut(BaseModel):
     xp_for_next_level: int
     xp_bonus_percent: int
     stats: CharacterStats
+    new_achievements: list[NewAchievementEvent] = []
+
+
+class InventoryItemUpdateResponse(BaseModel):
+    item: InventoryItem
+    new_achievements: list[NewAchievementEvent] = []
 
 
 class CharacterUpdate(BaseModel):

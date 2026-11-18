@@ -715,6 +715,16 @@
 - `frontend/src/components/QuestCard.tsx`: при выполнении квеста новые достижения выводятся через `ToastContext` с задержкой (500мс между тостами).
 - **Рефакторинг:** задача по выносу `AdventurerLicense` из `Character.tsx` уже была выполнена ранее (файл сокращен до ~90 строк), `AvatarBlock` решено оставить внутри `AdventurerLicense` без изоляции.
 
+## [2026-11-18 20:00] — Day 18, шаг 1: Фикс багов UI и синхронизация достижений
+
+- **Backend:** `PATCH /character/inventory/{item_code}`, `PATCH /character`, `POST /character/avatar` и `POST /auth/daily-reward` теперь возвращают `new_achievements` для показа тостов на фронте. Обновлен `test_inventory.py` под новый контракт.
+- **Frontend (Кэш):** Добавлена инвалидация `queryKey: ['character']` при завершении квеста. Теперь XP на доске обновляется мгновенно.
+- **Frontend (Уведомления):** Тосты за новые достижения добавлены в `useUpgradeTalent` (таланты) и `useUpdateInventoryItem` (экипировка).
+- **Frontend (Модалка):** В `FullAchievementsModal` добавлена сортировка (закрепленные в начало, затем полученные) и прогресс-бары для залоченных достижений. Удален устаревший `useUnlockAchievement`.
+- **Frontend (UI):** В `QuestCard` SVG-крестик вынесен за пределы карточки, увеличен, получил наклон и темно-бордовый цвет с прозрачностью.
+
+
+
 ## Шаблон для следующих дней
 
 ```markdown

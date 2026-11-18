@@ -2,6 +2,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from './client';
 import type { User } from '../types';
 import type { QuestRank } from './quests';
+import { useToast } from '../contexts/ToastContext';
+import { RARITY_COLORS } from '../constants';
+import type { NewAchievementEvent } from './quests';
 
 export type CharacterRank = QuestRank;
 
@@ -127,25 +130,28 @@ export function useCharacterInventory() {
 
 export function useUpdateInventoryItem() {
   const queryClient = useQueryClient();
+  const { addToast } = useToast();
+
   return useMutation({
-    mutationFn: async ({
-      itemId,
-      payload,
-    }: {
-      itemId: string;
-      payload: {
-        is_pinned?: boolean;
-        equipped_slot?: string | null;
-        enhancement_level?: number;
-        rarity?: string | null; // Добавлено
-      };
-    }) => {
-      const { data } = await api.patch<InventoryItem>(`/character/inventory/${itemId}`, payload);
+    mutationFn: async ({ itemId, payload }: any) => {
+      // Бэкенд теперь возвращает { item, new_achievements }
+      const { data } = await api.patch<{ item: InventoryItem, new_achievements?: NewAchievementEvent[] }>(`/character/inventory/${itemId}`, payload);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: characterKeys.inventory() });
       queryClient.invalidateQueries({ queryKey: [...characterKeys.all, 'stats'] });
+
+      data.new_achievements?.forEach((ach, index) => {
+        setTimeout(() => {
+          addToast({
+            title: `Достижение: ${ach.name}`,
+            description: ach.description,
+            icon: `/icons/${ach.icon}.svg`,
+            color: RARITY_COLORS[ach.rarity] || '#5c4033',
+          });
+        }, index * 500);
+      });
     },
   });
 }
