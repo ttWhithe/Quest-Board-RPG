@@ -705,6 +705,9 @@
   9. **`read_current_user`** может выдать ачивку в фоне (смена дня) — фронт не увидит тост (нет поля в `UserOut`). Day 18+: добавить в `/auth/me` или polling.
 - `QuestForm.tsx`: показ потенциального базового XP на основе выбранных ранга и редкости (`RANK_BASE × RARITY_MULT`). Использует `useCharacter().xp_bonus_percent` для учёта бонуса талантов.
 - Автор правки — пользователь (не ИИ), в рамках Day 17.
+- `backend/app/static/avatars/` — добавлен в `.gitignore` (user-generated runtime-контент).
+- `.gitkeep` сохраняет папку в репо (`upload_avatar` использует `Path("app/static/avatars")`).
+- Из индекса удалён ранее закоммиченный `5c3b5881-..._edf4fcbc.webp` (на диске остаётся).
 - **Дальше:** шаг 6 — рефакторинг `Character.tsx` (`AdventurerLicense`, `AvatarBlock`), фронтовые тосты для `new_achievements`.
 
 ## Шаблон для следующих дней
