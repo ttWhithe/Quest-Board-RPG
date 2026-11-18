@@ -703,6 +703,8 @@
   7. **`load_json("items.json")`** в `_handle_equipped_slots` вызывается до 3 раз за `ITEM_CHANGED` — Day 18+ добавить `lru_cache`.
   8. **Демо-юзер** не получает `ach_q_1/2/5` задним числом (только `ach_sec_6` через `DEMO_LOGIN`). Следующий `complete` их доберёт.
   9. **`read_current_user`** может выдать ачивку в фоне (смена дня) — фронт не увидит тост (нет поля в `UserOut`). Day 18+: добавить в `/auth/me` или polling.
+- `QuestForm.tsx`: показ потенциального базового XP на основе выбранных ранга и редкости (`RANK_BASE × RARITY_MULT`). Использует `useCharacter().xp_bonus_percent` для учёта бонуса талантов.
+- Автор правки — пользователь (не ИИ), в рамках Day 17.
 - **Дальше:** шаг 6 — рефакторинг `Character.tsx` (`AdventurerLicense`, `AvatarBlock`), фронтовые тосты для `new_achievements`.
 
 ## Шаблон для следующих дней
