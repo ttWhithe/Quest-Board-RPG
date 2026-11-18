@@ -11,14 +11,23 @@
 
 > ⚠️ **ПЕРЕД НАЧАЛОМ РАБОТЫ ОБЯЗАТЕЛЬНО ПРОЧИТАЙ `PROMPT-rules.md`**.
 
-## Текущее состояние (Day 16 завершен)
-- **Backend:** Модель `UserAchievement`, загрузка аватарок (WebP/Pillow), API для достижений, кастомизация герба.
-- **Frontend:** Глобальный редизайн достижений (блок, книга деяний, бейджи на удостоверении). Система тостов (`ToastContext`). Глобальная модалка уровня.
+## Текущее состояние (Day 17 завершен)
+- **Backend:** Движок достижений на `condition`-схеме. 100 достижений (84 auto + 16 manual-TODO). Все триггеры подключены (quests, talents, character, events, auth). Ручной `/unlock` удалён.
+- **Frontend:** Тосты за новые ачивки в `QuestCard`. `Character.tsx` (~90 строк, `AdventurerLicense` вынесен).
 - **Infra:** Docker, CI (зеленый).
 
-## Что делаем сейчас — Day 17 (Achievements Engine & Refactoring)
-1. **Движок достижений (Backend):**
-   - Перевод `achievements.json` на схему `condition` (квесты, инвентарь, время, таланты).
-   - Сервис `check_and_unlock_achievements` (проверка условий при завершении квеста, экипировке, апгрейде талантов).
-   - Написание тестов на выдачу ачивок (Sad Path: повторный unlock).
-2. **Рефакторинг:** Разбить `Character.tsx` (вынести `AdventurerLicense`, `AvatarBlock` в отдельные компоненты).
+## Что делаем сейчас — Day 18 (Achievements Engine — доработка)
+1. **Backend (TODO Day 17):**
+   - Юнит-тесты на каждый `condition.type`.
+   - Интеграционный тест `equip item → ach_inv_5`.
+   - `talents_branch_*` (ach_t_7/8/9/10) — добавить поле `branch` в `talent_tree.json`.
+   - `talents_notable` (ach_t_6) — проверить наличие `type: "notable"` в `talent_tree.json`.
+   - Item-награды — создавать `UserItem` при `reward.type == "item"`.
+   - Level-up от achievement XP — триггерить `level_reached` на следующем событии (сейчас возможен пропуск).
+   - `GET /achievements` — батч-преагрегация (сейчас ~84 SELECT'а).
+   - `load_json("items.json")` в `_handle_equipped_slots` — добавить `lru_cache`.
+2. **Frontend:**
+   - Показ прогресса залоченных ачивок (progress-bar) — если ещё не реализовано.
+   - Тосты для ачивок, полученных вне `QuestCard` (login, daily-reward, profile change) — добавить `new_achievements` в `/auth/me` или polling.
+3. **Docs/Infra:**
+   - Завершить PR Day 17 (squash-merge).
