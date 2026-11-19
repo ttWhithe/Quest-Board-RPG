@@ -161,16 +161,14 @@ async def get_daily_reward_info(
     config = load_json("daily_rewards.json")
     rewards = config.get("rewards", [])
 
-    # Вычисляем текущий день цикла (масштабируется под любую длину rewards)
-    current_day = _get_cycle_day(current_user.daily_reward_day, len(rewards))
+    # Источник правды — login_streak (синхронизируется с реальной серией входов)
+    current_day = _get_cycle_day(current_user.login_streak, len(rewards))
 
     can_claim = can_claim_daily_reward(current_user)
 
     return {
         "rewards": rewards,
         "current_day": current_day,
-        # Для UI (например, "Вы забрали наград: 8")
-        "total_claimed_days": current_user.daily_reward_day,
         "can_claim": can_claim,
         "streak": current_user.login_streak,
     }
@@ -191,7 +189,8 @@ async def claim_daily_reward(
     config = load_json("daily_rewards.json")
     rewards = config.get("rewards", [])
 
-    current_day = _get_cycle_day(current_user.daily_reward_day, len(rewards))
+    # Текущий день = позиция в цикле на основе login_streak
+    current_day = _get_cycle_day(current_user.login_streak, len(rewards))
     reward = rewards[current_day - 1]
 
     # Начисляем награду (пока только XP)
@@ -202,6 +201,7 @@ async def claim_daily_reward(
     # TODO: Добавить выдачу предметов (когда будет инвентарь)
 
     current_user.last_daily_reward_at = datetime.now(UTC)
+    # Синхронизируем daily_reward_day с реальным прогрессом (для обратной совместимости)
     current_user.daily_reward_day = current_day + 1
 
     await session.flush()
@@ -217,7 +217,7 @@ async def claim_daily_reward(
     return {
         "success": True,
         "xp_awarded": xp_awarded,
-        "next_day": current_user.daily_reward_day,
+        "next_day": _get_cycle_day(current_user.login_streak + 1, len(rewards)),
         "new_total_xp": current_user.total_xp,
         "login_streak": current_user.login_streak,
     }

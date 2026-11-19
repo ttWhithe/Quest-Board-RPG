@@ -82,7 +82,7 @@ export function DailyRewardModal({ forceOpen, onClose }: Props) {
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="parchment-card w-full max-w-2xl p-6 md:p-8 relative overflow-hidden"
+        className="parchment-card w-full max-w-3xl p-6 md:p-8 relative overflow-hidden"
       >
 
         {/* Кнопка закрытия */}
