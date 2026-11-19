@@ -28,6 +28,17 @@ from app.schemas.user import UserCreate, UserOut
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
+def _get_cycle_day(day: int, total_days: int) -> int:
+    """Возвращает текущий день цикла (1..total_days) для любого day >= 1.
+
+    Пример: day=8, total=7 -> ((8-1) % 7) + 1 = 1
+    Пример: day=14, total=7 -> ((14-1) % 7) + 1 = 7
+    """
+    if total_days <= 0:
+        return 1
+    return ((max(1, day) - 1) % total_days) + 1
+
+
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
 async def register(
     user_in: UserCreate,
@@ -150,16 +161,16 @@ async def get_daily_reward_info(
     config = load_json("daily_rewards.json")
     rewards = config.get("rewards", [])
 
-    # Циклический переход: если день 7 прошел, начинается 1
-    current_day = current_user.daily_reward_day
-    if current_day > len(rewards):
-        current_day = 1
+    # Вычисляем текущий день цикла (масштабируется под любую длину rewards)
+    current_day = _get_cycle_day(current_user.daily_reward_day, len(rewards))
 
     can_claim = can_claim_daily_reward(current_user)
 
     return {
         "rewards": rewards,
         "current_day": current_day,
+        # Для UI (например, "Вы забрали наград: 8")
+        "total_claimed_days": current_user.daily_reward_day,
         "can_claim": can_claim,
         "streak": current_user.login_streak,
     }
@@ -180,10 +191,7 @@ async def claim_daily_reward(
     config = load_json("daily_rewards.json")
     rewards = config.get("rewards", [])
 
-    current_day = current_user.daily_reward_day
-    if current_day > len(rewards):
-        current_day = 1
-
+    current_day = _get_cycle_day(current_user.daily_reward_day, len(rewards))
     reward = rewards[current_day - 1]
 
     # Начисляем награду (пока только XP)

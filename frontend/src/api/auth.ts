@@ -12,6 +12,7 @@ export interface DailyReward {
 export interface DailyRewardInfo {
   rewards: DailyReward[];
   current_day: number;
+  total_claimed_days?: number; // Добавлено для гибкости
   can_claim: boolean;
   streak: number;
 }

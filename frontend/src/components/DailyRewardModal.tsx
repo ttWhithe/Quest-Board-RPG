@@ -103,7 +103,7 @@ export function DailyRewardModal({ forceOpen, onClose }: Props) {
           Твоя серия: <span className="font-bold text-orange-600">🔥 {rewardInfo.streak} дней</span>
         </p>
 
-        <div className="grid grid-cols-4 md:grid-cols-7 gap-2 mb-8 relative z-10">
+        <div className="flex flex-wrap justify-center gap-2 mb-8 relative z-10">
           {rewardInfo.rewards.map((reward) => {
             const isCurrent = reward.day === rewardInfo.current_day;
             const isPast = reward.day < rewardInfo.current_day;
@@ -111,7 +111,7 @@ export function DailyRewardModal({ forceOpen, onClose }: Props) {
             return (
               <div
                 key={reward.day}
-                className={`relative flex flex-col items-center justify-between p-2 rounded-lg border-2 h-32 transition-all
+                className={`relative flex flex-col items-center justify-between p-2 rounded-lg border-2 h-32 w-20 shrink-0 transition-all
                   ${isCurrent ? 'border-amber-600 bg-amber-100 shadow-[0_0_15px_rgba(245,158,11,0.6)] z-10' :
                     isPast ? 'border-[#5c4033]/30 bg-black/5 opacity-50' : 'border-[#5c4033]/50 bg-[#e8dac1]'}`}
               >
