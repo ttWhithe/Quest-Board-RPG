@@ -127,3 +127,41 @@ async def test_rarity_multipliers_in_stats(async_client: AsyncClient) -> None:
     # Проверяем статы (Сила 5.0 + 1 * 3.5 = 8.5)
     stats_leg = (await async_client.get("/api/v1/character/stats", headers=headers)).json()
     assert stats_leg["stats"]["strength"] == 8.5
+
+
+@pytest.mark.asyncio
+async def test_daily_reward_reset_on_streak_break() -> None:
+    """Sad Path: при сгорании стрика daily_reward_day сбрасывается в 1."""
+    user = User(
+        id=uuid4(),
+        nickname="Test",
+        emblem_seed="seed",
+        timezone="UTC",
+        last_login_at=datetime.now(UTC) - timedelta(days=3),
+        login_streak=5,
+        daily_reward_day=5,
+    )
+
+    updated = update_login_streak(user)
+    assert updated is True
+    assert user.login_streak == 1
+    assert user.daily_reward_day == 1
+
+
+@pytest.mark.asyncio
+async def test_daily_reward_preserved_on_consecutive_login() -> None:
+    """delta=1 (consecutive login) не сбрасывает daily_reward_day."""
+    user = User(
+        id=uuid4(),
+        nickname="Test",
+        emblem_seed="seed",
+        timezone="UTC",
+        last_login_at=datetime.now(UTC) - timedelta(days=1),
+        login_streak=3,
+        daily_reward_day=4,
+    )
+
+    updated = update_login_streak(user)
+    assert updated is True
+    assert user.login_streak == 4
+    assert user.daily_reward_day == 4
