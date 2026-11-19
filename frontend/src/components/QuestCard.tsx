@@ -55,7 +55,7 @@ export function QuestCard({ quest }: { quest: Quest }) {
               addToast({
                 title: `Достижение: ${ach.name}`,
                 description: ach.description,
-                icon: `/icons/${ach.icon}.svg`,
+                icon: ach.icon,
                 color: RARITY_COLORS[ach.rarity] || '#5c4033',
               });
             }, index * 500); // Небольшая задержка между тостами
