@@ -165,3 +165,43 @@ async def test_daily_reward_preserved_on_consecutive_login() -> None:
     assert updated is True
     assert user.login_streak == 4
     assert user.daily_reward_day == 4
+
+
+@pytest.mark.asyncio
+async def test_daily_reward_item_granted(async_client: AsyncClient) -> None:
+    """Проверяем, что при выпадении предмета он падает в инвентарь."""
+    email = f"test_item_reward_{uuid4()}@example.com"
+    res = await async_client.post(
+        "/api/v1/auth/register",
+        json={
+            "email": email,
+            "password": "password123",
+            "nickname": "ItemTester",
+            "timezone": "UTC",
+        },
+    )
+    token = res.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Принудительно ставим 3-й день (там выпадает предмет item_021)
+    from sqlalchemy import update
+
+    from app.db import get_session
+    from app.models.user import User
+
+    # Делаем так, чтобы сегодня можно было забрать (last_daily_reward_at = None)
+    async for session in get_session():
+        await session.execute(update(User).where(User.email == email).values(daily_reward_day=3))
+        await session.commit()
+        break
+
+    # Забираем награду
+    claim_res = await async_client.post("/api/v1/auth/daily-reward", headers=headers)
+    assert claim_res.status_code == 200
+    assert claim_res.json()["item_awarded"] == "item_021"
+
+    # Проверяем, что предмет в инвентаре
+    inv_res = await async_client.get("/api/v1/character/inventory", headers=headers)
+    assert inv_res.status_code == 200
+    items = inv_res.json()["items"]
+    assert any(i["id"] == "item_021" for i in items)
