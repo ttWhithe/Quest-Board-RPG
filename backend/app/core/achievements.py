@@ -122,6 +122,7 @@ _EVENT_CONDITION_MAP: dict[AchievementEvent, set[str]] = {
         "daily_reward",
         "level_reached",
         "xp_total",
+        "inventory_count",
     },
     AchievementEvent.LOGIN: {
         "login_streak",

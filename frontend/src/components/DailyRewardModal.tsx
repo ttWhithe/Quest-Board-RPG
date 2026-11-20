@@ -14,6 +14,7 @@ export function DailyRewardModal({ forceOpen, onClose }: Props) {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [claimedXp, setClaimedXp] = useState<number | null>(null);
+  const [claimedItem, setClaimedItem] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState<string>('00:00:00');
 
   const { data: rewardInfo } = useQuery({
@@ -60,6 +61,7 @@ export function DailyRewardModal({ forceOpen, onClose }: Props) {
     mutationFn: authApi.claimDailyReward,
     onSuccess: (data) => {
       setClaimedXp(data.xp_awarded);
+      setClaimedItem(data.item_awarded || null);
       updateUser({
         total_xp: data.new_total_xp,
         daily_reward_day: data.next_day,
@@ -67,11 +69,14 @@ export function DailyRewardModal({ forceOpen, onClose }: Props) {
       });
       queryClient.invalidateQueries({ queryKey: ['daily-reward'] });
       queryClient.invalidateQueries({ queryKey: ['character'] });
+      queryClient.invalidateQueries({ queryKey: ['inventory'] }); // Чтобы обновился инвентарь
     },
   });
 
   const handleClose = () => {
     setIsOpen(false);
+    setClaimedXp(null); // Сбрасываем состояние, чтобы в следующий раз показать таймер
+    setClaimedItem(null);
     if (onClose) onClose();
   };
 
@@ -132,7 +137,7 @@ export function DailyRewardModal({ forceOpen, onClose }: Props) {
           {claimedXp !== null ? (
             <div className="text-center">
               <p className="text-xl font-bold text-green-700 mb-4 animate-bounce">
-                Получено +{claimedXp} XP!
+                {claimedItem ? 'Предмет добавлен в инвентарь!' : `Получено +${claimedXp} XP!`}
               </p>
               <button onClick={handleClose} className="btn-wood px-8">
                 Продолжить

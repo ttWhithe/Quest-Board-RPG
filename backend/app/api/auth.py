@@ -22,6 +22,7 @@ from app.core.streaks import can_claim_daily_reward, update_login_streak
 from app.data import load_json
 from app.db import get_session
 from app.models.user import User
+from app.models.user_item import UserItem
 from app.schemas.auth import LoginRequest, TokenResponse
 from app.schemas.user import UserCreate, UserOut
 
@@ -161,8 +162,8 @@ async def get_daily_reward_info(
     config = load_json("daily_rewards.json")
     rewards = config.get("rewards", [])
 
-    # Источник правды — login_streak (синхронизируется с реальной серией входов)
-    current_day = _get_cycle_day(current_user.login_streak, len(rewards))
+    # Источник правды — daily_reward_day (инкрементится при получении награды)
+    current_day = _get_cycle_day(current_user.daily_reward_day, len(rewards))
 
     can_claim = can_claim_daily_reward(current_user)
 
@@ -189,19 +190,29 @@ async def claim_daily_reward(
     config = load_json("daily_rewards.json")
     rewards = config.get("rewards", [])
 
-    # Текущий день = позиция в цикле на основе login_streak
-    current_day = _get_cycle_day(current_user.login_streak, len(rewards))
+    # Текущий день = позиция в цикле на основе daily_reward_day
+    current_day = _get_cycle_day(current_user.daily_reward_day, len(rewards))
     reward = rewards[current_day - 1]
 
-    # Начисляем награду (пока только XP)
+    # Начисляем награду
     xp_awarded = 0
+    item_awarded = None
+
     if reward["type"] == "xp":
         xp_awarded = reward["amount"]
         current_user.total_xp += xp_awarded
-    # TODO: Добавить выдачу предметов (когда будет инвентарь)
+    elif reward["type"] == "item":
+        item_id = reward.get("item_id")
+        amount = int(reward.get("amount", 1))
+        items_dict = load_json("items.json").get("items", [])
+        # Проверяем, что предмет существует, чтобы не выдать битый
+        if any(i["id"] == item_id for i in items_dict):
+            for _ in range(amount):
+                session.add(UserItem(user_id=current_user.id, item_code=item_id))
+            item_awarded = item_id
 
     current_user.last_daily_reward_at = datetime.now(UTC)
-    # Синхронизируем daily_reward_day с реальным прогрессом (для обратной совместимости)
+    # Синхронизируем daily_reward_day
     current_user.daily_reward_day = current_day + 1
 
     await session.flush()
@@ -217,7 +228,8 @@ async def claim_daily_reward(
     return {
         "success": True,
         "xp_awarded": xp_awarded,
-        "next_day": _get_cycle_day(current_user.login_streak + 1, len(rewards)),
+        "item_awarded": item_awarded,
+        "next_day": _get_cycle_day(current_user.daily_reward_day, len(rewards)),
         "new_total_xp": current_user.total_xp,
         "login_streak": current_user.login_streak,
     }
