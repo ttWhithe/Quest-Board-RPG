@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, DateTime, Integer, String, func
-from sqlalchemy.dialects.postgresql import ARRAY, UUID
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
@@ -49,6 +49,11 @@ class User(Base):
         DateTime(timezone=True), nullable=True
     )
     daily_reward_day: Mapped[int] = mapped_column(Integer, default=1, server_default="1")  # 1..7
+
+    # Статистика для клиентских/накопительных ачивок (клики, открытия UI и т.д.)
+    tracking_stats: Mapped[dict[str, int]] = mapped_column(
+        JSONB, default=dict, server_default="{}", nullable=False
+    )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False

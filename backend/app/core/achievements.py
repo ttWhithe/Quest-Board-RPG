@@ -82,6 +82,7 @@ class AchievementEvent(StrEnum):
     LOGIN = "login"
     PROFILE_CHANGED = "profile_changed"
     DEMO_LOGIN = "demo_login"
+    STATS_UPDATED = "stats_updated"
 
 
 # Какие condition.type проверяем при каком событии.
@@ -131,6 +132,11 @@ _EVENT_CONDITION_MAP: dict[AchievementEvent, set[str]] = {
     },
     AchievementEvent.DEMO_LOGIN: {
         "demo_login",
+    },
+    AchievementEvent.STATS_UPDATED: {
+        "tracking_stat",
+        "quest_count",
+        "quest_count_per_rank",
     },
 }
 
@@ -705,6 +711,20 @@ async def _handle_demo_login(
     return bool(user.is_demo), None, None
 
 
+async def _handle_tracking_stat(
+    session: AsyncSession,
+    user: User,
+    params: dict[str, Any],
+    context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
+) -> HandlerResult:
+    stat_name = params.get("stat_name", "")
+    target = int(params.get("target", 1))
+
+    current = user.tracking_stats.get(stat_name, 0) if user.tracking_stats else 0
+    return current >= target, current, target
+
+
 _HANDLERS: dict[str, Handler] = {
     "quest_count": _handle_quest_count,
     "quest_count_per_rank": _handle_quest_count_per_rank,
@@ -731,6 +751,7 @@ _HANDLERS: dict[str, Handler] = {
     "level_reached": _handle_level_reached,
     "xp_total": _handle_xp_total,
     "demo_login": _handle_demo_login,
+    "tracking_stat": _handle_tracking_stat,
 }
 
 

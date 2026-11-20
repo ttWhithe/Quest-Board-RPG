@@ -399,10 +399,34 @@ async def complete_quest(
         update(User).where(User.id == current_user.id).values(total_xp=User.total_xp + xp)
     )
 
-    # 5.5. Достижения. Перед вызовом движка:
-    #   * `flush` — чтобы SUM(completion_count) в handler'ах увидел новые данные;
-    #   * `refresh(current_user)` — чтобы handlers читали свежий total_xp
-    #     (SQL-инкремент выше не меняет Python-объект).
+    # 5.5. Обновляем трекинг статов для квестов
+    stats = dict(current_user.tracking_stats or {})
+
+    # 13. Трудоголик (20 квестов подряд без провалов)
+    is_overdue = quest.deadline is not None and quest.deadline < now
+    if is_overdue:
+        stats["completion_streak"] = 0
+    else:
+        stats["completion_streak"] = stats.get("completion_streak", 0) + 1
+
+    # 14. Пунктуальность (10 квестов до дедлайна)
+    if quest.deadline is not None and now <= quest.deadline:
+        stats["quests_before_deadline"] = stats.get("quests_before_deadline", 0) + 1
+
+    # 24. Кризис-менеджер (5 квестов с истекающим дедлайном < 24ч)
+    if quest.deadline is not None:
+        diff_hours = (quest.deadline - now).total_seconds() / 3600
+        if 0 <= diff_hours < 24:
+            stats["quests_expiring_soon"] = stats.get("quests_expiring_soon", 0) + 1
+
+    # Продуктивный вечер (3 квеста после 20:00)
+    local_hour = now.astimezone(tz).hour
+    if local_hour >= 20:
+        stats["quests_after_20"] = stats.get("quests_after_20", 0) + 1
+
+    current_user.tracking_stats = stats
+
+    # 5.6. Достижения.
     await session.flush()
     await session.refresh(current_user)
     new_achievements = await check_and_unlock_achievements(

@@ -38,6 +38,7 @@ ConditionType = Literal[
     "level_reached",
     "xp_total",
     "demo_login",
+    "tracking_stat",
     "manual",
 ]
 
@@ -87,3 +88,9 @@ class NewAchievementEvent(BaseModel):
     icon: str
     rarity: str
     reward: dict[str, Any]
+
+
+class TrackEventRequest(BaseModel):
+    """Запрос на инкремент клиентского счётчика (клики, открытия UI)."""
+
+    stat_name: str
