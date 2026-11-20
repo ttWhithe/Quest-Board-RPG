@@ -10,6 +10,9 @@
 
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta
+from uuid import uuid4
+
 import pytest
 from httpx import AsyncClient
 
@@ -146,3 +149,74 @@ async def test_talent_branch_achievements(async_client: AsyncClient) -> None:
         ach_res = await async_client.get("/api/v1/achievements", headers=headers)
         ach_t_8 = next(a for a in ach_res.json() if a["id"] == "ach_t_8")
         assert ach_t_8["unlocked"] is True
+
+
+@pytest.mark.asyncio
+async def test_track_event_success_and_sad_path(async_client: AsyncClient) -> None:
+    """Проверяем инкремент трекинга и выдачу ачивки."""
+    headers = await _demo_headers(async_client)
+
+    # Sad Path: невалидный stat_name
+    res_bad = await async_client.post(
+        "/api/v1/achievements/track",
+        json={"stat_name": "invalid_stat"},
+        headers=headers,
+    )
+    assert res_bad.status_code == 400
+    assert res_bad.json()["code"] == "INVALID_STAT"
+
+    # Success: инкрементим emblem_click 10 раз (должна выдаться ach_sec_1)
+    new_achievements = []
+    for _ in range(10):
+        res = await async_client.post(
+            "/api/v1/achievements/track",
+            json={"stat_name": "emblem_click"},
+            headers=headers,
+        )
+        assert res.status_code == 200
+        new_achievements.extend(res.json())
+
+    # Проверяем, что ачивка выдалась
+    assert any(a["code"] == "ach_sec_1" for a in new_achievements)
+
+
+@pytest.mark.asyncio
+async def test_quest_completion_tracking(async_client: AsyncClient) -> None:
+    """Проверяем, что при выполнении квеста инкрементятся трекинг-статы."""
+    email = f"test_track_quest_{uuid4()}@example.com"
+    res = await async_client.post(
+        "/api/v1/auth/register",
+        json={
+            "email": email,
+            "password": "password123",
+            "nickname": "QuestTracker",
+            "timezone": "UTC",
+        },
+    )
+    token = res.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Создаем квест с дедлайном в будущем
+    quest_res = await async_client.post(
+        "/api/v1/quests",
+        json={
+            "title": "Test Track",
+            "rank": "F",
+            "rarity": "common",
+            "deadline": (datetime.now(UTC) + timedelta(days=1)).isoformat(),
+            "recurrence": "none",
+        },
+        headers=headers,
+    )
+    quest_id = quest_res.json()["id"]
+
+    # Выполняем
+    complete_res = await async_client.post(f"/api/v1/quests/{quest_id}/complete", headers=headers)
+    assert complete_res.status_code == 200
+
+    # Проверяем трекинг через /auth/me (там возвращается user, но tracking_stats не отдается,
+    # поэтому просто дергаем эндпоинт достижений и проверяем прогресс ach_q_14)
+    ach_res = await async_client.get("/api/v1/achievements", headers=headers)
+    achievements = ach_res.json()
+    ach_q_14 = next(a for a in achievements if a["id"] == "ach_q_14")
+    assert ach_q_14["progress"]["current"] == 1

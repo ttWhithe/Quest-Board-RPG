@@ -26,7 +26,10 @@ def update_login_streak(user: User) -> bool:
         if delta == 1:
             user.login_streak = (user.login_streak or 0) + 1
         else:
+            # Стрик сгорел — сбрасываем и цикл ежедневных наград,
+            # иначе пользователь после пропуска получит «следующую» награду.
             user.login_streak = 1
+            user.daily_reward_day = 1
     else:
         user.login_streak = 1
 

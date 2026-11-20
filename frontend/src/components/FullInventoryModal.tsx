@@ -1,7 +1,8 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import type { InventoryItem } from '../api/character';
 import { rarityColor, rankColor, RARITY_MULTIPLIERS } from '../constants';
 import { useUpdateInventoryItem } from '../api/character';
+import { useTrackEvent } from '../api/achievements';
 
 const ENHANCEMENT_LETTERS = ['', 'D', 'C', 'B', 'A', 'S'] as const;
 const MAX_ENHANCEMENT = 5;
@@ -28,6 +29,12 @@ interface Props {
 }
 
 export function FullInventoryModal({ items, onClose }: Props) {
+  const { mutate: trackEvent } = useTrackEvent();
+
+  useEffect(() => {
+    trackEvent('inventory_open');
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const [filter, setFilter] = useState<string>('all');
   const [mode, setMode] = useState<'inventory' | 'blacksmith'>('inventory');
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);

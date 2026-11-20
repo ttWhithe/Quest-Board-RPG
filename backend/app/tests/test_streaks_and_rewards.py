@@ -127,3 +127,81 @@ async def test_rarity_multipliers_in_stats(async_client: AsyncClient) -> None:
     # Проверяем статы (Сила 5.0 + 1 * 3.5 = 8.5)
     stats_leg = (await async_client.get("/api/v1/character/stats", headers=headers)).json()
     assert stats_leg["stats"]["strength"] == 8.5
+
+
+@pytest.mark.asyncio
+async def test_daily_reward_reset_on_streak_break() -> None:
+    """Sad Path: при сгорании стрика daily_reward_day сбрасывается в 1."""
+    user = User(
+        id=uuid4(),
+        nickname="Test",
+        emblem_seed="seed",
+        timezone="UTC",
+        last_login_at=datetime.now(UTC) - timedelta(days=3),
+        login_streak=5,
+        daily_reward_day=5,
+    )
+
+    updated = update_login_streak(user)
+    assert updated is True
+    assert user.login_streak == 1
+    assert user.daily_reward_day == 1
+
+
+@pytest.mark.asyncio
+async def test_daily_reward_preserved_on_consecutive_login() -> None:
+    """delta=1 (consecutive login) не сбрасывает daily_reward_day."""
+    user = User(
+        id=uuid4(),
+        nickname="Test",
+        emblem_seed="seed",
+        timezone="UTC",
+        last_login_at=datetime.now(UTC) - timedelta(days=1),
+        login_streak=3,
+        daily_reward_day=4,
+    )
+
+    updated = update_login_streak(user)
+    assert updated is True
+    assert user.login_streak == 4
+    assert user.daily_reward_day == 4
+
+
+@pytest.mark.asyncio
+async def test_daily_reward_item_granted(async_client: AsyncClient) -> None:
+    """Проверяем, что при выпадении предмета он падает в инвентарь."""
+    email = f"test_item_reward_{uuid4()}@example.com"
+    res = await async_client.post(
+        "/api/v1/auth/register",
+        json={
+            "email": email,
+            "password": "password123",
+            "nickname": "ItemTester",
+            "timezone": "UTC",
+        },
+    )
+    token = res.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Принудительно ставим 3-й день (там выпадает предмет item_021)
+    from sqlalchemy import update
+
+    from app.db import get_session
+    from app.models.user import User
+
+    # Делаем так, чтобы сегодня можно было забрать (last_daily_reward_at = None)
+    async for session in get_session():
+        await session.execute(update(User).where(User.email == email).values(daily_reward_day=3))
+        await session.commit()
+        break
+
+    # Забираем награду
+    claim_res = await async_client.post("/api/v1/auth/daily-reward", headers=headers)
+    assert claim_res.status_code == 200
+    assert claim_res.json()["item_awarded"] == "item_021"
+
+    # Проверяем, что предмет в инвентаре
+    inv_res = await async_client.get("/api/v1/character/inventory", headers=headers)
+    assert inv_res.status_code == 200
+    items = inv_res.json()["items"]
+    assert any(i["id"] == "item_021" for i in items)

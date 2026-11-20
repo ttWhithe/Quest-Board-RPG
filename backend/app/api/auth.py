@@ -22,10 +22,22 @@ from app.core.streaks import can_claim_daily_reward, update_login_streak
 from app.data import load_json
 from app.db import get_session
 from app.models.user import User
+from app.models.user_item import UserItem
 from app.schemas.auth import LoginRequest, TokenResponse
 from app.schemas.user import UserCreate, UserOut
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+def _get_cycle_day(day: int, total_days: int) -> int:
+    """Возвращает текущий день цикла (1..total_days) для любого day >= 1.
+
+    Пример: day=8, total=7 -> ((8-1) % 7) + 1 = 1
+    Пример: day=14, total=7 -> ((14-1) % 7) + 1 = 7
+    """
+    if total_days <= 0:
+        return 1
+    return ((max(1, day) - 1) % total_days) + 1
 
 
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
@@ -150,10 +162,8 @@ async def get_daily_reward_info(
     config = load_json("daily_rewards.json")
     rewards = config.get("rewards", [])
 
-    # Циклический переход: если день 7 прошел, начинается 1
-    current_day = current_user.daily_reward_day
-    if current_day > len(rewards):
-        current_day = 1
+    # Источник правды — daily_reward_day (инкрементится при получении награды)
+    current_day = _get_cycle_day(current_user.daily_reward_day, len(rewards))
 
     can_claim = can_claim_daily_reward(current_user)
 
@@ -180,20 +190,29 @@ async def claim_daily_reward(
     config = load_json("daily_rewards.json")
     rewards = config.get("rewards", [])
 
-    current_day = current_user.daily_reward_day
-    if current_day > len(rewards):
-        current_day = 1
-
+    # Текущий день = позиция в цикле на основе daily_reward_day
+    current_day = _get_cycle_day(current_user.daily_reward_day, len(rewards))
     reward = rewards[current_day - 1]
 
-    # Начисляем награду (пока только XP)
+    # Начисляем награду
     xp_awarded = 0
+    item_awarded = None
+
     if reward["type"] == "xp":
         xp_awarded = reward["amount"]
         current_user.total_xp += xp_awarded
-    # TODO: Добавить выдачу предметов (когда будет инвентарь)
+    elif reward["type"] == "item":
+        item_id = reward.get("item_id")
+        amount = int(reward.get("amount", 1))
+        items_dict = load_json("items.json").get("items", [])
+        # Проверяем, что предмет существует, чтобы не выдать битый
+        if any(i["id"] == item_id for i in items_dict):
+            for _ in range(amount):
+                session.add(UserItem(user_id=current_user.id, item_code=item_id))
+            item_awarded = item_id
 
     current_user.last_daily_reward_at = datetime.now(UTC)
+    # Синхронизируем daily_reward_day
     current_user.daily_reward_day = current_day + 1
 
     await session.flush()
@@ -209,7 +228,8 @@ async def claim_daily_reward(
     return {
         "success": True,
         "xp_awarded": xp_awarded,
-        "next_day": current_user.daily_reward_day,
+        "item_awarded": item_awarded,
+        "next_day": _get_cycle_day(current_user.daily_reward_day, len(rewards)),
         "new_total_xp": current_user.total_xp,
         "login_streak": current_user.login_streak,
     }

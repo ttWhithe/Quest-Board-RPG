@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { format, addDays, subDays } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { useQuests } from '../api/quests';
@@ -6,9 +6,15 @@ import { useEvents } from '../api/events';
 import type { Event } from '../api/events';
 import { ScrollOfTime } from '../components/ScrollOfTime';
 import { CalendarSkeleton } from '../components/Skeletons';
+import { useTrackEvent } from '../api/achievements';
 
 export function Calendar() {
+  const { mutate: trackEvent } = useTrackEvent();
   const [currentDate, setCurrentDate] = useState(new Date());
+
+  useEffect(() => {
+    trackEvent('calendar_open');
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const dateStr = format(currentDate, 'yyyy-MM-dd');
 
   // 1. Запрашиваем квесты с дедлайном на выбранный день
@@ -32,7 +38,15 @@ export function Calendar() {
   });
 
   const handlePrevDay = () => setCurrentDate((prev) => subDays(prev, 1));
-  const handleNextDay = () => setCurrentDate((prev) => addDays(prev, 1));
+  const handleNextDay = () => {
+    setCurrentDate((prev) => {
+      const next = addDays(prev, 1);
+      if (next.getMonth() !== prev.getMonth()) {
+        trackEvent('calendar_skip_month');
+      }
+      return next;
+    });
+  };
   const handleToday = () => setCurrentDate(new Date());
 
   if (isQuestsLoading || isEventsLoading) {

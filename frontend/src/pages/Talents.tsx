@@ -274,6 +274,14 @@ export function Talents() {
                 const rx = node.x - bounds.minX;
                 const ry = node.y - bounds.minY;
 
+                const isMaxed = node.rank > 0 && node.rank >= node.max_rank;
+                const rankBadgeColor =
+                  node.rank === 0
+                    ? 'text-gray-500 border-gray-600'
+                    : isMaxed
+                      ? 'text-emerald-400 border-emerald-500'
+                      : 'text-amber-400 border-amber-500';
+
                 return (
                   <div
                     key={node.id}
@@ -304,6 +312,18 @@ export function Talents() {
                         {String.fromCharCode(65 + parseInt(node.id.split('_').pop() || '0'))}
                       </span>
                     ) : null}
+
+                    {/* Бейдж ранга: только для узлов с max_rank > 1 */}
+                    {node.max_rank > 1 && (
+                      <div
+                        className={`absolute -bottom-2.5 -right-2.5 w-6 h-6 rounded-full bg-[#1a1512] border-2 flex items-center justify-center z-30 pointer-events-none shadow-lg shadow-black/60 ${rankBadgeColor}`}
+                        title={`Ранг: ${node.rank} / ${node.max_rank}`}
+                      >
+                        <span className="text-[9px] font-bold leading-none tracking-tighter">
+                          {node.rank}/{node.max_rank}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 );
               })}

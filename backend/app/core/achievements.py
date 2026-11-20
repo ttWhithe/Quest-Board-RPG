@@ -11,15 +11,23 @@
 
   * `get_all_achievements_with_progress(session, user)`
     — для GET /achievements: полный список с `unlocked`/`progress`.
+    — Оптимизирован: батч-преагрегация (4 запроса вместо ~84).
 
 Условия (`condition.type`) описаны в `schemas/achievement.py`.
 Тип `manual` — не проверяется (Day 18+: клиентские счётчики, ветки талантов).
 """
 
+# TODO(Post-MVP): при росте > 1500 строк разделить на:
+#   - achievements/engine.py    (check_and_unlock, get_all_achievements_with_progress)
+#   - achievements/handlers.py  (все 25 хендлеров + _HANDLERS реестр)
+#   - achievements/prefetch.py  (PrefetchData + хелперы)
+#   - achievements/__init__.py  (публичный API)
+
 from __future__ import annotations
 
 import logging
 from collections.abc import Awaitable, Callable
+from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum
 from functools import lru_cache
@@ -49,6 +57,16 @@ from app.schemas.achievement import (
 logger = logging.getLogger(__name__)
 
 
+@dataclass
+class PrefetchData:
+    """Контейнер с предзагруженными данными для батч-проверки прогресса."""
+
+    quests: list[Quest]
+    items: list[UserItem]
+    events: list[Event]
+    user_talents: list[UserTalent]
+
+
 # ---------------------------------------------------------------------------
 # Events (что триггерит проверку)
 # ---------------------------------------------------------------------------
@@ -64,6 +82,7 @@ class AchievementEvent(StrEnum):
     LOGIN = "login"
     PROFILE_CHANGED = "profile_changed"
     DEMO_LOGIN = "demo_login"
+    STATS_UPDATED = "stats_updated"
 
 
 # Какие condition.type проверяем при каком событии.
@@ -103,6 +122,7 @@ _EVENT_CONDITION_MAP: dict[AchievementEvent, set[str]] = {
         "daily_reward",
         "level_reached",
         "xp_total",
+        "inventory_count",
     },
     AchievementEvent.LOGIN: {
         "login_streak",
@@ -113,6 +133,11 @@ _EVENT_CONDITION_MAP: dict[AchievementEvent, set[str]] = {
     },
     AchievementEvent.DEMO_LOGIN: {
         "demo_login",
+    },
+    AchievementEvent.STATS_UPDATED: {
+        "tracking_stat",
+        "quest_count",
+        "quest_count_per_rank",
     },
 }
 
@@ -138,7 +163,7 @@ _RARITY_ORDER = ["common", "uncommon", "rare", "epic", "legendary"]
 
 HandlerResult = tuple[bool, int | None, int | None]
 Handler = Callable[
-    [AsyncSession, User, dict[str, Any], dict[str, Any] | None],
+    [AsyncSession, User, dict[str, Any], dict[str, Any] | None, PrefetchData | None],
     Awaitable[HandlerResult],
 ]
 
@@ -148,8 +173,21 @@ async def _handle_quest_count(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     total = int(params.get("total", 1))
+
+    if prefetched is not None:
+        qs = prefetched.quests
+        if "rank_in" in params:
+            qs = [q for q in qs if q.rank.value in params["rank_in"]]
+        if "rarity_in" in params:
+            qs = [q for q in qs if q.rarity.value in params["rarity_in"]]
+        if "recurrence_in" in params:
+            qs = [q for q in qs if q.recurrence.value in params["recurrence_in"]]
+        current = sum(q.completion_count for q in qs)
+        return current >= total, current, total
+
     stmt = select(func.coalesce(func.sum(Quest.completion_count), 0)).where(
         Quest.user_id == user.id
     )
@@ -170,8 +208,18 @@ async def _handle_quest_count_per_rank(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     min_per_rank = int(params.get("min_per_rank", 1))
+
+    if prefetched is not None:
+        by_rank: dict[str, int] = {}
+        for q in prefetched.quests:
+            by_rank[q.rank.value] = by_rank.get(q.rank.value, 0) + q.completion_count
+        target = len(QuestRank)
+        current = sum(1 for rank in QuestRank if by_rank.get(rank.value, 0) >= min_per_rank)
+        return current >= target, current, target
+
     stmt = (
         select(Quest.rank, func.coalesce(func.sum(Quest.completion_count), 0))
         .where(Quest.user_id == user.id)
@@ -189,10 +237,20 @@ async def _handle_quest_failed(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     min_count = int(params.get("min_count", 1))
     now = (context or {}).get("now") or datetime.now(UTC)
     tz = _user_tz(user)
+
+    if prefetched is not None:
+        current = sum(
+            1
+            for q in prefetched.quests
+            if q.status == QuestStatus.active and effective_status(q, now, tz) == "failed"
+        )
+        return current >= min_count, current, min_count
+
     stmt = select(Quest).where(Quest.user_id == user.id, Quest.status == QuestStatus.active)
     quests = (await session.scalars(stmt)).all()
     current = sum(1 for q in quests if effective_status(q, now, tz) == "failed")
@@ -204,6 +262,7 @@ async def _handle_time_of_day(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     hour_from = int(params["hour_from"])
     hour_to = int(params["hour_to"])
@@ -217,6 +276,7 @@ async def _handle_specific_date(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     month = int(params["month"])
     day = int(params["day"])
@@ -230,6 +290,7 @@ async def _handle_event_flag(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     flag = params.get("flag", "")
     ctx = context or {}
@@ -253,6 +314,7 @@ async def _handle_quests_created_today(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     min_count = int(params.get("min_count", 1))
     now = (context or {}).get("now") or datetime.now(UTC)
@@ -260,6 +322,11 @@ async def _handle_quests_created_today(
     start_local = local_now.replace(hour=0, minute=0, second=0, microsecond=0)
     start_utc = start_local.astimezone(UTC)
     end_utc = (start_local + timedelta(days=1)).astimezone(UTC)
+
+    if prefetched is not None:
+        current = sum(1 for q in prefetched.quests if start_utc <= q.created_at < end_utc)
+        return current >= min_count, current, min_count
+
     stmt = select(func.count(Quest.id)).where(
         Quest.user_id == user.id,
         Quest.created_at >= start_utc,
@@ -274,8 +341,14 @@ async def _handle_talents_total(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     min_count = int(params.get("min_count", 1))
+
+    if prefetched is not None:
+        current = sum(ut.rank for ut in prefetched.user_talents)
+        return current >= min_count, current, min_count
+
     stmt = select(func.coalesce(func.sum(UserTalent.rank), 0)).where(UserTalent.user_id == user.id)
     current = int(await session.scalar(stmt) or 0)
     return current >= min_count, current, min_count
@@ -286,10 +359,18 @@ async def _handle_talents_notable(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
-    # TODO(Day 18): проверить, что в talent_tree.json есть `type == "notable"`.
-    # Если нет — счётчик всегда 0, достижение не выдаётся.
     min_count = int(params.get("min_count", 1))
+
+    if prefetched is not None:
+        current = 0
+        for ut in prefetched.user_talents:
+            node = TALENTS.get(ut.talent_code)
+            if node is not None and node.type == "notable":
+                current += 1
+        return current >= min_count, current, min_count
+
     stmt = select(UserTalent).where(UserTalent.user_id == user.id)
     user_talents = (await session.scalars(stmt)).all()
     current = 0
@@ -305,17 +386,26 @@ async def _handle_talents_branch_complete(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
+    if prefetched is not None:
+        ranks_by_code = {ut.talent_code: ut.rank for ut in prefetched.user_talents}
+        for branch in ["magic", "war", "stealth"]:
+            nodes_in_branch = [n for n in TALENTS.values() if n.branch == branch]
+            if not nodes_in_branch:
+                continue
+            if all(ranks_by_code.get(n.id, 0) > 0 for n in nodes_in_branch):
+                return True, None, None
+        return False, None, None
+
     stmt = select(UserTalent).where(UserTalent.user_id == user.id)
     user_talents = (await session.scalars(stmt)).all()
     ranks_by_code = {ut.talent_code: ut.rank for ut in user_talents}
 
     for branch in ["magic", "war", "stealth"]:
-        # Берем все узлы этой ветки, исключая рут (если он есть, но у нас нет)
         nodes_in_branch = [n for n in TALENTS.values() if n.branch == branch]
         if not nodes_in_branch:
             continue
-        # Проверяем, что каждый узел в ветке прокачан хотя бы на 1
         if all(ranks_by_code.get(n.id, 0) > 0 for n in nodes_in_branch):
             return True, None, None
 
@@ -327,19 +417,26 @@ async def _handle_talents_branch_count(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     branch = params.get("branch", "")
     min_count = int(params.get("min_count", 1))
 
+    if prefetched is not None:
+        current = 0
+        for ut in prefetched.user_talents:
+            node = TALENTS.get(ut.talent_code)
+            if node and node.branch == branch:
+                current += 1
+        return current >= min_count, current, min_count
+
     stmt = select(UserTalent).where(UserTalent.user_id == user.id)
     user_talents = (await session.scalars(stmt)).all()
-
     current = 0
     for ut in user_talents:
         node = TALENTS.get(ut.talent_code)
         if node and node.branch == branch:
             current += 1
-
     return current >= min_count, current, min_count
 
 
@@ -348,6 +445,7 @@ async def _handle_login_streak(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     min_days = int(params.get("min_days", 1))
     current = user.login_streak or 0
@@ -359,6 +457,7 @@ async def _handle_daily_reward(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     min_day = int(params.get("min_day", 1))
     current = user.daily_reward_day or 1
@@ -370,6 +469,7 @@ async def _handle_return_after_gap(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     min_days = int(params.get("min_days", 7))
     days = (context or {}).get("days_since_previous_login")
@@ -383,8 +483,14 @@ async def _handle_inventory_count(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     min_count = int(params.get("min_count", 1))
+
+    if prefetched is not None:
+        current = len(prefetched.items)
+        return current >= min_count, current, min_count
+
     stmt = select(func.count(UserItem.id)).where(UserItem.user_id == user.id)
     current = int(await session.scalar(stmt) or 0)
     return current >= min_count, current, min_count
@@ -395,8 +501,14 @@ async def _handle_equipped_count(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     min_count = int(params.get("min_count", 1))
+
+    if prefetched is not None:
+        current = sum(1 for it in prefetched.items if it.equipped_slot is not None)
+        return current >= min_count, current, min_count
+
     stmt = select(func.count(UserItem.id)).where(
         UserItem.user_id == user.id,
         UserItem.equipped_slot.isnot(None),
@@ -410,21 +522,42 @@ async def _handle_equipped_slots(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     required = set(params.get("slots_required", []))
     both_weapons = bool(params.get("both_weapons", False))
+
+    if prefetched is not None:
+        items = [it for it in prefetched.items if it.equipped_slot is not None]
+        filled = {it.equipped_slot for it in items if it.equipped_slot}
+        current = len(required & filled)
+        target = len(required)
+        satisfied = required.issubset(filled)
+        if satisfied and both_weapons:
+            items_dict = _load_items()
+            types = {k: v.get("type", "") for k, v in items_dict.items()}
+            main = next((it for it in items if it.equipped_slot == "main_hand"), None)
+            off = next((it for it in items if it.equipped_slot == "off_hand"), None)
+            satisfied = (
+                main is not None
+                and off is not None
+                and types.get(main.item_code) == "weapon"
+                and types.get(off.item_code) == "weapon"
+            )
+        return satisfied, current, target
+
     stmt = select(UserItem).where(
         UserItem.user_id == user.id,
         UserItem.equipped_slot.isnot(None),
     )
-    items = (await session.scalars(stmt)).all()
+    items = list((await session.scalars(stmt)).all())
     filled = {it.equipped_slot for it in items if it.equipped_slot}
     current = len(required & filled)
     target = len(required)
     satisfied = required.issubset(filled)
     if satisfied and both_weapons:
-        items_data = load_json("items.json").get("items", [])
-        types = {i["id"]: i.get("type", "") for i in items_data}
+        items_dict = _load_items()
+        types = {k: v.get("type", "") for k, v in items_dict.items()}
         main = next((it for it in items if it.equipped_slot == "main_hand"), None)
         off = next((it for it in items if it.equipped_slot == "off_hand"), None)
         satisfied = (
@@ -441,7 +574,12 @@ async def _handle_item_pinned(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
+    if prefetched is not None:
+        current = sum(1 for it in prefetched.items if it.is_pinned)
+        return current >= 1, current, 1
+
     stmt = select(func.count(UserItem.id)).where(
         UserItem.user_id == user.id,
         UserItem.is_pinned.is_(True),
@@ -455,9 +593,15 @@ async def _handle_enhancement(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     min_level = int(params.get("min_level", 1))
     min_count = int(params.get("min_count", 1))
+
+    if prefetched is not None:
+        current = sum(1 for it in prefetched.items if (it.enhancement_level or 0) >= min_level)
+        return current >= min_count, current, min_count
+
     stmt = select(func.count(UserItem.id)).where(
         UserItem.user_id == user.id,
         UserItem.enhancement_level >= min_level,
@@ -471,11 +615,17 @@ async def _handle_rarity_upgrade(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     target_rarity = params.get("target_rarity", "rare")
     min_count = int(params.get("min_count", 1))
     target_idx = _RARITY_ORDER.index(target_rarity) if target_rarity in _RARITY_ORDER else 0
     higher_rarities = _RARITY_ORDER[target_idx:]
+
+    if prefetched is not None:
+        current = sum(1 for it in prefetched.items if it.rarity_override in higher_rarities)
+        return current >= min_count, current, min_count
+
     stmt = select(func.count(UserItem.id)).where(
         UserItem.user_id == user.id,
         UserItem.rarity_override.in_(higher_rarities),
@@ -489,8 +639,22 @@ async def _handle_events_created(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     min_count = int(params.get("min_count", 1))
+
+    if prefetched is not None:
+        current = 0
+        now = (context or {}).get("now") or datetime.now(UTC)
+        today_local = now.astimezone(_user_tz(user)).date()
+        for ev in prefetched.events:
+            if params.get("repeats_yearly") is True and not ev.repeats_yearly:
+                continue
+            if params.get("date_in_past") is True and ev.date >= today_local:
+                continue
+            current += 1
+        return current >= min_count, current, min_count
+
     stmt = select(func.count(Event.id)).where(Event.user_id == user.id)
     if params.get("repeats_yearly") is True:
         stmt = stmt.where(Event.repeats_yearly.is_(True))
@@ -507,6 +671,7 @@ async def _handle_profile_change(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     field = params.get("field", "")
     ctx = context or {}
@@ -518,6 +683,7 @@ async def _handle_level_reached(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     target = int(params.get("level", 1))
     current = level_for_xp(user.total_xp)
@@ -529,6 +695,7 @@ async def _handle_xp_total(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     target = int(params.get("amount", 1))
     current = user.total_xp or 0
@@ -540,8 +707,23 @@ async def _handle_demo_login(
     user: User,
     params: dict[str, Any],
     context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
 ) -> HandlerResult:
     return bool(user.is_demo), None, None
+
+
+async def _handle_tracking_stat(
+    session: AsyncSession,
+    user: User,
+    params: dict[str, Any],
+    context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
+) -> HandlerResult:
+    stat_name = params.get("stat_name", "")
+    target = int(params.get("target", 1))
+
+    current = user.tracking_stats.get(stat_name, 0) if user.tracking_stats else 0
+    return current >= target, current, target
 
 
 _HANDLERS: dict[str, Handler] = {
@@ -570,6 +752,7 @@ _HANDLERS: dict[str, Handler] = {
     "level_reached": _handle_level_reached,
     "xp_total": _handle_xp_total,
     "demo_login": _handle_demo_login,
+    "tracking_stat": _handle_tracking_stat,
 }
 
 
@@ -650,7 +833,7 @@ async def check_and_unlock_achievements(
 
             try:
                 satisfied, _current, _target = await handler(
-                    session, user, ach.condition.params, context
+                    session, user, ach.condition.params, context, None
                 )
             except Exception:
                 logger.exception(
@@ -691,7 +874,6 @@ async def check_and_unlock_achievements(
                 amount = int(ach.reward.get("amount", 1))
                 items_dict = _load_items()
 
-                # Проверяем, существует ли предмет в JSON, чтобы не выдать битый
                 if item_id in items_dict:
                     for _ in range(amount):
                         session.add(UserItem(user_id=user.id, item_code=item_id))
@@ -701,12 +883,9 @@ async def check_and_unlock_achievements(
                         extra={"achievement_code": ach.id, "item_id": item_id},
                     )
 
-        # Если в этом цикле ничего не разблокировали — выходим
         if unlocked_this_loop == 0:
             break
 
-        # Применяем XP и обновляем юзера, чтобы в следующем цикле
-        # ачивки на уровень (ach_glob_*) увидели новый total_xp
         if xp_gained_this_loop > 0:
             await session.execute(
                 update(User)
@@ -723,6 +902,7 @@ async def get_achievement_progress(
     session: AsyncSession,
     user: User,
     ach: AchievementDef,
+    prefetched: PrefetchData | None = None,
 ) -> tuple[bool, AchievementProgress | None]:
     """(satisfied, progress). progress=None для флагов и `manual`."""
     if ach.condition.type == "manual":
@@ -731,7 +911,9 @@ async def get_achievement_progress(
     if handler is None:
         return False, None
     try:
-        satisfied, current, target = await handler(session, user, ach.condition.params, None)
+        satisfied, current, target = await handler(
+            session, user, ach.condition.params, None, prefetched
+        )
     except Exception:
         logger.exception(
             "achievement_progress_failed",
@@ -749,20 +931,32 @@ async def get_all_achievements_with_progress(
 ) -> list[AchievementOut]:
     """Полный список достижений с unlocked/progress для GET /achievements.
 
-    TODO(Day 18): сейчас по одному запросу на ачивку (~84 SELECT).
-    MVP: приемлемо, при росте — batch-преагрегация.
+    Батч-преагрегация: вместо ~84 SELECT'ов делаем 4 запроса (quests, items,
+    events, user_talents) и считаем прогресс в памяти.
     """
     all_defs = _load_achievements()
     existing_stmt = select(UserAchievement).where(UserAchievement.user_id == user.id)
     user_ach = (await session.scalars(existing_stmt)).all()
     unlocked_map = {ua.achievement_code: ua.unlocked_at for ua in user_ach}
 
+    # Предзагружаем все связанные данные за 4 запроса
+    prefetched = PrefetchData(
+        quests=list((await session.scalars(select(Quest).where(Quest.user_id == user.id))).all()),
+        items=list(
+            (await session.scalars(select(UserItem).where(UserItem.user_id == user.id))).all()
+        ),
+        events=list((await session.scalars(select(Event).where(Event.user_id == user.id))).all()),
+        user_talents=list(
+            (await session.scalars(select(UserTalent).where(UserTalent.user_id == user.id))).all()
+        ),
+    )
+
     result: list[AchievementOut] = []
     for ach in all_defs:
         is_unlocked = ach.id in unlocked_map
         progress: AchievementProgress | None = None
         if not is_unlocked:
-            _, progress = await get_achievement_progress(session, user, ach)
+            _, progress = await get_achievement_progress(session, user, ach, prefetched)
         result.append(
             AchievementOut(
                 id=ach.id,

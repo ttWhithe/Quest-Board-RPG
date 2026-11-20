@@ -1,5 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { api } from './client';
+import { useToast } from '../contexts/ToastContext';
+import { RARITY_COLORS } from '../constants';
 
 export interface Achievement {
   id: string;
@@ -25,5 +27,27 @@ export function useAchievements() {
       return data;
     },
     staleTime: 60_000,
+  });
+}
+
+export function useTrackEvent() {
+  const { addToast } = useToast();
+  return useMutation({
+    mutationFn: async (statName: string) => {
+      const { data } = await api.post('/achievements/track', { stat_name: statName });
+      return data;
+    },
+    onSuccess: (newAchievements: any[]) => {
+      newAchievements?.forEach((ach, index) => {
+        setTimeout(() => {
+          addToast({
+            title: `Достижение: ${ach.name}`,
+            description: ach.description,
+            icon: ach.icon,
+            color: RARITY_COLORS[ach.rarity] || '#5c4033',
+          });
+        }, index * 500);
+      });
+    },
   });
 }

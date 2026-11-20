@@ -27,8 +27,8 @@ export function ToastContainer() {
                 <div
                   className="w-6 h-6"
                   style={{
-                    WebkitMaskImage: `url(/icons/${toast.icon}.svg)`,
-                    maskImage: `url(/icons/${toast.icon}.svg)`,
+                    WebkitMaskImage: `url(${toast.icon.startsWith('/') ? toast.icon : `/icons/${toast.icon}.svg`})`,
+                    maskImage: `url(${toast.icon.startsWith('/') ? toast.icon : `/icons/${toast.icon}.svg`})`,
                     WebkitMaskSize: 'contain',
                     WebkitMaskRepeat: 'no-repeat',
                     WebkitMaskPosition: 'center',

@@ -12,6 +12,7 @@ export interface DailyReward {
 export interface DailyRewardInfo {
   rewards: DailyReward[];
   current_day: number;
+  total_claimed_days?: number; // Добавлено для гибкости
   can_claim: boolean;
   streak: number;
 }
@@ -42,7 +43,7 @@ export const authApi = {
     return response.data;
   },
 
-  claimDailyReward: async (): Promise<{ success: boolean; xp_awarded: number; next_day: number; new_total_xp: number; login_streak: number }> => {
+  claimDailyReward: async (): Promise<{ success: boolean; xp_awarded: number; item_awarded?: string | null; next_day: number; new_total_xp: number; login_streak: number }> => {
     const response = await api.post('/auth/daily-reward');
     return response.data;
   }

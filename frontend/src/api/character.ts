@@ -147,7 +147,7 @@ export function useUpdateInventoryItem() {
           addToast({
             title: `Достижение: ${ach.name}`,
             description: ach.description,
-            icon: `/icons/${ach.icon}.svg`,
+            icon: ach.icon,
             color: RARITY_COLORS[ach.rarity] || '#5c4033',
           });
         }, index * 500);
