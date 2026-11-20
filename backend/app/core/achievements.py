@@ -543,7 +543,7 @@ async def _handle_equipped_slots(
         UserItem.user_id == user.id,
         UserItem.equipped_slot.isnot(None),
     )
-    items = (await session.scalars(stmt)).all()
+    items = list((await session.scalars(stmt)).all())
     filled = {it.equipped_slot for it in items if it.equipped_slot}
     current = len(required & filled)
     target = len(required)
@@ -919,12 +919,14 @@ async def get_all_achievements_with_progress(
 
     # Предзагружаем все связанные данные за 4 запроса
     prefetched = PrefetchData(
-        quests=(await session.scalars(select(Quest).where(Quest.user_id == user.id))).all(),
-        items=(await session.scalars(select(UserItem).where(UserItem.user_id == user.id))).all(),
-        events=(await session.scalars(select(Event).where(Event.user_id == user.id))).all(),
-        user_talents=(
-            await session.scalars(select(UserTalent).where(UserTalent.user_id == user.id))
-        ).all(),
+        quests=list((await session.scalars(select(Quest).where(Quest.user_id == user.id))).all()),
+        items=list(
+            (await session.scalars(select(UserItem).where(UserItem.user_id == user.id))).all()
+        ),
+        events=list((await session.scalars(select(Event).where(Event.user_id == user.id))).all()),
+        user_talents=list(
+            (await session.scalars(select(UserTalent).where(UserTalent.user_id == user.id))).all()
+        ),
     )
 
     result: list[AchievementOut] = []
