@@ -21,6 +21,7 @@ export interface CharacterResponse {
   xp_for_next_level: number;
   xp_bonus_percent: number;
   stats: CharacterStats;
+  new_achievements?: NewAchievementEvent[];
 }
 
 export interface CharacterUpdate {

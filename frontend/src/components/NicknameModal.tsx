@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useUpdateCharacter } from '../api/character';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
+import { RARITY_COLORS } from '../constants';
 
 interface Props {
   currentNickname: string;
@@ -10,6 +12,7 @@ interface Props {
 export function NicknameModal({ currentNickname, onClose }: Props) {
   const { updateUser } = useAuth();
   const { mutate: updateCharacter, isPending } = useUpdateCharacter();
+  const { addToast } = useToast(); // Замени на актуальный метод из вашего ToastContext
 
   const [nickname, setNickname] = useState(currentNickname);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -24,6 +27,17 @@ export function NicknameModal({ currentNickname, onClose }: Props) {
     updateCharacter({ nickname: nickname.trim() }, {
       onSuccess: (res) => {
         updateUser(res.user);
+
+        // Показываем тосты за новые ачивки
+        res.new_achievements?.forEach((ach) => {
+          addToast({
+            title: ach.name,
+            description: ach.description,
+            icon: ach.icon,
+            color: RARITY_COLORS[ach.rarity] || '#f59e0b',
+          });
+        });
+
         onClose();
       },
       onError: (err: any) => {

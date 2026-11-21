@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useUpdateCharacter } from '../api/character';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
+import { RARITY_COLORS } from '../constants';
 import { Emblem } from './Emblem';
 
 interface Props {
@@ -20,6 +22,7 @@ const SHAPES = [
 export function EmblemModal({ currentSeed, onClose }: Props) {
   const { updateUser } = useAuth();
   const { mutate: updateCharacter, isPending } = useUpdateCharacter();
+  const { addToast } = useToast();
 
   // Пытаемся загрузить текущие настройки или ставим дефолтные
   let initialData = { borderColor: COLORS[0], iconColor: COLORS[1], shape: 'shield', symbol: 'dragon-head' };
@@ -43,6 +46,17 @@ export function EmblemModal({ currentSeed, onClose }: Props) {
     updateCharacter({ emblem_seed: currentJson }, {
       onSuccess: (res) => {
         updateUser(res.user);
+
+        // Показываем тосты
+        res.new_achievements?.forEach((ach) => {
+          addToast({
+            title: ach.name,
+            description: ach.description,
+            icon: ach.icon,
+            color: RARITY_COLORS[ach.rarity] || '#f59e0b',
+          });
+        });
+
         onClose();
       },
       onError: (err: any) => {
