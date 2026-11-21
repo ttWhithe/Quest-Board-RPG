@@ -12,6 +12,7 @@ from sqlalchemy import ColumnElement, Date, case, cast, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.achievements import AchievementEvent, check_and_unlock_achievements
+from app.core.daily_reset import apply_daily_reset
 from app.core.deps import get_current_user
 from app.core.game import (
     calc_xp,
@@ -399,7 +400,10 @@ async def complete_quest(
         update(User).where(User.id == current_user.id).values(total_xp=User.total_xp + xp)
     )
 
-    # 5.5. Обновляем трекинг статов для квестов
+    # 5.5. Daily reset до мутации tracking_stats (см. core/daily_reset.py).
+    apply_daily_reset(current_user, now)
+
+    # Обновляем трекинг статов для квестов
     stats = dict(current_user.tracking_stats or {})
 
     # 13. Трудоголик (20 квестов подряд без провалов)
