@@ -792,6 +792,28 @@
 - **Решение:** Переписал тест на самодостаточный (inline-регистрация с `uuid4` в email + `AsyncSession(engine)`), чтобы не модифицировать `conftest.py` и не ломать другие тесты.
 - **Дальше:** Шаг 2 — перевод 5 manual-ачивок (`ach_q_25`, `ach_inv_7`, `ach_s_9`, `ach_prof_3`, `ach_prof_5`) на серверные триггеры.
 
+## [2026-11-21 12:00] — Day 20, шаг 2: Перевод 5 manual-ачивок на серверные триггеры
+- **Сделано:**
+  - В `achievements.json` обновлены условия для `ach_q_25` (спринтер), `ach_inv_7` (модник), `ach_s_9` (рекордсмен), `ach_prof_3` (ник+герб), `ach_prof_5` (тщеславие).
+  - В `core/achievements.py` добавлен хендлер `tracking_stat_all` (для проверки нескольких счётчиков одновременно), а также обработка флагов `three_quests_in_hour` и `new_max_streak` в `_handle_event_flag`.
+  - В `_EVENT_CONDITION_MAP` добавлены новые условия для `ITEM_CHANGED`, `PROFILE_CHANGED` и `LOGIN`.
+  - В `api/quests.py` реализован подсчёт `quests_in_last_hour` (3 квеста за час).
+  - В `api/auth.py` добавлена передача флага `new_max_streak` при логине, `/me` и demo-входе.
+  - В `api/character.py` реализован инкремент дневных счётчиков (`equip_changes_today`, `nickname_changed_today`, `emblem_changed_today`) и кумулятивного (`emblem_changes_total`).
+- **Застрял:** В `ach_prof_3` требовалось отследить два события в один день, чего не позволял стандартный `tracking_stat`.
+- **Решение:** Добавлен `tracking_stat_all`, принимающий словарь требуемых статов, чтобы не плодить кучу разрозненных флагов.
+- **Дальше:** Шаг 3 — доработка Quest Board (поля `image_preset`, `has_watermark`, миграция и Pydantic-валидация).
+
+## [2026-11-21 12:06] — Day 20, шаг 3: Визуальные поля квестов (Backend)
+- **Сделано:**
+  - В модель `Quest` добавлены поля `image_preset` (nullable) и `has_watermark` (default=False).
+  - Сгенерирована и применена миграция Alembic.
+  - В `schemas/quest.py` добавлен `Literal`-тип `ImagePreset` (15 валидных значений) и поля добавлены в `QuestCreate`, `QuestUpdate`, `QuestRead`.
+  - В `api/quests.py` обновлены `_quest_to_read`, `create_quest` и `update_quest` для поддержки новых полей.
+  - Написаны интеграционные тесты в `test_quest_board.py` (успешное создание, 422 на невалидный пресет, обновление).
+- **Застрял:** —.
+- **Дальше:** Шаг 4 — Frontend (трекинг смены ника/герба/экипировки через `POST /achievements/track`).
+
 ## Шаблон для следующих дней
 
 ```markdown

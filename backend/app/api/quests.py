@@ -72,6 +72,8 @@ def _quest_to_read(quest: Quest, now: datetime, tz: tzinfo) -> QuestRead:
         "rank": quest.rank.value,
         "rarity": quest.rarity.value,
         "deadline": quest.deadline,
+        "image_preset": quest.image_preset,
+        "has_watermark": quest.has_watermark,
         "status": quest.status.value,
         "effective_status": effective_status(quest, now, tz),
         "recurrence": quest.recurrence.value,
@@ -226,6 +228,8 @@ async def create_quest(
         rarity=QuestRarity(payload.rarity),
         deadline=payload.deadline,
         recurrence=QuestRecurrence(payload.recurrence),
+        image_preset=payload.image_preset,
+        has_watermark=payload.has_watermark,
         status=QuestStatus.active,
     )
     session.add(quest)
@@ -301,6 +305,10 @@ async def update_quest(
         quest.rarity = QuestRarity(update_data["rarity"])
     if "recurrence" in update_data:
         quest.recurrence = QuestRecurrence(update_data["recurrence"])
+    if "image_preset" in update_data:
+        quest.image_preset = update_data["image_preset"]
+    if "has_watermark" in update_data:
+        quest.has_watermark = update_data["has_watermark"]
 
     await session.commit()
     await session.refresh(quest)

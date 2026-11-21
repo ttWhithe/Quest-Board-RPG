@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, Enum, ForeignKey, Index, Integer, String, Text, func
+from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Index, Integer, String, Text, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -31,6 +31,11 @@ class Quest(Base):
     )
 
     deadline: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    # Визуальные поля (Day 20)
+    image_preset: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    has_watermark: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
+
     status: Mapped[QuestStatus] = mapped_column(
         Enum(QuestStatus, name="quest_status"),
         default=QuestStatus.active,

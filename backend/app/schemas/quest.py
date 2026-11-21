@@ -26,6 +26,25 @@ QuestStatus = Literal["active", "completed", "archived"]
 EffectiveStatus = Literal["active", "completed", "failed", "archived"]
 Recurrence = Literal["none", "daily", "weekly"]
 
+# Доступные пресеты картинок для доски квестов (10-15 штук)
+ImagePreset = Literal[
+    "dragon",
+    "sword",
+    "shield",
+    "scroll",
+    "potion",
+    "castle",
+    "forest",
+    "skull",
+    "crown",
+    "chest",
+    "compass",
+    "wizard",
+    "knight",
+    "tavern",
+    "map",
+]
+
 # §7.2: сортировки.
 QuestSort = Literal[
     "deadline_asc",
@@ -73,6 +92,8 @@ class QuestCreate(BaseModel):
     rarity: QuestRarity
     deadline: datetime | None = None
     recurrence: Recurrence = "none"
+    image_preset: ImagePreset | None = None
+    has_watermark: bool = False
 
     @field_validator("deadline")
     @classmethod
@@ -101,6 +122,8 @@ class QuestUpdate(BaseModel):
     rarity: QuestRarity | None = None
     deadline: datetime | None = None
     recurrence: Recurrence | None = None
+    image_preset: ImagePreset | None = None
+    has_watermark: bool | None = None
 
     @field_validator("deadline")
     @classmethod
@@ -138,6 +161,8 @@ class QuestRead(BaseModel):
     rank: QuestRank
     rarity: QuestRarity
     deadline: datetime | None
+    image_preset: ImagePreset | None
+    has_watermark: bool
     status: QuestStatus
     effective_status: EffectiveStatus
     recurrence: Recurrence
