@@ -406,6 +406,17 @@ async def complete_quest(
     # Обновляем трекинг статов для квестов
     stats = dict(current_user.tracking_stats or {})
 
+    # 25. Спринтер (3 квеста за 1 час)
+    now_ts = int(now.timestamp())
+    last_ts = stats.get("last_quest_ts", 0)
+    hour_count = stats.get("quests_in_last_hour", 0)
+    if now_ts - last_ts < 3600:
+        hour_count += 1
+    else:
+        hour_count = 1
+    stats["last_quest_ts"] = now_ts
+    stats["quests_in_last_hour"] = hour_count
+
     # 13. Трудоголик (20 квестов подряд без провалов)
     is_overdue = quest.deadline is not None and quest.deadline < now
     if is_overdue:
@@ -437,7 +448,7 @@ async def complete_quest(
         session,
         current_user,
         AchievementEvent.QUEST_COMPLETED,
-        {"now": now, "quest": quest},
+        {"now": now, "quest": quest, "three_quests_in_hour": hour_count >= 3},
     )
 
     # 6. COMMIT + refresh: подтягиваем server-side `updated_at` и total_xp

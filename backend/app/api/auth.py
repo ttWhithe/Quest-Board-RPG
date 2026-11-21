@@ -92,10 +92,14 @@ async def login(
 
     # Обновляем стрик при входе
     prev_login_at = user.last_login_at
+    prev_max_streak = user.max_login_streak
     update_login_streak(user)
 
     now = datetime.now(UTC)
-    ctx: dict[str, Any] = {"now": now}
+    ctx: dict[str, Any] = {
+        "now": now,
+        "new_max_streak": user.max_login_streak > prev_max_streak,
+    }
     if prev_login_at is not None:
         ctx["days_since_previous_login"] = (now - prev_login_at).days
 
@@ -115,6 +119,7 @@ async def read_current_user(
 ) -> User:
     """Get current user profile."""
     # Проверяем стрик при каждой загрузке приложения
+    prev_max_streak = current_user.max_login_streak
     updated = update_login_streak(current_user)
     if updated:
         await session.flush()
@@ -122,7 +127,10 @@ async def read_current_user(
             session,
             current_user,
             AchievementEvent.LOGIN,
-            {"now": datetime.now(UTC)},
+            {
+                "now": datetime.now(UTC),
+                "new_max_streak": current_user.max_login_streak > prev_max_streak,
+            },
         )
         await session.commit()
         await session.refresh(current_user)
@@ -139,13 +147,17 @@ async def demo_login(
 ) -> TokenResponse:
     """Create a demo user with seeded data and return JWT (Spec §7.8)."""
     demo_user = await create_demo_user(session)
+    prev_max_streak = demo_user.max_login_streak
     update_login_streak(demo_user)
     await session.flush()
     await check_and_unlock_achievements(
         session,
         demo_user,
         AchievementEvent.DEMO_LOGIN,
-        {"now": datetime.now(UTC)},
+        {
+            "now": datetime.now(UTC),
+            "new_max_streak": demo_user.max_login_streak > prev_max_streak,
+        },
     )
     await session.commit()
     await session.refresh(demo_user)

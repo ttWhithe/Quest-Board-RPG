@@ -108,6 +108,7 @@ _EVENT_CONDITION_MAP: dict[AchievementEvent, set[str]] = {
         "enhancement",
         "rarity_upgrade",
         "event_flag",
+        "tracking_stat",
     },
     AchievementEvent.TALENT_UPGRADED: {
         "talents_total",
@@ -127,15 +128,19 @@ _EVENT_CONDITION_MAP: dict[AchievementEvent, set[str]] = {
     AchievementEvent.LOGIN: {
         "login_streak",
         "return_after_gap",
+        "event_flag",
     },
     AchievementEvent.PROFILE_CHANGED: {
         "profile_change",
+        "tracking_stat",
+        "tracking_stat_all",
     },
     AchievementEvent.DEMO_LOGIN: {
         "demo_login",
     },
     AchievementEvent.STATS_UPDATED: {
         "tracking_stat",
+        "tracking_stat_all",
         "quest_count",
         "quest_count_per_rank",
     },
@@ -306,6 +311,10 @@ async def _handle_event_flag(
         return bool(ctx.get("rarity_upgraded")), None, None
     if flag == "enhanced_negative_item":
         return bool(ctx.get("enhanced_negative_item")), None, None
+    if flag == "three_quests_in_hour":
+        return bool(ctx.get("three_quests_in_hour")), None, None
+    if flag == "new_max_streak":
+        return bool(ctx.get("new_max_streak")), None, None
     return False, None, None
 
 
@@ -726,6 +735,26 @@ async def _handle_tracking_stat(
     return current >= target, current, target
 
 
+async def _handle_tracking_stat_all(
+    session: AsyncSession,
+    user: User,
+    params: dict[str, Any],
+    context: dict[str, Any] | None,
+    prefetched: PrefetchData | None = None,
+) -> HandlerResult:
+    required_stats: dict[str, int] = params.get("stats", {})
+    target = len(required_stats)
+    if not user.tracking_stats:
+        return False, 0, target
+
+    current = sum(
+        1
+        for stat_name, required_val in required_stats.items()
+        if user.tracking_stats.get(stat_name, 0) >= required_val
+    )
+    return current >= target, current, target
+
+
 _HANDLERS: dict[str, Handler] = {
     "quest_count": _handle_quest_count,
     "quest_count_per_rank": _handle_quest_count_per_rank,
@@ -753,6 +782,7 @@ _HANDLERS: dict[str, Handler] = {
     "xp_total": _handle_xp_total,
     "demo_login": _handle_demo_login,
     "tracking_stat": _handle_tracking_stat,
+    "tracking_stat_all": _handle_tracking_stat_all,
 }
 
 

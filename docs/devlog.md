@@ -782,6 +782,16 @@
 - **Решение:** Использовать `daily_reward_day` как единственный источник правды для прогресса наград, не полагаясь на стрики входов.
 - **Дальше:** Финальный PR, закрытие Issue #44 и #45, обновление документации.
 
+## [2026-11-21 11:35] — Day 20, шаг 1: Daily Reset для tracking_stats
+- **Сделано:**
+  - В `User` добавлено поле `last_daily_reset_date` (Date, nullable) + миграция.
+  - Создан `app/core/daily_reset.py` с функцией `apply_daily_reset(user, now)` и константой `DAILY_STAT_KEYS`.
+  - Сброс интегрирован в `POST /achievements/track`, `GET /achievements` (если день сменился) и `POST /quests/{id}/complete`.
+  - Интеграционный тест использует `async_client` + прямую запись в `AsyncSession(engine)` (в `conftest.py` нет фикстур `client`, `auth_headers`, `session`).
+- **Застрял:** Первый прогон интеграционного теста упал на `fixture 'client' not found` — фикстуры `auth_headers` и `session` в `conftest.py` отсутствуют.
+- **Решение:** Переписал тест на самодостаточный (inline-регистрация с `uuid4` в email + `AsyncSession(engine)`), чтобы не модифицировать `conftest.py` и не ломать другие тесты.
+- **Дальше:** Шаг 2 — перевод 5 manual-ачивок (`ach_q_25`, `ach_inv_7`, `ach_s_9`, `ach_prof_3`, `ach_prof_5`) на серверные триггеры.
+
 ## Шаблон для следующих дней
 
 ```markdown

@@ -39,6 +39,7 @@ ConditionType = Literal[
     "xp_total",
     "demo_login",
     "tracking_stat",
+    "tracking_stat_all",
     "manual",
 ]
 

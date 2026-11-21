@@ -16,6 +16,7 @@ from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.achievements import AchievementEvent, check_and_unlock_achievements
+from app.core.daily_reset import apply_daily_reset
 from app.core.deps import get_current_user
 from app.core.game import (
     RARITY_MULTIPLIERS,
@@ -154,8 +155,18 @@ async def update_character(
 
     new_achievements = []
     if changed_fields:
-        await session.flush()
         now = datetime.now(UTC)
+        apply_daily_reset(current_user, now)
+
+        stats = dict(current_user.tracking_stats or {})
+        if "nickname" in changed_fields:
+            stats["nickname_changed_today"] = stats.get("nickname_changed_today", 0) + 1
+        if "emblem_seed" in changed_fields:
+            stats["emblem_changed_today"] = stats.get("emblem_changed_today", 0) + 1
+            stats["emblem_changes_total"] = stats.get("emblem_changes_total", 0) + 1
+        current_user.tracking_stats = stats
+
+        await session.flush()
         for field in changed_fields:
             unlocked = await check_and_unlock_achievements(
                 session,
@@ -384,6 +395,7 @@ async def update_inventory_item(
     if payload.rarity is not None:
         user_item.rarity_override = payload.rarity
 
+    prev_slot = user_item.equipped_slot
     if "equipped_slot" in payload.model_fields_set:
         new_slot = payload.equipped_slot
         if new_slot is not None:
@@ -445,6 +457,15 @@ async def update_inventory_item(
         if any(v < 0 for v in item_data.get("stats", {}).values()):
             ctx["enhanced_negative_item"] = True
 
+    now = datetime.now(UTC)
+    apply_daily_reset(current_user, now)
+
+    if user_item.equipped_slot != prev_slot:
+        stats = dict(current_user.tracking_stats or {})
+        stats["equip_changes_today"] = stats.get("equip_changes_today", 0) + 1
+        current_user.tracking_stats = stats
+
+    ctx["now"] = now
     await session.flush()
     new_achievements = await check_and_unlock_achievements(
         session,

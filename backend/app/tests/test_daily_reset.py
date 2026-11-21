@@ -6,6 +6,7 @@ from datetime import UTC, date, datetime, timedelta
 from uuid import uuid4
 
 import pytest
+from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -119,7 +120,7 @@ class TestDailyResetIntegration:
     """
 
     @pytest.mark.asyncio
-    async def test_track_resets_after_day_change(self, async_client) -> None:
+    async def test_track_resets_after_day_change(self, async_client: AsyncClient) -> None:
         # 1. Уникальный пользователь
         email = f"daily-reset-{uuid4().hex[:12]}@test.local"
         reg = await async_client.post(
